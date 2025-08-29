@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patrimonio Sonoro - Colombia</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="js/tailwind-confing.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+    <!-- Navegación -->
+    <nav class="nav-with-bg bg-white shadow-md fixed top-0 left-0 w-full z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Izquierda: Logo -->
+                <div class="flex items-center">
+                    <div class="mr-3">
+                        <!-- Logo de la carpeta assets/images -->
+                        <img src="assets/images/logo_sin_letra.png" alt="Patrimonio Sonoro" class="h-14 w-auto object-contain" loading="eager" decoding="async">
+                    </div>
+                    <div>
+                        <span class="text-lg font-bold text-azulInstitucional">Patrimonio Sonoro</span>
+                        <div class="flex items-center text-[11px] text-gray-500 leading-none">
+                            <span>SENA</span>
+                            <span class="mx-1">•</span>
+                            <span>AudioBrand</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Centro: Menú escritorio -->
+                <div class="hidden md:flex items-center justify-center space-x-8">
+                    <a href="#inicio" class="px-3 py-2 text-sm font-medium text-azulInstitucional hover:text-turquesaAudioBrand transition-colors">Inicio</a>
+                    <a href="#que-es" class="px-3 py-2 text-sm font-medium text-azulInstitucional hover:text-turquesaAudioBrand transition-colors">¿Qué es?</a>
+                    <a href="#explora" class="px-3 py-2 text-sm font-medium text-azulInstitucional hover:text-turquesaAudioBrand transition-colors">Explora</a>
+                    <a href="#regiones" class="px-3 py-2 text-sm font-medium text-azulInstitucional hover:text-turquesaAudioBrand transition-colors">Regiones</a>
+                    <a href="#campanas" class="px-3 py-2 text-sm font-medium text-azulInstitucional hover:text-turquesaAudioBrand transition-colors">Campañas</a>
+                    <a href="#mapa-sonoro" class="px-3 py-2 text-sm font-medium text-azulInstitucional hover:text-turquesaAudioBrand transition-colors">Mapa Sonoro</a>
+                    <a href="#nosotros" class="px-3 py-2 text-sm font-medium text-azulInstitucional hover:text-turquesaAudioBrand transition-colors">Nosotros</a>
+                </div>
+
+                <!-- Derecha: acciones (login / usuario) -->
+                <div class="hidden md:flex items-center space-x-4">
+                    <!-- Botón de inicio de sesión (se oculta cuando el usuario está autenticado) -->
+                    <button id="login-button" class="bg-turquesaAudioBrand hover:bg-opacity-90 text-white px-4 py-2 rounded-full text-sm font-medium transition-all">Iniciar sesión</button>
+
+                    <!-- Menú de usuario (se muestra cuando el usuario está autenticado) -->
+                    <div id="user-dropdown" class="user-dropdown hidden">
+                        <div class="avatar cursor-pointer flex items-center" id="avatar-button">
+                            <span id="user-initials"></span>
+                        </div>
+                        <div class="user-menu hidden" id="user-menu">
+                            <div class="profile-header">
+                                <div class="avatar avatar-lg">
+                                    <span id="user-menu-initials"></span>
+                                </div>
+                                <div class="profile-info">
+                                    <div class="profile-name" id="user-menu-name">Usuario</div>
+                                    <div class="profile-email" id="user-menu-email">usuario@ejemplo.com</div>
+                                </div>
+                            </div>
+                            <a href="#" class="user-menu-item">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                                </svg>
+                                Mi perfil
+                            </a>
+                            <a href="#" class="user-menu-item">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                </svg>
+                                Mis grabaciones
+                            </a>
+                            <a href="#" class="user-menu-item">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path>
+                                </svg>
+                                Guardados
+                            </a>
+                            <div class="user-menu-divider"></div>
+                            <a href="#" class="user-menu-item">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                </svg>
+                                Configuración
+                            </a>
+                            <a href="#" class="user-menu-item" id="logout-button">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                                </svg>
+                                Cerrar sesión
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botón de menú móvil (derecha) -->
+                <div class="md:hidden flex items-center">
+                    <button id="mobile-menu-button" class="text-azulInstitucional hover:text-turquesaAudioBrand focus:outline-none">
+                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Menú móvil -->
+        <div id="mobile-menu" class="mobile-menu fixed top-16 left-0 w-64 h-full bg-white shadow-lg z-40 transition-transform duration-300 md:hidden">
+
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="#inicio" class="block px-3 py-2 rounded-md text-base font-medium text-azulInstitucional hover:bg-turquesaAudioBrand hover:text-white">Inicio</a>
+                <a href="#que-es" class="block px-3 py-2 rounded-md text-base font-medium text-azulInstitucional hover:bg-turquesaAudioBrand hover:text-white">¿Qué es?</a>
+                <a href="#explora" class="block px-3 py-2 rounded-md text-base font-medium text-azulInstitucional hover:bg-turquesaAudioBrand hover:text-white">Explora</a>
+                <a href="#regiones" class="block px-3 py-2 rounded-md text-base font-medium text-azulInstitucional hover:bg-turquesaAudioBrand hover:text-white">Regiones</a>
+                <a href="#campanas" class="block px-3 py-2 rounded-md text-base font-medium text-azulInstitucional hover:bg-turquesaAudioBrand hover:text-white">Campañas</a>
+                <a href="#mapa-sonoro" class="block px-3 py-2 rounded-md text-base font-medium text-azulInstitucional hover:bg-turquesaAudioBrand hover:text-white">Mapa Sonoro</a>
+                <a href="#nosotros" class="block px-3 py-2 rounded-md text-base font-medium text-azulInstitucional hover:bg-turquesaAudioBrand hover:text-white">Nosotros</a>
+                
+                <!-- Botón de inicio de sesión móvil (se oculta cuando el usuario está autenticado) -->
+                <button id="mobile-login-button" class="mt-4 w-full bg-turquesaAudioBrand hover:bg-opacity-90 text-white px-4 py-2 rounded-full text-base font-medium transition-all">Iniciar sesión</button>
+                
+                <!-- Información del usuario móvil (se muestra cuando el usuario está autenticado) -->
+                <div id="mobile-user-info" class="hidden mt-4 p-3 bg-gray-100 rounded-lg">
+                    <div class="flex items-center">
+                        <div class="avatar avatar-sm mr-3">
+                            <span id="mobile-user-initials">US</span>
+                        </div>
+                        <div>
+                            <div class="font-medium text-gray-900" id="mobile-user-name">Usuario</div>
+                            <div class="text-sm text-gray-500" id="mobile-user-email">usuario@ejemplo.com</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Botón de cerrar sesión móvil (se muestra cuando el usuario está autenticado) -->
+                <button id="mobile-logout-button" class="hidden mt-4 w-full bg-red-500 hover:bg-opacity-90 text-white px-4 py-2 rounded-full text-base font-medium transition-all">Cerrar sesión</button>
+            </div>
+        </div>
+        <!-- Overlay para menú móvil -->
+        <div id="mobile-menu-overlay" class="fixed inset-0 bg-black bg-opacity-40 z-30 hidden md:hidden"></div>
+    </nav>
+
+    <!-- Modal de inicio de sesión -->
+    <div id="login-modal" class="login-modal">
+        <div class="login-modal-content">
+            <div class="auth-tabs">
+                <div class="auth-tab active" data-tab="login">Iniciar sesión</div>
+                <div class="auth-tab" data-tab="register">Registrarse</div>
+            </div>
+            
+            <!-- Contenido de inicio de sesión -->
+            <div id="login-content" class="auth-content active">
+                <div id="login-error" class="auth-error">
+                    Credenciales incorrectas. Por favor, inténtalo de nuevo.
+                </div>
+                <div id="login-success" class="auth-success">
+                    ¡Inicio de sesión exitoso! Redirigiendo...
+                </div>
+                
+                <div class="mb-6">
+                    <button class="social-login-btn google-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21.8055 10.0415H21V10H12V14H17.6515C16.827 16.3285 14.6115 18 12 18C8.6865 18 6 15.3135 6 12C6 8.6865 8.6865 6 12 6C13.5295 6 14.921 6.577 15.9805 7.5195L18.809 4.691C17.023 3.0265 14.634 2 12 2C6.4775 2 2 6.4775 2 12C2 17.5225 6.4775 22 12 22C17.5225 22 22 17.5225 22 12C22 11.3295 21.931 10.675 21.8055 10.0415Z" fill="#FFC107"/>
+                            <path d="M3.15295 7.3455L6.43845 9.755C7.32745 7.554 9.48045 6 12 6C13.5295 6 14.921 6.577 15.9805 7.5195L18.809 4.691C17.023 3.0265 14.634 2 12 2C8.15895 2 4.82795 4.1685 3.15295 7.3455Z" fill="#FF3D00"/>
+                            <path d="M12 22C14.583 22 16.93 21.0115 18.7045 19.404L15.6095 16.785C14.5718 17.5742 13.3038 18.001 12 18C9.39903 18 7.19053 16.3415 6.35853 14.027L3.09753 16.5395C4.75253 19.778 8.11353 22 12 22Z" fill="#4CAF50"/>
+                            <path d="M21.8055 10.0415H21V10H12V14H17.6515C17.2571 15.1082 16.5467 16.0766 15.608 16.7855L15.6095 16.7845L18.7045 19.4035C18.4855 19.6025 22 17 22 12C22 11.3295 21.931 10.675 21.8055 10.0415Z" fill="#1976D2"/>
+                        </svg>
+                        Continuar con Google
+                    </button>
+                    <button class="social-login-btn facebook-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M24 12.073C24 5.40365 18.629 0 12 0C5.37097 0 0 5.40365 0 12.073C0 18.0988 4.38823 23.0935 10.125 24V15.563H7.07661V12.073H10.125V9.41306C10.125 6.38751 11.9153 4.71627 14.6574 4.71627C15.9706 4.71627 17.3439 4.95189 17.3439 4.95189V7.92146H15.8303C14.34 7.92146 13.875 8.85225 13.875 9.8069V12.073H17.2031L16.6708 15.563H13.875V24C19.6118 23.0935 24 18.0988 24 12.073Z"/>
+                        </svg>
+                        Continuar con Facebook
+                    </button>
+                </div>
+                
+                <div class="auth-divider">
+                    <span class="auth-divider-text">o</span>
+                </div>
+                
+                <form id="login-form">
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <input type="email" id="login-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-turquesaAudioBrand input-with-icon" placeholder="Correo electrónico" required>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                        </div>
+                        <input type="password" id="login-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-turquesaAudioBrand input-with-icon" placeholder="Contraseña" required>
+                        <div class="password-toggle" id="login-password-toggle">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-center mb-6">
+                        <div class="flex items-center">
+                            <input type="checkbox" id="remember-me" class="h-4 w-4 text-turquesaAudioBrand focus:ring-turquesaAudioBrand border-gray-300 rounded">
+                            <label for="remember-me" class="ml-2 block text-sm text-gray-700">Recordarme</label>
+                        </div>
+                        <div class="text-sm">
+                            <a href="#" class="auth-link" id="forgot-password-link">¿Olvidaste tu contraseña?</a>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-turquesaAudioBrand hover:bg-opacity-90 text-white py-2 px-4 rounded-lg font-medium transition-all">Iniciar sesión</button>
+                </form>
+            </div>
+            
+            <!-- Contenido de registro -->
+            <div id="register-content" class="auth-content">
+                <div id="register-error" class="auth-error">
+                    Error al registrarse. Por favor, inténtalo de nuevo.
+                </div>
+                <div id="register-success" class="auth-success">
+                    ¡Registro exitoso! Ya puedes iniciar sesión.
+                </div>
+                
+                <div class="mb-6">
+                    <button class="social-login-btn google-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21.8055 10.0415H21V10H12V14H17.6515C16.827 16.3285 14.6115 18 12 18C8.6865 18 6 15.3135 6 12C6 8.6865 8.6865 6 12 6C13.5295 6 14.921 6.577 15.9805 7.5195L18.809 4.691C17.023 3.0265 14.634 2 12 2C6.4775 2 2 6.4775 2 12C2 17.5225 6.4775 22 12 22C17.5225 22 22 17.5225 22 12C22 11.3295 21.931 10.675 21.8055 10.0415Z" fill="#FFC107"/>
+                            <path d="M3.15295 7.3455L6.43845 9.755C7.32745 7.554 9.48045 6 12 6C13.5295 6 14.921 6.577 15.9805 7.5195L18.809 4.691C17.023 3.0265 14.634 2 12 2C8.15895 2 4.82795 4.1685 3.15295 7.3455Z" fill="#FF3D00"/>
+                            <path d="M12 22C14.583 22 16.93 21.0115 18.7045 19.404L15.6095 16.785C14.5718 17.5742 13.3038 18.001 12 18C9.39903 18 7.19053 16.3415 6.35853 14.027L3.09753 16.5395C4.75253 19.778 8.11353 22 12 22Z" fill="#4CAF50"/>
+                            <path d="M21.8055 10.0415H21V10H12V14H17.6515C17.2571 15.1082 16.5467 16.0766 15.608 16.7855L15.6095 16.7845L18.7045 19.4035C18.4855 19.6025 22 17 22 12C22 11.3295 21.931 10.675 21.8055 10.0415Z" fill="#1976D2"/>
+                        </svg>
+                        Continuar con Google
+                    </button>
+                    <button class="social-login-btn facebook-btn">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M24 12.073C24 5.40365 18.629 0 12 0C5.37097 0 0 5.40365 0 12.073C0 18.0988 4.38823 23.0935 10.125 24V15.563H7.07661V12.073H10.125V9.41306C10.125 6.38751 11.9153 4.71627 14.6574 4.71627C15.9706 4.71627 17.3439 4.95189 17.3439 4.95189V7.92146H15.8303C14.34 7.92146 13.875 8.85225 13.875 9.8069V12.073H17.2031L16.6708 15.563H13.875V24C19.6118 23.0935 24 18.0988 24 12.073Z"/>
+                        </svg>
+                        Continuar con Facebook
+                    </button>
+                </div>
+                
+                <div class="auth-divider">
+                    <span class="auth-divider-text">o</span>
+                </div>
+                
+                <form id="register-form">
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+                            </svg>
+                        </div>
+                        <input type="text" id="register-name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-turquesaAudioBrand input-with-icon" placeholder="Nombre completo" required>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                        </div>
+                        <input type="email" id="register-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-turquesaAudioBrand input-with-icon" placeholder="Correo electrónico" required>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                        </div>
+                        <input type="password" id="register-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-turquesaAudioBrand input-with-icon" placeholder="Contraseña" required>
+                        <div class="password-toggle" id="register-password-toggle">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                            </svg>
+                        </div>
+                        <input type="password" id="register-confirm-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-turquesaAudioBrand input-with-icon" placeholder="Confirmar contraseña" required>
+                    </div>
+                    <!-- Selección de rol -->
+                    <div class="input-group">
+                        <div class="input-icon">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8l7-7 7 7M5 12h14" />
+                            </svg>
+                        </div>
+                        <select id="register-role" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-turquesaAudioBrand input-with-icon" required>
+                            <option value="" disabled selected>Selecciona un rol</option>
+                            <option value="Usuario">Usuario</option>
+                            <option value="Institucion">Institución</option>
+                            <option value="Empresa">Empresa</option>
+                        </select>
+                    </div>
+                    <div class="flex items-center mb-6">
+                        <input type="checkbox" id="terms" class="h-4 w-4 text-turquesaAudioBrand focus:ring-turquesaAudioBrand border-gray-300 rounded" required>
+                        <label for="terms" class="ml-2 block text-sm text-gray-700">
+                            Acepto los <a href="#" class="auth-link">Términos de servicio</a> y la <a href="#" class="auth-link">Política de privacidad</a>
+                        </label>
+                    </div>
+                    <button type="submit" class="w-full bg-turquesaAudioBrand hover:bg-opacity-90 text-white py-2 px-4 rounded-lg font-medium transition-all">Registrarse</button>
+                </form>
+            </div>
+            
+            <div class="auth-footer">
+                <p id="login-footer-text">¿No tienes una cuenta? <a href="#" class="auth-link" id="register-link">Regístrate</a></p>
+                <p id="register-footer-text" class="hidden">¿Ya tienes una cuenta? <a href="#" class="auth-link" id="login-link">Inicia sesión</a></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de cierre de sesión -->
+    <div id="logout-modal" class="logout-modal">
+        <div class="logout-modal-content">
+            <div class="logout-modal-title">Cerrar sesión</div>
+            <div class="logout-modal-message">¿Estás seguro de que deseas cerrar sesión?</div>
+            <div class="logout-modal-buttons">
+                <button id="logout-cancel" class="logout-modal-button cancel">Cancelar</button>
+                <button id="logout-confirm" class="logout-modal-button confirm">Cerrar sesión</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenido principal -->
+    <main>
+        <!-- Sección de inicio -->
+        <section id="inicio" class="hero-section min-h-screen flex items-center justify-center relative">
+            <!-- Onda inferior como antes -->
+            <div class="sound-wave"></div>
+            <div class="container mx-auto px-4 text-center text-white z-10">
+                <div class="flex justify-center mb-6 hero-waves-top">
+                    <div class="flex items-center space-x-1 waves-inline">
+                        <div class="sound-bar h-12"></div>
+                        <div class="sound-bar h-16"></div>
+                        <div class="sound-bar h-20"></div>
+                        <div class="sound-bar h-16"></div>
+                        <div class="sound-bar h-12"></div>
+                    </div>
+                </div>
+
+                <!-- Espaciador para mantener posiciones al remover H1 y P -->
+                <div class="hero-spacer"></div>
+
+                <div class="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6 hero-buttons">
+                    <a href="#explora" class="bg-turquesaAudioBrand hover:bg-opacity-90 text-white px-8 py-3 rounded-full text-lg font-medium transition-all transform hover:scale-105">Explorar sonidos</a>
+                    <a href="#que-es" class="bg-transparent border-2 border-white hover:bg-white hover:text-azulInstitucional text-white px-8 py-3 rounded-full text-lg font-medium transition-all">Conocer más</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección ¿Qué es Patrimonio Sonoro? -->
+        <section id="que-es" class="py-20 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="max-w-4xl mx-auto">
+                    <div class="flex justify-center mb-6">
+                        <div class="w-20 h-1 bg-turquesaAudioBrand"></div>
+                    </div>
+                    <h2 class="text-3xl md:text-4xl font-bold text-center mb-6">¿Qué es Patrimonio Sonoro?</h2>
+                    <p class="text-xl text-center text-gray-600 mb-12">Una plataforma del SENA para preservar lo que se escucha</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="bg-grisClaro p-6 rounded-xl text-center">
+                            <div class="bg-turquesaAudioBrand w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">Plataforma abierta</h3>
+                            <p class="text-gray-600">Una iniciativa del SENA y AudioBrand para preservar y compartir sonidos representativos de Colombia.</p>
+                        </div>
+                        <div class="bg-grisClaro p-6 rounded-xl text-center">
+                            <div class="bg-verdeSena w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">Repositorio sonoro</h3>
+                            <p class="text-gray-600">Colección de música y sonidos representativos de las regiones de Colombia con licencias abiertas.</p>
+                        </div>
+                        <div class="bg-grisClaro p-6 rounded-xl text-center">
+                            <div class="bg-amarilloVibrante w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-3">Patrimonio cultural</h3>
+                            <p class="text-gray-600">Preservamos el patrimonio cultural inmaterial de Colombia a través de sus sonidos característicos.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Explora los Sonidos -->
+        <section id="explora" class="py-20 bg-grisClaro">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-center mb-6">
+                    <div class="w-20 h-1 bg-turquesaAudioBrand"></div>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-6">Explora los Sonidos</h2>
+                <p class="text-xl text-center text-gray-600 mb-12">Descubre la riqueza sonora de Colombia</p>
+                
+                <!-- Filtros de búsqueda -->
+                <div class="search-filters mb-12">
+                    <input type="text" placeholder="Buscar sonidos..." class="search-input">
+                    <select class="filter-select">
+                        <option value="">Todas las regiones</option>
+                        <option value="amazonia">Amazonía</option>
+                        <option value="andina">Andina</option>
+                        <option value="caribe">Caribe</option>
+                        <option value="insular">Insular</option>
+                        <option value="pacifico">Pacífico</option>
+                    </select>
+                    <select class="filter-select">
+                        <option value="">Todas las campañas</option>
+                        <option value="campesena">CampeSENA</option>
+                        <option value="formacion">Formación</option>
+                        <option value="sena-al-aire">SENA al Aire</option>
+                    </select>
+                </div>
+                
+                <!-- Tarjetas de sonidos -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Sonido 1 -->
+                    <div class="sound-card bg-white rounded-xl overflow-hidden shadow-md">
+                        <div class="relative h-48 bg-azulInstitucional">
+                            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <path d="M0,50 Q20,45 40,50 T80,50 T100,50 V100 H0 Z" fill="#002D62" fill-opacity="0.5"></path>
+                                <path d="M0,60 Q25,55 50,60 T100,60 V100 H0 Z" fill="#00B8A9" fill-opacity="0.3"></path>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="play-button w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
+                                    <svg class="w-8 h-8 text-turquesaAudioBrand" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="bg-turquesaAudioBrand text-white text-xs font-semibold px-3 py-1 rounded-full">Caribe</span>
+                                <span class="text-gray-500 text-sm">2:45</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Tambores de San Basilio</h3>
+                            <p class="text-gray-600 mb-4">Grabación de los tradicionales tambores de San Basilio de Palenque, patrimonio cultural inmaterial.</p>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <div class="avatar avatar-sm mr-2">
+                                        <span>JR</span>
+                                    </div>
+                                    <span class="text-sm text-gray-500">Juan Reyes</span>
+                                </div>
+                                <button class="text-turquesaAudioBrand hover:text-opacity-80">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sonido 2 -->
+                    <div class="sound-card bg-white rounded-xl overflow-hidden shadow-md">
+                        <div class="relative h-48 bg-verdeSena">
+                            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <path d="M0,50 Q20,45 40,50 T80,50 T100,50 V100 H0 Z" fill="#009F4D" fill-opacity="0.5"></path>
+                                <path d="M0,60 Q25,55 50,60 T100,60 V100 H0 Z" fill="#F8BA3F" fill-opacity="0.3"></path>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="play-button w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
+                                    <svg class="w-8 h-8 text-verdeSena" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="bg-verdeSena text-white text-xs font-semibold px-3 py-1 rounded-full">Andina</span>
+                                <span class="text-gray-500 text-sm">3:12</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Amanecer en los Andes</h3>
+                            <p class="text-gray-600 mb-4">Paisaje sonoro del amanecer en la cordillera de los Andes, con cantos de aves y sonidos naturales.</p>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <div class="avatar avatar-sm mr-2">
+                                        <span>MC</span>
+                                    </div>
+                                    <span class="text-sm text-gray-500">María Cardona</span>
+                                </div>
+                                <button class="text-verdeSena hover:text-opacity-80">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sonido 3 -->
+                    <div class="sound-card bg-white rounded-xl overflow-hidden shadow-md">
+                        <div class="relative h-48 bg-amarilloVibrante">
+                            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <path d="M0,50 Q20,45 40,50 T80,50 T100,50 V100 H0 Z" fill="#F8BA3F" fill-opacity="0.5"></path>
+                                <path d="M0,60 Q25,55 50,60 T100,60 V100 H0 Z" fill="#C92B28" fill-opacity="0.3"></path>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="play-button w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
+                                    <svg class="w-8 h-8 text-amarilloVibrante" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="bg-amarilloVibrante text-white text-xs font-semibold px-3 py-1 rounded-full">Pacífico</span>
+                                <span class="text-gray-500 text-sm">4:05</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Marimba del Pacífico</h3>
+                            <p class="text-gray-600 mb-4">Interpretación de marimba de chonta, instrumento tradicional de la región pacífica colombiana.</p>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <div class="avatar avatar-sm mr-2">
+                                        <span>PL</span>
+                                    </div>
+                                    <span class="text-sm text-gray-500">Pedro López</span>
+                                </div>
+                                <button class="text-amarilloVibrante hover:text-opacity-80">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sonido 4 -->
+                    <div class="sound-card bg-white rounded-xl overflow-hidden shadow-md">
+                        <div class="relative h-48 bg-azulSonoro">
+                            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <path d="M0,50 Q20,45 40,50 T80,50 T100,50 V100 H0 Z" fill="#215585" fill-opacity="0.5"></path>
+                                <path d="M0,60 Q25,55 50,60 T100,60 V100 H0 Z" fill="#00B8A9" fill-opacity="0.3"></path>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="play-button w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
+                                    <svg class="w-8 h-8 text-azulSonoro" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="bg-azulSonoro text-white text-xs font-semibold px-3 py-1 rounded-full">Amazonía</span>
+                                <span class="text-gray-500 text-sm">2:30</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Selva Amazónica</h3>
+                            <p class="text-gray-600 mb-4">Grabación de los sonidos de la selva amazónica colombiana, con su rica biodiversidad sonora.</p>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <div class="avatar avatar-sm mr-2">
+                                        <span>LG</span>
+                                    </div>
+                                    <span class="text-sm text-gray-500">Laura Gómez</span>
+                                </div>
+                                <button class="text-azulSonoro hover:text-opacity-80">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sonido 5 -->
+                    <div class="sound-card bg-white rounded-xl overflow-hidden shadow-md">
+                        <div class="relative h-48 bg-rojoSonoro">
+                            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <path d="M0,50 Q20,45 40,50 T80,50 T100,50 V100 H0 Z" fill="#C92B28" fill-opacity="0.5"></path>
+                                <path d="M0,60 Q25,55 50,60 T100,60 V100 H0 Z" fill="#F8BA3F" fill-opacity="0.3"></path>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="play-button w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
+                                    <svg class="w-8 h-8 text-rojoSonoro" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="bg-rojoSonoro text-white text-xs font-semibold px-3 py-1 rounded-full">Insular</span>
+                                <span class="text-gray-500 text-sm">3:45</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Calypso de San Andrés</h3>
+                            <p class="text-gray-600 mb-4">Música tradicional de la región insular colombiana, con influencias caribeñas y africanas.</p>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <div class="avatar avatar-sm mr-2">
+                                        <span>RJ</span>
+                                    </div>
+                                    <span class="text-sm text-gray-500">Roberto James</span>
+                                </div>
+                                <button class="text-rojoSonoro hover:text-opacity-80">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Sonido 6 -->
+                    <div class="sound-card bg-white rounded-xl overflow-hidden shadow-md">
+                        <div class="relative h-48 bg-verdeCultural">
+                            <svg class="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <path d="M0,50 Q20,45 40,50 T80,50 T100,50 V100 H0 Z" fill="#2E7D32" fill-opacity="0.5"></path>
+                                <path d="M0,60 Q25,55 50,60 T100,60 V100 H0 Z" fill="#009F4D" fill-opacity="0.3"></path>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <button class="play-button w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-lg">
+                                    <svg class="w-8 h-8 text-verdeCultural" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="bg-verdeCultural text-white text-xs font-semibold px-3 py-1 rounded-full">Andina</span>
+                                <span class="text-gray-500 text-sm">2:15</span>
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Mercado Campesino</h3>
+                            <p class="text-gray-600 mb-4">Ambiente sonoro de un mercado campesino tradicional en la región andina colombiana.</p>
+                            <div class="flex justify-between items-center">
+                                <div class="flex items-center">
+                                    <div class="avatar avatar-sm mr-2">
+                                        <span>CM</span>
+                                    </div>
+                                    <span class="text-sm text-gray-500">Carlos Martínez</span>
+                                </div>
+                                <button class="text-verdeCultural hover:text-opacity-80">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path d="M10 12a2 2 0 100-4 2 2 0 000 4z"></path>
+                                        <path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-12 text-center">
+                    <button class="bg-turquesaAudioBrand hover:bg-opacity-90 text-white px-6 py-3 rounded-full text-lg font-medium transition-all transform hover:scale-105">Cargar más sonidos</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Regiones de Colombia -->
+        <section id="regiones" class="py-20 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-center mb-6">
+                    <div class="w-20 h-1 bg-turquesaAudioBrand"></div>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-6">Regiones de Colombia</h2>
+                <p class="text-xl text-center text-gray-600 mb-12">Explora los sonidos característicos de cada región</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6">
+                    <!-- Región Amazónica -->
+                    <div class="region-card bg-azulSonoro text-white rounded-xl overflow-hidden shadow-lg">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold mb-2">Amazonía</h3>
+                            <p class="mb-4">Sonidos de la selva, ríos y comunidades indígenas</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm opacity-75">42 grabaciones</span>
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Región Andina -->
+                    <div class="region-card bg-verdeSena text-white rounded-xl overflow-hidden shadow-lg">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold mb-2">Andina</h3>
+                            <p class="mb-4">Bambucos, pasillos y sonidos de montaña</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm opacity-75">78 grabaciones</span>
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Región Caribe -->
+                    <div class="region-card bg-turquesaAudioBrand text-white rounded-xl overflow-hidden shadow-lg">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold mb-2">Caribe</h3>
+                            <p class="mb-4">Cumbias, vallenatos y sonidos costeros</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm opacity-75">65 grabaciones</span>
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Región Insular -->
+                    <div class="region-card bg-rojoSonoro text-white rounded-xl overflow-hidden shadow-lg">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold mb-2">Insular</h3>
+                            <p class="mb-4">Calypso, reggae y sonidos del mar</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm opacity-75">28 grabaciones</span>
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Región Pacífico -->
+                    <div class="region-card bg-amarilloVibrante text-white rounded-xl overflow-hidden shadow-lg">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold mb-2">Pacífico</h3>
+                            <p class="mb-4">Currulao, marimba y sonidos de selva húmeda</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm opacity-75">53 grabaciones</span>
+                                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Campañas -->
+        <section id="campanas" class="py-20 bg-grisClaro">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-center mb-6">
+                    <div class="w-20 h-1 bg-turquesaAudioBrand"></div>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-6">Campañas</h2>
+                <p class="text-xl text-center text-gray-600 mb-12">Iniciativas para la recolección y preservación de sonidos</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Campaña CampeSENA -->
+                    <div class="campaign-card bg-white rounded-xl overflow-hidden shadow-md">
+                        <div class="relative h-48 overflow-hidden">
+                            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <rect width="100" height="100" fill="#009F4D" />
+                                <circle cx="80" cy="20" r="30" fill="#2E7D32" fill-opacity="0.6" />
+                                <circle cx="10" cy="70" r="20" fill="#F8BA3F" fill-opacity="0.4" />
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <h3 class="text-3xl font-bold text-white">CampeSENA</h3>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-600 mb-4">Recopilación de sonidos rurales y campesinos de Colombia, preservando la identidad sonora del campo colombiano.</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-500">32 grabaciones</span>
+                                <a href="#" class="text-verdeSena hover:text-opacity-80 font-medium flex items-center">
+                                    Explorar
+                                    <svg class="w-5 h-5 ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Campaña Formación -->
+                    <div class="campaign-card bg-white rounded-xl overflow-hidden shadow-md">
+                        <div class="relative h-48 overflow-hidden">
+                            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <rect width="100" height="100" fill="#002D62" />
+                                <circle cx="80" cy="20" r="30" fill="#215585" fill-opacity="0.6" />
+                                <circle cx="10" cy="70" r="20" fill="#00B8A9" fill-opacity="0.4" />
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <h3 class="text-3xl font-bold text-white">Formación</h3>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-600 mb-4">Sonidos recopilados por aprendices e instructores del SENA como parte de proyectos formativos en todo el país.</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-500">45 grabaciones</span>
+                                <a href="#" class="text-azulInstitucional hover:text-opacity-80 font-medium flex items-center">
+                                    Explorar
+                                    <svg class="w-5 h-5 ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Campaña SENA al Aire -->
+                    <div class="campaign-card bg-white rounded-xl overflow-hidden shadow-md">
+                        <div class="relative h-48 overflow-hidden">
+                            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                                <rect width="100" height="100" fill="#C92B28" />
+                                <circle cx="80" cy="20" r="30" fill="#F8BA3F" fill-opacity="0.6" />
+                                <circle cx="10" cy="70" r="20" fill="#215585" fill-opacity="0.4" />
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <h3 class="text-3xl font-bold text-white">SENA al Aire</h3>
+                            </div>
+                        </div>
+                        <div class="p-6">
+                            <p class="text-gray-600 mb-4">Proyecto de radio y podcast que recopila historias sonoras de las comunidades y regiones donde el SENA tiene presencia.</p>
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm text-gray-500">28 grabaciones</span>
+                                <a href="#" class="text-rojoSonoro hover:text-opacity-80 font-medium flex items-center">
+                                    Explorar
+                                    <svg class="w-5 h-5 ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                        <path fill-rule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clip-rule="evenodd"></path>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Mapa Sonoro -->
+        <section id="mapa-sonoro" class="py-20 bg-white">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-center mb-6">
+                    <div class="w-20 h-1 bg-turquesaAudioBrand"></div>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-6">Mapa Sonoro</h2>
+                <p class="text-xl text-center text-gray-600 mb-12">Explora los sonidos de Colombia por ubicación geográfica</p>
+
+                <!-- Contenedor del mapa -->
+                <div class="map-container mb-12">
+                    <div id="map" class="w-full h-[60vh] rounded-lg shadow-md"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sección Nosotros -->
+        <section id="nosotros" class="py-20 bg-grisClaro">
+            <div class="container mx-auto px-4">
+                <div class="flex justify-center mb-6">
+                    <div class="w-20 h-1 bg-turquesaAudioBrand"></div>
+                </div>
+                <h2 class="text-3xl md:text-4xl font-bold text-center mb-10">Nosotros</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Texto descriptivo -->
+                    <div class="md:col-span-2 space-y-4 text-gray-700 text-center md:text-justify">
+                        <p>Patrimonio Sonoro es una iniciativa cultural, educativa y tecnológica del Servicio Nacional de Aprendizaje – SENA, liderada junto a la oficina de AudioBrand, que busca preservar, visibilizar y compartir los sonidos representativos de las regiones de Colombia mediante una plataforma digital pública, abierta y colaborativa.</p>
+                        <p>Nace con el propósito de consolidar un banco nacional de sonidos que capture la riqueza auditiva de nuestro país — desde paisajes sonoros rurales y urbanos, hasta expresiones culturales, voces del territorio, música tradicional, fauna, eventos, historias habladas y mucho más.</p>
+                        <p>Creemos que lo que suena también nos representa, y por eso trabajamos para que aprendices, instructores, comunidades, instituciones y empresas puedan contribuir, escuchar, descargar y reutilizar sonidos con atribución institucional bajo licencias abiertas.</p>
+                        <p>Actualmente estamos desarrollando la fase inicial del proyecto, construyendo una plataforma web interactiva que funcionará como repositorio, mapa sonoro y red colaborativa, permitiendo explorar sonidos por región, temática o campaña. Esta plataforma servirá como herramienta pedagógica, archivo patrimonial y espacio de innovación sonora para el país.</p>
+                        <p>Nuestro compromiso es convertir el sonido en una herramienta de aprendizaje, memoria, identidad y transformación cultural, al servicio de todos los colombianos.</p>
+                    </div>
+                    <!-- Tarjeta de equipo -->
+                    <div class="bg-white p-8 rounded-xl shadow-md mx-auto lg:mx-0">
+                        <h3 class="text-lg font-bold text-azulInstitucional mb-4">Nuestro Equipo</h3>
+                        <div class="space-y-4 text-sm">
+                            <div>
+                                <span class="font-semibold">AudioBrand</span><br>
+                                Dirección creativa y técnica
+                            </div>
+                            <div>
+                                <span class="font-semibold">SENA</span><br>
+                                Servicio Nacional de Aprendizaje
+                            </div>
+                            <div>
+                                <span class="font-semibold">Aliados</span><br>
+                                Instituciones educativas y culturales de Colombia
+                            </div>
+                            <hr class="my-4">
+                            <div>
+                                <span class="font-semibold">Contacto</span><br>
+                                <a href="mailto:info@patrimoniosonoro.co" class="text-turquesaAudioBrand">info@patrimoniosonoro.co</a><br>
+                                <span>+57 (1) 123 4567</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="mt-20">
+            <!-- Barra superior de contacto -->
+            <div class="bg-azulInstitucional text-white py-8">
+                <div class="container mx-auto px-4 text-center">
+                    <h3 class="text-lg md:text-2xl font-bold mb-4">Contacto institucional</h3>
+                    <div class="flex flex-col md:flex-row items-center justify-center space-y-3 md:space-y-0 md:space-x-8 text-sm">
+                        <div class="flex items-center space-x-2">
+                            <!-- ícono correo -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-18 8h18a2 2 0 002-2V8a2 2 0 00-2-2H3a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
+                            <span>patrimoniosonoro@sena.edu.co</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <!-- ícono teléfono -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5h2l3 7-1.34 2.68a2 2 0 001.8 2.96h3.13a2 2 0 001.8-1.14l1.42-2.82a48.6 48.6 0 006.95 6.95l-2.82 1.42a2 2 0 00-1.14 1.8v3.13a2 2 0 002.96 1.8L19 19l7 3v2a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2z"/></svg>
+                            <span>(601) 546-2354</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <!-- ícono ubicación -->
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5 9 6.343 9 8s1.343 3 3 3z"/><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8C19.5 13.5 12 21 12 21S4.5 13.5 4.5 8a7.5 7.5 0 1115 0z"/></svg>
+                            <span>Valledupar-Cesar, Colombia</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Cuerpo del footer -->
+            <div class="bg-negroSuave text-gray-400 py-10 text-sm">
+                <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Col 1 -->
+                    <div>
+                        <div class="flex items-center mb-4">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-turquesaAudioBrand mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3v18c0 1.103-.897 2-2 2s-2-.897-2-2V3h-2v18c0 1.103-.897 2-2 2s-2-.897-2-2V3H9v18c0 1.103-.897 2-2 2s-2-.897-2-2V3H3v18c0 2.206 1.794 4 4 4s4-1.794 4-4V7h2v14c0 2.206 1.794 4 4 4s4-1.794 4-4V3h-2z"/></svg>
+                            <div>
+                                <p class="font-bold text-white leading-none">Patrimonio Sonoro</p>
+                                <span class="text-turquesaAudioBrand text-xs">AudioBrand</span>
+                            </div>
+                        </div>
+                        <p>Preservando, visibilizando y difundiendo los sonidos representativos de Colombia como parte de nuestro patrimonio cultural inmaterial.</p>
+                    </div>
+                    <!-- Col 2 -->
+                    <div>
+                        <h4 class="font-semibold text-white mb-3">Explorar</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="hover:text-white">Inicio</a></li>
+                            <li><a href="#" class="hover:text-white">¿Por qué?</a></li>
+                            <li><a href="#explora" class="hover:text-white">Explora</a></li>
+                            <li><a href="#regiones" class="hover:text-white">Regiones</a></li>
+                        </ul>
+                    </div>
+                    <!-- Col 3 -->
+                    <div>
+                        <h4 class="font-semibold text-white mb-3">Participa</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#campanas" class="hover:text-white">Campañas</a></li>
+                            <li><a href="#" class="hover:text-white">Formulario</a></li>
+                            <li><a href="#" class="hover:text-white">Recursos</a></li>
+                            <li><a href="#" class="hover:text-white">Preguntas frecuentes</a></li>
+                        </ul>
+                    </div>
+                    <!-- Col 4 -->
+                    <div>
+                        <h4 class="font-semibold text-white mb-3">Institucional</h4>
+                        <ul class="space-y-2">
+                            <li><a href="#" class="hover:text-white">Sobre el proyecto</a></li>
+                            <li><a href="#" class="hover:text-white">SENA</a></li>
+                            <li><a href="#" class="hover:text-white">AudioBrand</a></li>
+                            <li><a href="#" class="hover:text-white">Contacto</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Franja legal centrada (como en la imagen de ejemplo) -->
+            <div class="footer-legal">
+                <div class="legal-inner">
+                    <div class="legal-item legal-brand">
+                        <!-- Logotipo pequeño -->
+                        <img src="assets/images/logo_footer.png" alt="Patrimonio Sonoro" class="legal-logo" />
+                    </div>
+                    <div class="divider"></div>
+                    <div class="legal-item">Copyright © 2025</div>
+                    <div class="divider"></div>
+                    <div class="legal-item">Todos los derechos reservados</div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Chatbot: botón flotante y panel -->
+        <button id="chatbot-toggle" class="chatbot-button" aria-label="Abrir chat de asistencia" data-chatbot-url="https://landbot.online/v3/H-3102361-MH0I8UTYRQSKPHB3/index.html">
+            <!-- Icono de chatbot (burbuja de chat) -->
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M7 8h10M7 12h6" stroke="white" stroke-width="1.8" stroke-linecap="round"/>
+                <path d="M21 11c0 4.418-4.03 8-9 8-1.03 0-2.02-.15-2.94-.43-.36-.11-.54-.16-.71-.17-.18-.02-.37.01-.73.09l-3.1.67c-.41.09-.62.14-.76.05-.14-.09-.16-.3-.19-.71l-.22-3.12c-.03-.39-.05-.58-.02-.76.03-.19.11-.36.28-.7.49-.98.74-1.47.9-1.98.19-.59.27-1.2.27-1.84 0-4.418 4.03-8 9-8s9 3.582 9 8Z" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
+
+        <!-- Panel/iframe eliminados: ahora el chat abre en ventana emergente del navegador -->
+
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script src="js/main.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+        <script src="js/auth.js"></script>
+        <script>
+            (function () {
+                const toggle = document.getElementById('chatbot-toggle');
+                const DEFAULT_URL = 'https://landbot.online/v3/H-3102361-MH0I8UTYRQSKPHB3/index.html';
+                const attrUrl = (toggle.getAttribute('data-chatbot-url') || '').trim();
+                const URL = attrUrl.length ? attrUrl : DEFAULT_URL;
+
+                function openCenteredPopup(url, title, w, h) {
+                    const dualScreenLeft = window.screenLeft !== undefined ? window.screenLeft : window.screenX;
+                    const dualScreenTop = window.screenTop !== undefined ? window.screenTop : window.screenY;
+                    const width = window.innerWidth || document.documentElement.clientWidth || screen.width;
+                    const height = window.innerHeight || document.documentElement.clientHeight || screen.height;
+                    const systemZoom = width / window.screen.availWidth;
+                    const left = (width - w) / 2 / systemZoom + dualScreenLeft;
+                    const top = (height - h) / 2 / systemZoom + dualScreenTop;
+                    const features = `scrollbars=yes, width=${w}, height=${h}, top=${top}, left=${left}, resizable=yes`;
+                    const win = window.open(url, title, features);
+                    if (win) { win.focus(); }
+                    return win;
+                }
+
+                toggle.addEventListener('click', () => {
+                    openCenteredPopup(URL, 'Chat Patrimonio Sonoro', 420, 640);
+                });
+            })();
+        </script>
+
+</body>
+</html>

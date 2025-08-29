@@ -5,13 +5,6 @@
   --foreground: #171717;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #0a0a0a;
@@ -23,4 +16,242 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+/* Keep Leaflet map and its controls behind the fixed navbar within the Mapa Sonoro section */
+#mapa-sonoro .leaflet-pane,
+#mapa-sonoro .leaflet-top,
+#mapa-sonoro .leaflet-bottom,
+#mapa-sonoro .leaflet-control-container {
+  z-index: 0 !important;
+}
+
+/* Legacy color utility classes used by migrated homepage */
+.text-azulInstitucional { color: #002D62; }
+.bg-azulInstitucional { background-color: #002D62; }
+.text-turquesaAudioBrand { color: #00B8A9; }
+.bg-turquesaAudioBrand { background-color: #00B8A9; }
+.bg-grisClaro { background-color: #F4F4F4; }
+.bg-verdeSena { background-color: #3CAA35; }
+.bg-amarilloVibrante { background-color: #FECE43; }
+
+/* Fondo oscuro utilizado en el footer migrado */
+.bg-negroSuave { background-color: #111827; }
+
+/* Modern sound card styles based on design reference */
+.sound-card-modern {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.sound-card-modern:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+}
+
+.sound-card-header {
+  height: 140px;
+  position: relative;
+  overflow: hidden;
+}
+
+.sound-card-header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, var(--card-color-1), var(--card-color-2));
+  z-index: 1;
+}
+
+.sound-card-header.amazonia {
+  --card-color-1: #2E5984;
+  --card-color-2: #4A90A4;
+}
+
+.sound-card-header.insular {
+  --card-color-1: #C53030;
+  --card-color-2: #E53E3E;
+}
+
+.sound-card-header.andina {
+  --card-color-1: #38A169;
+  --card-color-2: #48BB78;
+}
+
+.sound-card-header.caribe {
+  --card-color-1: #3182CE;
+  --card-color-2: #4299E1;
+}
+
+.sound-card-header.pacifico {
+  --card-color-1: #D69E2E;
+  --card-color-2: #ECC94B;
+}
+
+.play-button {
+  position: absolute;
+  top: 30%;
+  left: 43%;
+  width: 52px;
+  height: 52px;
+  background: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+
+.play-button::after {
+  content: '';
+  width: 0;
+  height: 0;
+  border-left: 12px solid #333;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  margin-left: 2px;
+}
+
+.sound-card-content {
+  padding: 20px;
+}
+
+.sound-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.region-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.region-badge.amazonia { background: #E6FFFA; color: #234E52; }
+.region-badge.insular { background: #FED7D7; color: #742A2A; }
+.region-badge.andina { background: #C6F6D5; color: #22543D; }
+.region-badge.caribe { background: #BEE3F8; color: #2A4365; }
+.region-badge.pacifico { background: #FAF089; color: #744210; }
+
+.sound-duration {
+  font-size: 14px;
+  color: #718096;
+  font-weight: 500;
+}
+
+.sound-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #2D3748;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.sound-description {
+  font-size: 14px;
+  color: #718096;
+  line-height: 1.5;
+  margin-bottom: 16px;
+}
+
+.sound-author {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.author-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: white;
+}
+
+.author-name {
+  font-size: 14px;
+  color: #4A5568;
+  font-weight: 500;
+}
+
+.sound-stats {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: #718096;
+  font-size: 14px;
+}
+
+/* Navigation hover effects */
+.nav-link-hover {
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.nav-link-hover::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: #00B8A9;
+  transition: all 0.3s ease;
+  transform: translateX(-50%);
+}
+
+.nav-link-hover:hover::after {
+  width: 100%;
+}
+
+.nav-link-hover:hover {
+  color: #00B8A9;
+  transform: translateY(-1px);
+}
+
+/* Login button enhanced hover */
+.btn-login-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-login-hover::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-login-hover:hover::before {
+  left: 100%;
+}
+
+.btn-login-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 184, 169, 0.3);
 }
