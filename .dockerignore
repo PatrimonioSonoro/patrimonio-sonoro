@@ -1,0 +1,13 @@
+node_modules
+.next
+.env.local
+.env.*.local
+.vscode
+.git
+coverage
+dist
+tmp
+logs
+README.md
+docs
+code_sitio_web
