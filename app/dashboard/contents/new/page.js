@@ -19,6 +19,7 @@ import {
   SimpleGrid,
   InputGroup,
   InputLeftElement,
+  Progress,
 } from "@chakra-ui/react";
 import { FiUpload, FiImage, FiVideo, FiFileText } from "react-icons/fi";
 
@@ -32,6 +33,7 @@ export default function NewContentPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [uploads, setUploads] = useState({});
+  const [progress, setProgress] = useState(0);
 
   const onChange = (e) => setForm((f) => ({ ...f, [e.target.name]: e.target.value }));
 
@@ -40,19 +42,35 @@ export default function NewContentPage() {
     setFile(f);
   };
 
+  const validateFile = (file, type) => {
+    if (!file) return { ok: true };
+    const sizeMB = file.size / (1024 * 1024);
+    if (type === 'audio' && sizeMB > 10) return { ok: false, msg: 'Audio demasiado grande (máx 10MB)' };
+    if (type === 'image' && sizeMB > 5) return { ok: false, msg: 'Imagen demasiado grande (máx 5MB)' };
+    if (type === 'video' && sizeMB > 50) return { ok: false, msg: 'Video demasiado grande (máx 50MB)' };
+    return { ok: true };
+  };
+
   async function uploadToStorage(file, folder) {
     if (!file) return null;
     const ext = file.name.split('.').pop();
     const fileName = `${Date.now()}-${Math.random().toString(36).slice(2,8)}.${ext}`;
     const path = `${folder}/${fileName}`;
 
-    const { data, error } = await supabase.storage.from('contenido').upload(path, file, { cacheControl: '3600', upsert: false });
-    if (error) throw error;
+  // simulate progress for UX
+  setProgress(10);
+  // perform upload
+  const { data, error } = await supabase.storage.from('contenido').upload(path, file, { cacheControl: '3600', upsert: true });
+  if (error) throw error;
+  setProgress(60);
 
-    // get public url
-    const { data: publicData } = supabase.storage.from('contenido').getPublicUrl(path);
-    const publicUrl = publicData?.publicUrl || null;
-    return { path, publicUrl };
+  // get public url
+  const { data: publicData } = supabase.storage.from('contenido').getPublicUrl(path);
+  const publicUrl = publicData?.publicUrl || null;
+  setProgress(100);
+  // reset progress a bit for next upload
+  setTimeout(() => setProgress(0), 500);
+  return { path, publicUrl };
   }
 
   const onSubmit = async (e) => {
@@ -68,6 +86,14 @@ export default function NewContentPage() {
       // get user id
       const { data: sessionData } = await supabase.auth.getSession();
       const userId = sessionData?.session?.user?.id || null;
+
+      // validate files
+      const vAudio = validateFile(audioFile, 'audio');
+      const vImage = validateFile(imageFile, 'image');
+      const vVideo = validateFile(videoFile, 'video');
+      if (!vAudio.ok) throw new Error(vAudio.msg);
+      if (!vImage.ok) throw new Error(vImage.msg);
+      if (!vVideo.ok) throw new Error(vVideo.msg);
 
       // Upload files (if any) to respective folders
       const results = {};
@@ -92,6 +118,20 @@ export default function NewContentPage() {
         created_by: userId,
         updated_by: userId,
       };
+
+      // attach media fields if uploaded
+      if (results.audio) {
+        insertPayload.audio_path = results.audio.path;
+        insertPayload.audio_public_url = results.audio.publicUrl;
+      }
+      if (results.image) {
+        insertPayload.image_path = results.image.path;
+        insertPayload.image_public_url = results.image.publicUrl;
+      }
+      if (results.video) {
+        insertPayload.video_path = results.video.path;
+        insertPayload.video_public_url = results.video.publicUrl;
+      }
 
       const { data, error } = await supabase.from('contenidos').insert(insertPayload).select('id').single();
       if (error) throw error;

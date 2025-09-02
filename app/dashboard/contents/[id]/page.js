@@ -42,6 +42,7 @@ export default function EditContentPage() {
   const [audioFile, setAudioFile] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [videoFile, setVideoFile] = useState(null);
+  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     if (!id) return;
@@ -79,12 +80,25 @@ export default function EditContentPage() {
     const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
     const path = `${folder}/${fileName}`;
 
+    setProgress(8);
     const { data, error } = await supabase.storage.from("contenido").upload(path, file, { cacheControl: "3600", upsert: true });
     if (error) throw error;
+    setProgress(60);
     const { data: publicData } = supabase.storage.from("contenido").getPublicUrl(path);
     const publicUrl = publicData?.publicUrl || null;
+    setProgress(100);
+    setTimeout(() => setProgress(0), 500);
     return { path, publicUrl };
   }
+
+  const validateFile = (file, type) => {
+    if (!file) return { ok: true };
+    const sizeMB = file.size / (1024 * 1024);
+    if (type === 'audio' && sizeMB > 10) return { ok: false, msg: 'Audio demasiado grande (máx 10MB)' };
+    if (type === 'image' && sizeMB > 5) return { ok: false, msg: 'Imagen demasiado grande (máx 5MB)' };
+    if (type === 'video' && sizeMB > 50) return { ok: false, msg: 'Video demasiado grande (máx 50MB)' };
+    return { ok: true };
+  };
 
   const onSave = async (e) => {
     e.preventDefault();
@@ -95,11 +109,18 @@ export default function EditContentPage() {
       // ensure bucket exists (server-side)
       await fetch("/api/admin/ensure-bucket", { method: "POST" });
 
-      // upload new files first
-      const uploads = {};
-      if (audioFile) uploads.audio = await uploadToStorage(audioFile, "audios");
-      if (imageFile) uploads.image = await uploadToStorage(imageFile, "imagenes");
-      if (videoFile) uploads.video = await uploadToStorage(videoFile, "videos");
+  // validate and upload new files first
+  const vAudio = validateFile(audioFile, 'audio');
+  const vImage = validateFile(imageFile, 'image');
+  const vVideo = validateFile(videoFile, 'video');
+  if (!vAudio.ok) throw new Error(vAudio.msg);
+  if (!vImage.ok) throw new Error(vImage.msg);
+  if (!vVideo.ok) throw new Error(vVideo.msg);
+
+  const uploads = {};
+  if (audioFile) uploads.audio = await uploadToStorage(audioFile, "audios");
+  if (imageFile) uploads.image = await uploadToStorage(imageFile, "imagenes");
+  if (videoFile) uploads.video = await uploadToStorage(videoFile, "videos");
 
       // get user id
       const { data: sessionData } = await supabase.auth.getSession();
@@ -122,14 +143,13 @@ export default function EditContentPage() {
       const mapMedia = (type, result) => {
         if (!result || !row) return;
         const candidates = {
-          audio: ["audio_path", "audio_url", "audio_public_url", "audio"],
-          image: ["image_path", "image_url", "image_public_url", "image"],
-          video: ["video_path", "video_url", "video_public_url", "video"],
+          audio: ["audio_path", "audio_public_url"],
+          image: ["image_path", "image_public_url"],
+          video: ["video_path", "video_public_url"],
         }[type];
         for (const col of candidates) {
           if (allowed.includes(col)) {
-            // prefer publicUrl for url-like fields, path for path fields
-            if (col.includes("url") || col.includes("public")) payload[col] = result.publicUrl;
+            if (col.includes("public")) payload[col] = result.publicUrl;
             else payload[col] = result.path;
             break;
           }
