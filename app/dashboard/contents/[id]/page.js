@@ -34,6 +34,7 @@ export default function EditContentPage() {
   const toast = useToast();
 
   const [form, setForm] = useState({ title: "", description: "", region: "", status: "draft" });
+  const [visibleToUser, setVisibleToUser] = useState(true);
   const [row, setRow] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -62,6 +63,7 @@ export default function EditContentPage() {
           region: data?.region || "",
           status: data?.status || "draft",
         });
+  setVisibleToUser(data?.visible_to_user ?? true);
       } catch (e) {
         setError(e.message || "No se pudo cargar el contenido");
       } finally {
@@ -135,6 +137,7 @@ export default function EditContentPage() {
         region: form.region || null,
         status: form.status || "draft",
         updated_by: userId,
+  visible_to_user: visibleToUser,
       };
       // copy metadata if column exists
       for (const k of Object.keys(meta)) if (allowed.includes(k)) payload[k] = meta[k];
@@ -247,6 +250,10 @@ export default function EditContentPage() {
                     <option value="published">Publicado</option>
                     <option value="archived">Archivado</option>
                   </Select>
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Visible a usuarios</FormLabel>
+                  <input type="checkbox" checked={visibleToUser} onChange={(e) => setVisibleToUser(e.target.checked)} />
                 </FormControl>
               </Stack>
 

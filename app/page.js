@@ -1,151 +1,19 @@
-"use client";
 // Homepage migrated from legacy static site (code_sitio_web/index.html)
 
-import AuthModalButton from "./components/AuthModalButton";
-import { useState } from "react";
-import { motion } from "framer-motion";
 import SoundMap from "./components/SoundMap";
+import NavClient from "./components/NavClient";
+import HeroClient from "./components/HeroClient";
 
-// Página principal migrada
+// Página principal migrada (server component)
 export default function Page() {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
-  const fadeUp = {
-    hidden: { opacity: 0, y: 16 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
-  };
-  const stagger = {
-    show: { transition: { staggerChildren: 0.1 } },
-  };
 
   return (
     <main>
-      {/* Navegación superior */}
-      <nav className="nav-with-bg bg-white shadow-md fixed top-0 left-0 w-full z-[2000]">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            {/* Logo + marca */}
-            <div className="flex items-center">
-              <div className="mr-3">
-                <img src="/images/logo_sin_letra.png" alt="Patrimonio Sonoro" className="h-14 w-auto object-contain" />
-              </div>
-              <div>
-                <span className="text-lg font-bold text-azulInstitucional">Patrimonio Sonoro</span>
-                <div className="flex items-center text-[11px] text-gray-500 leading-none">
-                  <span>SENA</span>
-                  <span className="mx-1">•</span>
-                  <span>AudioBrand</span>
-                </div>
-              </div>
-            </div>
+      {/* Navegación superior (client) */}
+      <NavClient />
 
-            {/* Enlaces de navegación */}
-            <div className="hidden md:flex items-center space-x-6">
-              <a href="#inicio" className="px-3 py-2 text-sm font-bold text-azulInstitucional nav-link-hover">Inicio</a>
-              <a href="#que-es" className="px-3 py-2 text-sm font-bold text-azulInstitucional nav-link-hover">¿Qué es?</a>
-              <a href="#explora" className="px-3 py-2 text-sm font-bold text-azulInstitucional nav-link-hover">Explora</a>
-              <a href="#mapa-sonoro" className="px-3 py-2 text-sm font-bold text-azulInstitucional nav-link-hover">Mapa Sonoro</a>
-              <a href="#nosotros" className="px-3 py-2 text-sm font-bold text-azulInstitucional nav-link-hover">Nosotros</a>
-            </div>
-
-            {/* Acciones derecha */}
-            <div className="hidden md:flex items-center space-x-4">
-              <AuthModalButton />
-            </div>
-
-            {/* Botón menú móvil */}
-            <div className="md:hidden flex items-center space-x-2">
-              <AuthModalButton />
-              <button 
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="text-azulInstitucional p-2 rounded-md hover:bg-gray-100 transition-colors"
-                aria-label="Abrir menú de navegación"
-              >
-                <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  {mobileMenuOpen ? (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                  ) : (
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                  )}
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        {/* Menú móvil desplegable */}
-        <motion.div 
-          initial={false}
-          animate={mobileMenuOpen ? "open" : "closed"}
-          variants={{
-            open: { opacity: 1, height: "auto" },
-            closed: { opacity: 0, height: 0 }
-          }}
-          transition={{ duration: 0.3, ease: "easeInOut" }}
-          className="md:hidden bg-white border-t border-gray-200 overflow-hidden"
-        >
-          <div className="px-4 py-4 space-y-3">
-            <a 
-              href="#inicio" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors"
-            >
-              Inicio
-            </a>
-            <a 
-              href="#que-es" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors"
-            >
-              ¿Qué es?
-            </a>
-            <a 
-              href="#explora" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors"
-            >
-              Explora
-            </a>
-            <a 
-              href="#mapa-sonoro" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors"
-            >
-              Mapa Sonoro
-            </a>
-            <a 
-              href="#nosotros" 
-              onClick={() => setMobileMenuOpen(false)}
-              className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors"
-            >
-              Nosotros
-            </a>
-          </div>
-        </motion.div>
-      </nav>
-
-      {/* Héroe */}
-      <section id="inicio" className="hero-section min-h-screen flex items-center justify-center relative">
-        <div className="sound-wave" />
-        <div className="container mx-auto px-4 text-center text-white z-10">
-          <div className="flex justify-center mb-6 hero-waves-top">
-            <div className="flex items-center space-x-1 waves-inline">
-              <div className="sound-bar h-12" />
-              <div className="sound-bar h-16" />
-              <div className="sound-bar h-20" />
-              <div className="sound-bar h-16" />
-              <div className="sound-bar h-12" />
-            </div>
-          </div>
-        
-          <div className="hero-spacer" />
-          
-          <div className="flex flex-col md:flex-row justify-center space-y-4 md:space-y-0 md:space-x-6 hero-buttons">
-            <a href="#explora" className="bg-turquesaAudioBrand hover:bg-opacity-90 text-white px-8 py-3 rounded-full text-lg font-medium transition-all transform hover:scale-105">Explorar sonidos</a>
-            <a href="#que-es" className="bg-transparent border-2 border-white hover:bg-white hover:text-blue-900 text-white px-8 py-3 rounded-full text-lg font-medium transition-all">Conocer más</a>
-          </div>
-        </div>
-      </section>
+      {/* Héroe (client) */}
+      <HeroClient />
 
       {/* ¿Qué es? */}
       <section id="que-es" className="py-20 bg-white">
@@ -295,7 +163,7 @@ export default function Page() {
         </div>
       </section>
 
-      {/* Mapa Sonoro */}
+  {/* Mapa Sonoro */}
       <section id="mapa-sonoro" className="py-20 bg-white scroll-mt-24 relative z-0">
         <div className="container mx-auto px-15">
           <div className="flex justify-center mb-6">

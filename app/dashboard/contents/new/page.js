@@ -27,6 +27,7 @@ export default function NewContentPage() {
   const router = useRouter();
   const toast = useToast();
   const [form, setForm] = useState({ title: "", description: "", region: "", status: "draft" });
+  const [visibleToUser, setVisibleToUser] = useState(true);
   const [audioFile, setAudioFile] = useState(null);
   const [imageFile, setImageFile] = useState(null);
   const [videoFile, setVideoFile] = useState(null);
@@ -115,6 +116,7 @@ export default function NewContentPage() {
         description: form.description || null,
         region: form.region || null,
         status: form.status || 'draft',
+        visible_to_user: visibleToUser,
         created_by: userId,
         updated_by: userId,
       };
@@ -181,6 +183,10 @@ export default function NewContentPage() {
                   <option value="published">Publicado</option>
                   <option value="archived">Archivado</option>
                 </Select>
+              </FormControl>
+              <FormControl>
+                <FormLabel>Visible a usuarios</FormLabel>
+                <input type="checkbox" checked={visibleToUser} onChange={(e) => setVisibleToUser(e.target.checked)} />
               </FormControl>
             </SimpleGrid>
 
