@@ -5,8 +5,8 @@ html {
             font-family: 'Poppins', sans-serif;
             color: #121212;
             background-color: #F4F4F4;
-            /* Compensar el nav fijo de 64px */
-            padding-top: 64px;
+            /* Removed global top padding (was compensating a fixed nav) so admin header can sit at top */
+            padding-top: 0;
         }
 
         /* Eliminado: variable de imagen de fondo para el nav */

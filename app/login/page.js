@@ -26,9 +26,31 @@ export default function LoginPage() {
       const msg = /confirm/i.test(error.message)
         ? 'Tu correo aún no ha sido verificado. Revisa tu bandeja y carpeta de spam.'
         : error.message || 'Credenciales inválidas';
-      return Swal.fire('Error', msg, 'error');
+      return Swal.fire({ title: 'Error', text: msg, icon: 'error', zIndex: 20000 });
     }
-    // AuthProvider se encargará del mensaje de bienvenida y redirección a /dashboard
+    // Mostrar bienvenida inmediatamente (solo una vez) y redirigir según permisos
+    try {
+      const user = data?.user || data?.session?.user;
+      const nombre = user?.user_metadata?.nombre_completo || user?.email || 'Usuario';
+  const key = user ? `ps_welcome_shown_${user.id}` : null;
+  // show welcome immediately for this login action, then mark it as shown
+  await Swal.fire({ title: 'Bienvenido', text: `Hola ${nombre}`, icon: 'success', zIndex: 2147483647 });
+  if (typeof window !== 'undefined' && key) window.localStorage.setItem(key, '1');
+
+      // decidir destino según rol (is_admin RPC)
+      let dest = '/';
+      if (user?.id) {
+        try {
+          const { data: isAdmin, error: adminErr } = await supabase.rpc('is_admin', { uid: user.id });
+          if (!adminErr && isAdmin) dest = '/dashboard';
+        } catch (e) {
+          // si falla, mantener destino por defecto
+        }
+      }
+      router.replace(dest);
+    } catch (e) {
+      router.replace('/');
+    }
   }
 
   return (

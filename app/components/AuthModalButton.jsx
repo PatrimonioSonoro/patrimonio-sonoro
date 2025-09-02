@@ -42,35 +42,56 @@ export default function AuthModalButton() {
   async function onLogin(e) {
     e.preventDefault();
     setLoading(true);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     setLoading(false);
     if (error) {
       const msg = /confirm/i.test(error.message)
         ? "Tu correo aún no ha sido verificado. Revisa tu bandeja y carpeta de spam."
         : error.message || "Credenciales inválidas";
-      return Swal.fire("Error", msg, "error");
+      return Swal.fire({ title: "Error", text: msg, icon: "error", zIndex: 20000 });
     }
-    setOpen(false);
+
+    // Mostrar bienvenida una sola vez y redirigir según rol
+    try {
+      const user = data?.user || data?.session?.user;
+      const nombre = user?.user_metadata?.nombre_completo || user?.email || "Usuario";
+  const key = user ? `ps_welcome_shown_${user.id}` : null;
+  // show welcome immediately for this login action and mark it
+  await Swal.fire({ title: "Bienvenido", text: `Hola ${nombre}`, icon: "success", zIndex: 2147483647 });
+  if (typeof window !== "undefined" && key) window.localStorage.setItem(key, "1");
+      let dest = '/';
+      if (user?.id) {
+        try {
+          const { data: isAdmin, error: adminErr } = await supabase.rpc('is_admin', { uid: user.id });
+          if (!adminErr && isAdmin) dest = '/dashboard';
+        } catch (_) {}
+      }
+      setOpen(false);
+      window.location.href = dest;
+    } catch (e) {
+      setOpen(false);
+      window.location.href = '/';
+    }
   }
 
   async function onForgotPassword(e) {
     e.preventDefault();
     const value = email || regEmail;
-    if (!value) return Swal.fire("Recuperación", "Ingresa tu correo en el formulario para enviarte el enlace.", "info");
+  if (!value) return Swal.fire({ title: "Recuperación", text: "Ingresa tu correo en el formulario para enviarte el enlace.", icon: "info", zIndex: 20000 });
     const origin = typeof window !== "undefined" ? window.location.origin : "";
     const { error } = await supabase.auth.resetPasswordForEmail(value, {
       redirectTo: `${origin}/login`,
     });
-    if (error) return Swal.fire("Error", error.message || "No se pudo enviar el enlace", "error");
-    Swal.fire("Listo", "Hemos enviado instrucciones a tu correo", "success");
+  if (error) return Swal.fire({ title: "Error", text: error.message || "No se pudo enviar el enlace", icon: "error", zIndex: 20000 });
+  Swal.fire({ title: "Listo", text: "Hemos enviado instrucciones a tu correo", icon: "success", zIndex: 20000 });
   }
 
   async function onRegister(e) {
     e.preventDefault();
-    if (!validateFullName(nombre)) return Swal.fire("Error", "Nombre completo inválido (mínimo 2 palabras, sin números)", "error");
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(regEmail)) return Swal.fire("Error", "Correo inválido", "error");
-    if (!validatePassword(regPassword)) return Swal.fire("Error", "La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas y números", "error");
-    if (regPassword !== confirm) return Swal.fire("Error", "Las contraseñas no coinciden", "error");
+  if (!validateFullName(nombre)) return Swal.fire({ title: "Error", text: "Nombre completo inválido (mínimo 2 palabras, sin números)", icon: "error", zIndex: 20000 });
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(regEmail)) return Swal.fire({ title: "Error", text: "Correo inválido", icon: "error", zIndex: 20000 });
+  if (!validatePassword(regPassword)) return Swal.fire({ title: "Error", text: "La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas y números", icon: "error", zIndex: 20000 });
+  if (regPassword !== confirm) return Swal.fire({ title: "Error", text: "Las contraseñas no coinciden", icon: "error", zIndex: 20000 });
 
     setLoading(true);
     const redirectTo = typeof window !== "undefined" ? `${window.location.origin}/login` : undefined;
@@ -86,9 +107,9 @@ export default function AuthModalButton() {
         : /password/i.test(error.message)
         ? "La contraseña no cumple los requisitos"
         : error.message || "Error al registrar";
-      return Swal.fire("Error", msg, "error");
+      return Swal.fire({ title: "Error", text: msg, icon: "error", zIndex: 20000 });
     }
-    Swal.fire("Registro exitoso", "Revisa tu correo para confirmar la cuenta.", "success");
+    Swal.fire({ title: "Registro exitoso", text: "Revisa tu correo para confirmar la cuenta.", icon: "success", zIndex: 20000 });
     setMode("login");
   }
 

@@ -18,6 +18,15 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+/* Reset default browser spacing that can create white gaps at the top */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
 /* Keep Leaflet map and its controls behind the fixed navbar within the Mapa Sonoro section */
 #mapa-sonoro .leaflet-pane,
 #mapa-sonoro .leaflet-top,

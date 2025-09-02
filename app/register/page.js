@@ -26,10 +26,10 @@ export default function RegisterPage() {
   async function handleSubmit(e) {
     e.preventDefault();
     // Validaciones cliente
-    if (!validateFullName(nombre)) return Swal.fire('Error', 'Nombre completo inválido (mínimo 2 palabras, sin números)', 'error');
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return Swal.fire('Error', 'Correo inválido', 'error');
-    if (!validatePassword(password)) return Swal.fire('Error', 'La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas y números', 'error');
-    if (password !== confirm) return Swal.fire('Error', 'Las contraseñas no coinciden', 'error');
+  if (!validateFullName(nombre)) return Swal.fire({ title: 'Error', text: 'Nombre completo inválido (mínimo 2 palabras, sin números)', icon: 'error', zIndex: 20000 });
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return Swal.fire({ title: 'Error', text: 'Correo inválido', icon: 'error', zIndex: 20000 });
+  if (!validatePassword(password)) return Swal.fire({ title: 'Error', text: 'La contraseña debe tener al menos 8 caracteres, incluir mayúsculas, minúsculas y números', icon: 'error', zIndex: 20000 });
+  if (password !== confirm) return Swal.fire({ title: 'Error', text: 'Las contraseñas no coinciden', icon: 'error', zIndex: 20000 });
 
     setLoading(true);
     // Usar Supabase Auth para crear usuario y enviar correo de confirmación
@@ -46,10 +46,10 @@ export default function RegisterPage() {
         /duplicate key/i.test(error.message) ? 'El correo ya está registrado' :
         /password/i.test(error.message) ? 'La contraseña no cumple los requisitos' :
         error.message || 'Error al registrar';
-      return Swal.fire('Error', msg, 'error');
+      return Swal.fire({ title: 'Error', text: msg, icon: 'error', zIndex: 20000 });
     }
 
-    await Swal.fire('Registro exitoso', 'Revisa tu correo para confirmar la cuenta. Serás redirigido al login.', 'success');
+    await Swal.fire({ title: 'Registro exitoso', text: 'Revisa tu correo para confirmar la cuenta. Serás redirigido al login.', icon: 'success', zIndex: 20000 });
     router.push('/login');
   }
 

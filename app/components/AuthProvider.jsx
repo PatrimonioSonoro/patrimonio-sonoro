@@ -21,15 +21,24 @@ export default function AuthProvider({ children }) {
     const { data: sub } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (event === "SIGNED_IN") {
         const nombre = session?.user?.user_metadata?.nombre_completo || session?.user?.email || "Usuario";
-        await Swal.fire("Bienvenido", `Hola ${nombre}`, "success");
+        try {
+          const key = `ps_welcome_shown_${session?.user?.id}`;
+          const shown = typeof window !== "undefined" ? window.localStorage.getItem(key) : null;
+          if (!shown) {
+            await Swal.fire({ title: "Bienvenido", text: `Hola ${nombre}`, icon: "success", zIndex: 2147483647 });
+            if (typeof window !== "undefined") window.localStorage.setItem(key, "1");
+          }
+        } catch (e) {
+          await Swal.fire({ title: "Bienvenido", text: `Hola ${nombre}`, icon: "success", zIndex: 2147483647 });
+        }
         router.replace("/dashboard");
       }
       if (event === "SIGNED_OUT") {
-        await Swal.fire("Sesión cerrada", "Has cerrado sesión correctamente", "success");
+        await Swal.fire({ title: "Sesión cerrada", text: "Has cerrado sesión correctamente", icon: "success", zIndex: 20000 });
         router.replace("/");
       }
       if (event === "PASSWORD_RECOVERY") {
-        await Swal.fire("Recuperación", "Revisa tu correo para recuperar tu contraseña", "info");
+        await Swal.fire({ title: "Recuperación", text: "Revisa tu correo para recuperar tu contraseña", icon: "info", zIndex: 20000 });
       }
       if (event === "USER_UPDATED") {
         // Optional feedback
