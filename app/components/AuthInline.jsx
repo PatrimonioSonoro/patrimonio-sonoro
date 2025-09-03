@@ -53,7 +53,7 @@ export default function AuthInline() {
   // show welcome immediately for this login action and mark it
   await Swal.fire({ title: "Bienvenido", text: `Hola ${nombre}`, icon: "success", zIndex: 2147483647 });
   if (typeof window !== "undefined" && key) window.localStorage.setItem(key, "1");
-      let dest = '/';
+      let dest = '/usuario';
       if (user?.id) {
         try {
           const { data: isAdmin, error: adminErr } = await supabase.rpc('is_admin', { uid: user.id });

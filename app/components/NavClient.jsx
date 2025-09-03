@@ -1,10 +1,37 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import AuthModalButton from "./AuthModalButton";
 import { motion } from "framer-motion";
+import { supabase } from "../../lib/supabaseClient";
+import { forceSignOut } from "../../lib/authUtils";
 
 export default function NavClient() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
+  const [userMenuOpen, setUserMenuOpen] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const { data } = await supabase.auth.getUser();
+        if (!mounted) return;
+        setUser(data?.user ?? null);
+      } catch (e) {
+        console.error('Error fetching user in NavClient', e);
+      }
+    })();
+
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT') setUser(null);
+      if (event === 'SIGNED_IN') setUser(session?.user ?? null);
+    });
+
+    return () => {
+      mounted = false;
+      sub?.subscription?.unsubscribe?.();
+    };
+  }, []);
 
   return (
     <nav className="nav-with-bg bg-white shadow-md fixed top-0 left-0 w-full z-[2000]">
@@ -33,7 +60,30 @@ export default function NavClient() {
           </div>
 
           <div className="hidden md:flex items-center space-x-4">
-            <AuthModalButton />
+            {!user ? (
+              <AuthModalButton />
+            ) : (
+              <div className="relative">
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="flex items-center gap-2 px-3 py-2 rounded-full hover:bg-gray-100 transition-colors"
+                >
+                  <span className="text-sm font-medium">{user.user_metadata?.nombre_completo || user.email}</span>
+                </button>
+                <div className={`user-menu absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg ${userMenuOpen ? 'block' : 'hidden'}`}>
+                  <button
+                    onClick={async () => {
+                      await forceSignOut();
+                      // Redirect to home
+                      if (typeof window !== 'undefined') window.location.href = '/';
+                    }}
+                    className="w-full text-left px-4 py-2 hover:bg-gray-50"
+                  >
+                    Cerrar sesión
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="md:hidden flex items-center space-x-2">

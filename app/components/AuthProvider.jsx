@@ -15,9 +15,9 @@ export default function AuthProvider({ children }) {
       try {
         const { data, error } = await supabase.auth.getSession();
         if (error) {
-          console.error('Auth session error:', error);
-          // Clear any corrupted tokens
-          await supabase.auth.signOut();
+          console.error('Auth session error (preserving session):', error);
+          // Don't sign out automatically on transient errors here. Informational
+          // log only so that user content isn't removed on page reloads.
           return;
         }
         const session = data?.session;
@@ -25,10 +25,12 @@ export default function AuthProvider({ children }) {
         // no forced redirect here; we let pages guard themselves
       } catch (error) {
         console.error('Unexpected auth error:', error);
-        // Clear localStorage auth data if corrupted
+        // Do not clear user content silently. Notify and allow user to act if necessary.
         if (typeof window !== 'undefined') {
-          window.localStorage.removeItem('supabase.auth.token');
-          window.localStorage.removeItem('sb-qnwhhslrsigfnqtfvmkz-auth-token');
+          try {
+            // show a non-blocking notice in console and optionally UI
+            console.warn('Auth initialization failed; user content will not be removed automatically.');
+          } catch (e) {}
         }
       }
     })();
@@ -47,7 +49,30 @@ export default function AuthProvider({ children }) {
           } catch (e) {
             await Swal.fire({ title: "Bienvenido", text: `Hola ${nombre}`, icon: "success", zIndex: 2147483647 });
           }
-          router.replace("/dashboard");
+
+          // Decide redirect based on role RPCs: prefer is_user -> /usuario, is_admin -> /dashboard
+          try {
+            const uid = session?.user?.id;
+            if (uid) {
+              // Check is_user first
+              const { data: isUser, error: userErr } = await supabase.rpc('is_user', { uid });
+              if (!userErr && isUser) {
+                router.replace('/usuario');
+                return;
+              }
+              // Then check admin
+              const { data: isAdmin, error: adminErr } = await supabase.rpc('is_admin', { uid });
+              if (!adminErr && isAdmin) {
+                router.replace('/dashboard');
+                return;
+              }
+            }
+          } catch (e) {
+            console.error('Role check error on SIGNED_IN:', e);
+          }
+
+          // Fallback: go to usuario for safety if roles couldn't be determined
+          router.replace('/usuario');
         }
         if (event === "SIGNED_OUT") {
           // Clear all auth-related localStorage items
