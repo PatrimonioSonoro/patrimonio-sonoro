@@ -159,6 +159,78 @@ export default function Page() {
                 </div>
               </div>
             </div>
+            
+            <div className="sound-card-modern">
+              <div className="sound-card-header pacifico">
+                <div className="play-button"></div>
+              </div>
+              <div className="sound-card-content">
+                <div className="sound-card-meta">
+                  <span className="region-badge pacifico">Pacífico</span>
+                  <span className="sound-duration">3:05</span>
+                </div>
+                <h3 className="sound-title">Oleaje Pacífico</h3>
+                <p className="sound-description">Ambiente sonoro del oleaje y la brisa en la costa pacífica colombiana.</p>
+                <div className="sound-author">
+                  <div className="author-avatar" style={{background: '#319795'}}>PA</div>
+                  <span className="author-name">Paola Ávila</span>
+                  <div className="sound-stats">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    <span>4.7</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="sound-card-modern">
+              <div className="sound-card-header caribe">
+                <div className="play-button"></div>
+              </div>
+              <div className="sound-card-content">
+                <div className="sound-card-meta">
+                  <span className="region-badge caribe">Caribe</span>
+                  <span className="sound-duration">2:55</span>
+                </div>
+                <h3 className="sound-title">Amanecer Caribeño</h3>
+                <p className="sound-description">Cantos de aves y actividad costera en la región caribeña.</p>
+                <div className="sound-author">
+                  <div className="author-avatar" style={{background: '#F6AD55'}}>MC</div>
+                  <span className="author-name">María Correa</span>
+                  <div className="sound-stats">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    <span>4.5</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="sound-card-modern">
+              <div className="sound-card-header andina">
+                <div className="play-button"></div>
+              </div>
+              <div className="sound-card-content">
+                <div className="sound-card-meta">
+                  <span className="region-badge andina">Andina</span>
+                  <span className="sound-duration">1:50</span>
+                </div>
+                <h3 className="sound-title">Camino Andino</h3>
+                <p className="sound-description">Tránsito y charlas en vereda andina al amanecer.</p>
+                <div className="sound-author">
+                  <div className="author-avatar" style={{background: '#805AD5'}}>JA</div>
+                  <span className="author-name">Juan Álvarez</span>
+                  <div className="sound-stats">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    <span>4.4</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
