@@ -3,9 +3,22 @@
 import SoundMap from "./components/SoundMap";
 import NavClient from "./components/NavClient";
 import HeroClient from "./components/HeroClient";
+import { createClient } from '@supabase/supabase-js';
+
+async function fetchPublicContents() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!supabaseUrl || !anonKey) return [];
+  const sb = createClient(supabaseUrl, anonKey, { auth: { persistSession: false } });
+  // Only fetch metadata and storage paths. Public URLs are not exposed.
+  const { data, error } = await sb.from('contenidos').select('id,title,description,region,created_at,image_path,video_path,audio_path').eq('status','published').eq('publicly_visible', true).order('created_at', { ascending: false }).limit(9);
+  if (error) return [];
+  return data || [];
+}
 
 // Página principal migrada (server component)
-export default function Page() {
+export default async function Page() {
+  const contents = await fetchPublicContents();
 
   return (
     <main>
@@ -86,151 +99,26 @@ export default function Page() {
             </select>
           </div>
 
-          {/* Tarjetas demo */}
+          {/* Render public contents */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="sound-card-modern">
-              <div className="sound-card-header amazonia">
-                <div className="play-button"></div>
-              </div>
-              <div className="sound-card-content">
-                <div className="sound-card-meta">
-                  <span className="region-badge amazonia">Amazonia</span>
-                  <span className="sound-duration">2:30</span>
-                </div>
-                <h3 className="sound-title">Selva Amazónica</h3>
-                <p className="sound-description">Grabación de los sonidos de la selva amazónica colombiana, con su rica biodiversidad sonora.</p>
-                <div className="sound-author">
-                  <div className="author-avatar" style={{background: '#4A90A4'}}>LG</div>
-                  <span className="author-name">Laura Gómez</span>
-                  <div className="sound-stats">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                    <span>4.8</span>
+            {contents.length === 0 ? (
+              <div className="text-gray-600">No hay contenidos públicos disponibles.</div>
+            ) : (
+              contents.map((c) => (
+                <div key={c.id} className="sound-card-modern">
+                  <div className={`sound-card-header`}>
+                    <div className="play-button" />
+                  </div>
+                  <div className="sound-card-content">
+                    <div className="sound-card-meta">
+                      <span className="region-badge">{c.region || 'General'}</span>
+                    </div>
+                    <h3 className="sound-title">{c.title}</h3>
+                    <p className="sound-description">{c.description}</p>
                   </div>
                 </div>
-              </div>
-            </div>
-            
-            <div className="sound-card-modern">
-              <div className="sound-card-header insular">
-                <div className="play-button"></div>
-              </div>
-              <div className="sound-card-content">
-                <div className="sound-card-meta">
-                  <span className="region-badge insular">Insular</span>
-                  <span className="sound-duration">3:45</span>
-                </div>
-                <h3 className="sound-title">Calypso de San Andrés</h3>
-                <p className="sound-description">Música tradicional de la región insular colombiana, con influencias caribeñas y africanas.</p>
-                <div className="sound-author">
-                  <div className="author-avatar" style={{background: '#E53E3E'}}>RJ</div>
-                  <span className="author-name">Roberto James</span>
-                  <div className="sound-stats">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                    <span>4.6</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="sound-card-modern">
-              <div className="sound-card-header andina">
-                <div className="play-button"></div>
-              </div>
-              <div className="sound-card-content">
-                <div className="sound-card-meta">
-                  <span className="region-badge andina">Andina</span>
-                  <span className="sound-duration">2:15</span>
-                </div>
-                <h3 className="sound-title">Mercado Campesino</h3>
-                <p className="sound-description">Ambiente sonoro de un mercado campesino tradicional en la región andina colombiana.</p>
-                <div className="sound-author">
-                  <div className="author-avatar" style={{background: '#48BB78'}}>CM</div>
-                  <span className="author-name">Carlos Martínez</span>
-                  <div className="sound-stats">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                    <span>4.9</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="sound-card-modern">
-              <div className="sound-card-header pacifico">
-                <div className="play-button"></div>
-              </div>
-              <div className="sound-card-content">
-                <div className="sound-card-meta">
-                  <span className="region-badge pacifico">Pacífico</span>
-                  <span className="sound-duration">3:05</span>
-                </div>
-                <h3 className="sound-title">Oleaje Pacífico</h3>
-                <p className="sound-description">Ambiente sonoro del oleaje y la brisa en la costa pacífica colombiana.</p>
-                <div className="sound-author">
-                  <div className="author-avatar" style={{background: '#319795'}}>PA</div>
-                  <span className="author-name">Paola Ávila</span>
-                  <div className="sound-stats">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                    <span>4.7</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="sound-card-modern">
-              <div className="sound-card-header caribe">
-                <div className="play-button"></div>
-              </div>
-              <div className="sound-card-content">
-                <div className="sound-card-meta">
-                  <span className="region-badge caribe">Caribe</span>
-                  <span className="sound-duration">2:55</span>
-                </div>
-                <h3 className="sound-title">Amanecer Caribeño</h3>
-                <p className="sound-description">Cantos de aves y actividad costera en la región caribeña.</p>
-                <div className="sound-author">
-                  <div className="author-avatar" style={{background: '#F6AD55'}}>MC</div>
-                  <span className="author-name">María Correa</span>
-                  <div className="sound-stats">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                    <span>4.5</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="sound-card-modern">
-              <div className="sound-card-header andina">
-                <div className="play-button"></div>
-              </div>
-              <div className="sound-card-content">
-                <div className="sound-card-meta">
-                  <span className="region-badge andina">Andina</span>
-                  <span className="sound-duration">1:50</span>
-                </div>
-                <h3 className="sound-title">Camino Andino</h3>
-                <p className="sound-description">Tránsito y charlas en vereda andina al amanecer.</p>
-                <div className="sound-author">
-                  <div className="author-avatar" style={{background: '#805AD5'}}>JA</div>
-                  <span className="author-name">Juan Álvarez</span>
-                  <div className="sound-stats">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-                    </svg>
-                    <span>4.4</span>
-                  </div>
-                </div>
-              </div>
-            </div>
+              ))
+            )}
           </div>
         </div>
       </section>

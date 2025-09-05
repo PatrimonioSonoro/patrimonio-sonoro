@@ -1,13 +1,21 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Swal from "sweetalert2";
 import { supabase } from "../../lib/supabaseClient";
 
 export default function AuthProvider({ children }) {
   const router = useRouter();
+  const [isClient, setIsClient] = useState(false);
+
+  // Ensure we're on the client before doing any auth operations
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   useEffect(() => {
+    if (!isClient) return;
+    
     let mounted = true;
 
     // On load: decide initial redirect target if needed
@@ -26,7 +34,7 @@ export default function AuthProvider({ children }) {
       } catch (error) {
         console.error('Unexpected auth error:', error);
         // Do not clear user content silently. Notify and allow user to act if necessary.
-        if (typeof window !== 'undefined') {
+        if (isClient) {
           try {
             // show a non-blocking notice in console and optionally UI
             console.warn('Auth initialization failed; user content will not be removed automatically.');
@@ -41,10 +49,10 @@ export default function AuthProvider({ children }) {
           const nombre = session?.user?.user_metadata?.nombre_completo || session?.user?.email || "Usuario";
           try {
             const key = `ps_welcome_shown_${session?.user?.id}`;
-            const shown = typeof window !== "undefined" ? window.localStorage.getItem(key) : null;
+            const shown = isClient ? window.localStorage.getItem(key) : null;
             if (!shown) {
               await Swal.fire({ title: "Bienvenido", text: `Hola ${nombre}`, icon: "success", zIndex: 2147483647 });
-              if (typeof window !== "undefined") window.localStorage.setItem(key, "1");
+              if (isClient) window.localStorage.setItem(key, "1");
             }
           } catch (e) {
             await Swal.fire({ title: "Bienvenido", text: `Hola ${nombre}`, icon: "success", zIndex: 2147483647 });
@@ -76,7 +84,7 @@ export default function AuthProvider({ children }) {
         }
         if (event === "SIGNED_OUT") {
           // Clear all auth-related localStorage items
-          if (typeof window !== 'undefined') {
+          if (isClient) {
             const keys = Object.keys(window.localStorage);
             keys.forEach(key => {
               if (key.includes('ps_welcome_shown') || key.includes('supabase') || key.includes('sb-')) {
@@ -109,7 +117,38 @@ export default function AuthProvider({ children }) {
       mounted = false;
       sub?.subscription?.unsubscribe();
     };
-  }, [router]);
+  }, [isClient, router]);
+
+  // Don't render children until we're on the client to avoid hydration mismatches
+  if (!isClient) {
+    return (
+      <div style={{ 
+        position: 'fixed', 
+        top: 0, 
+        left: 0, 
+        width: '100%', 
+        height: '100%', 
+        backgroundColor: 'white', 
+        display: 'flex', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+        zIndex: 9999
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ 
+            width: '40px', 
+            height: '40px', 
+            border: '4px solid #f3f3f3',
+            borderTop: '4px solid #3498db',
+            borderRadius: '50%',
+            animation: 'spin 1s linear infinite',
+            margin: '0 auto 16px'
+          }}></div>
+          <p style={{ color: '#666', fontSize: '14px' }}>Cargando...</p>
+        </div>
+      </div>
+    );
+  }
 
   return children;
 }

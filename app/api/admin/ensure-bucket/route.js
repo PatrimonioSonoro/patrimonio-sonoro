@@ -15,9 +15,9 @@ export async function POST(req) {
   try {
     // Check if bucket exists
     const { data: buckets } = await supabaseAdmin.storage.listBuckets();
-    const exists = (buckets || []).some(b => b.name === 'contenido');
+    const exists = (buckets || []).some(b => b.name === 'Contenido');
     if (!exists) {
-      const { data, error } = await supabaseAdmin.storage.createBucket('contenido', { public: true });
+      const { data, error } = await supabaseAdmin.storage.createBucket('Contenido', { public: true });
       if (error) throw error;
       return NextResponse.json({ created: true, bucket: data }, { status: 201 });
     }
