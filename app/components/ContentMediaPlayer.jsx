@@ -11,12 +11,18 @@ export default function ContentMediaPlayer({ content }) {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // If we don't have URLs from server-side rendering, fetch them client-side
-    const needsUrls = !mediaUrls.image_url && content.image_path ||
-                     !mediaUrls.audio_url && content.audio_path ||
-                     !mediaUrls.video_url && content.video_path;
+    // Debug logging
+    console.log('ContentMediaPlayer content:', content);
+    console.log('Current mediaUrls:', mediaUrls);
+    
+    // Always try to fetch URLs client-side if we have paths
+    // This ensures we get fresh signed URLs even if server-side failed
+    const needsUrls = content.image_path || content.audio_path || content.video_path;
+
+    console.log('needsUrls:', needsUrls);
 
     if (needsUrls) {
+      console.log('Fetching media URLs for paths...');
       fetchMediaUrls();
     }
   }, [content]);
@@ -25,9 +31,11 @@ export default function ContentMediaPlayer({ content }) {
     setLoading(true);
     try {
       const paths = [];
-      if (content.image_path && !mediaUrls.image_url) paths.push(content.image_path);
-      if (content.audio_path && !mediaUrls.audio_url) paths.push(content.audio_path);
-      if (content.video_path && !mediaUrls.video_url) paths.push(content.video_path);
+      if (content.image_path) paths.push(content.image_path);
+      if (content.audio_path) paths.push(content.audio_path);
+      if (content.video_path) paths.push(content.video_path);
+
+      console.log('Fetching URLs for paths:', paths);
 
       if (paths.length > 0) {
         const response = await fetch('/api/public/signed-urls', {
@@ -36,14 +44,22 @@ export default function ContentMediaPlayer({ content }) {
           body: JSON.stringify({ paths, expires: 3600 })
         });
 
+        console.log('API response status:', response.status);
+
         if (response.ok) {
-          const { urls } = await response.json();
+          const data = await response.json();
+          console.log('API response data:', data);
+          
+          const { urls } = data;
           setMediaUrls(prev => ({
             ...prev,
             image_url: urls[content.image_path] || prev.image_url,
             audio_url: urls[content.audio_path] || prev.audio_url,
             video_url: urls[content.video_path] || prev.video_url
           }));
+        } else {
+          const errorText = await response.text();
+          console.error('API error:', response.status, errorText);
         }
       }
     } catch (error) {
