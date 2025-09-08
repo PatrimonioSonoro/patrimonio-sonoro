@@ -17,13 +17,6 @@ function getAnonKey() {
 export async function POST(req) {
   console.log('Admin upload route called');
   try {
-    // Use admin client if available, otherwise fallback to anonymous client
-    let supabase = supabaseAdmin;
-    if (!supabase) {
-      console.log('Admin client not available, using anonymous client as fallback');
-      supabase = createClient(getSupabaseUrl(), getAnonKey());
-    }
-    
     // Basic auth: require an Authorization: Bearer <access_token> header and check is_admin RPC
     const auth = req.headers.get('authorization');
     if (!auth?.startsWith('Bearer ')) {
@@ -53,6 +46,14 @@ export async function POST(req) {
     }
     
     const uid = userData.user.id;
+  // user authenticated
+
+    // For storage operations, prefer admin client if available, otherwise use authenticated user client
+    let storageClient = supabaseAdmin;
+    if (!storageClient) {
+      console.log('Admin client not available, using authenticated user client for storage operations');
+      storageClient = userClient;
+    }
   // user authenticated
 
     // check admin role via RPC (project has is_admin)
@@ -209,7 +210,7 @@ export async function POST(req) {
 
         console.log(`📊 Buffer size: ${buffer.length} bytes`);
 
-        const { data: uploadData, error: uploadErr } = await supabase.storage.from('Contenido').upload(path, buffer, { 
+        const { data: uploadData, error: uploadErr } = await storageClient.storage.from('Contenido').upload(path, buffer, { 
           upsert: true,
           contentType: fileObj.contentType || 'application/octet-stream'
         });
@@ -250,8 +251,10 @@ export async function POST(req) {
     }
 
   // insert into contenidos
+    // For database operations, prefer admin client if available, otherwise use authenticated user client
+    let dbClient = supabaseAdmin || userClient;
     
-    const { data: row, error: insertErr } = await supabase.from('contenidos').insert(payload).select('id').single();
+    const { data: row, error: insertErr } = await dbClient.from('contenidos').insert(payload).select('id').single();
     
     if (insertErr) {
       console.error('DB insert error:', insertErr.message || insertErr);
