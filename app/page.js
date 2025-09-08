@@ -3,6 +3,7 @@
 import SoundMap from "./components/SoundMap";
 import NavClient from "./components/NavClient";
 import HeroClient from "./components/HeroClient";
+import ContentMediaPlayer from "./components/ContentMediaPlayer";
 import { createClient } from '@supabase/supabase-js';
 import { supabaseAdmin } from '../lib/supabaseServer';
 
@@ -21,32 +22,48 @@ async function fetchPublicContents() {
   if (error || !data) return [];
 
   // For each content, if it has a storage path, generate a signed URL (short lived)
-  // Skip signed URL generation if supabaseAdmin is not available (during build)
   const results = await Promise.all(data.map(async (c) => {
     const out = { ...c };
     
-    if (!supabaseAdmin) {
-      // During build time, skip signed URL generation
-      return out;
-    }
-    
     try {
-      // Supabase storage.createSignedUrl returns { data, error } where
-      // data.signedUrl contains the URL. Use a 1 hour expiry for public listing.
-      if (c.image_path) {
-        const { data: imgData, error: imgErr } = await supabaseAdmin.storage.from('Contenido').createSignedUrl(c.image_path, 3600);
-        out.image_url = imgErr || !imgData?.signedUrl ? null : imgData.signedUrl;
-      }
-      if (c.audio_path) {
-        const { data: audioData, error: audioErr } = await supabaseAdmin.storage.from('Contenido').createSignedUrl(c.audio_path, 3600);
-        out.audio_url = audioErr || !audioData?.signedUrl ? null : audioData.signedUrl;
-      }
-      if (c.video_path) {
-        const { data: vidData, error: vidErr } = await supabaseAdmin.storage.from('Contenido').createSignedUrl(c.video_path, 3600);
-        out.video_url = vidErr || !vidData?.signedUrl ? null : vidData.signedUrl;
+      // Try to generate signed URLs using admin client if available
+      if (supabaseAdmin) {
+        // Use admin client for signed URLs
+        if (c.image_path) {
+          const { data: imgData, error: imgErr } = await supabaseAdmin.storage.from('Contenido').createSignedUrl(c.image_path, 3600);
+          out.image_url = imgErr || !imgData?.signedUrl ? null : imgData.signedUrl;
+        }
+        if (c.audio_path) {
+          const { data: audioData, error: audioErr } = await supabaseAdmin.storage.from('Contenido').createSignedUrl(c.audio_path, 3600);
+          out.audio_url = audioErr || !audioData?.signedUrl ? null : audioData.signedUrl;
+        }
+        if (c.video_path) {
+          const { data: vidData, error: vidErr } = await supabaseAdmin.storage.from('Contenido').createSignedUrl(c.video_path, 3600);
+          out.video_url = vidErr || !vidData?.signedUrl ? null : vidData.signedUrl;
+        }
+      } else {
+        // Fallback: try to generate signed URLs using anonymous client
+        // This will work if the bucket policies allow public access for these specific files
+        try {
+          if (c.image_path) {
+            const { data: imgData, error: imgErr } = await sb.storage.from('Contenido').createSignedUrl(c.image_path, 3600);
+            out.image_url = imgErr || !imgData?.signedUrl ? null : imgData.signedUrl;
+          }
+          if (c.audio_path) {
+            const { data: audioData, error: audioErr } = await sb.storage.from('Contenido').createSignedUrl(c.audio_path, 3600);
+            out.audio_url = audioErr || !audioData?.signedUrl ? null : audioData.signedUrl;
+          }
+          if (c.video_path) {
+            const { data: vidData, error: vidErr } = await sb.storage.from('Contenido').createSignedUrl(c.video_path, 3600);
+            out.video_url = vidErr || !vidData?.signedUrl ? null : vidData.signedUrl;
+          }
+        } catch (fallbackError) {
+          console.warn('Failed to generate fallback signed URLs:', fallbackError);
+        }
       }
     } catch (e) {
       // ignore and leave urls null
+      console.warn('Error generating signed URLs:', e);
     }
     return out;
   }));
@@ -144,29 +161,15 @@ export default async function Page() {
             ) : (
               contents.map((c) => (
                 <div key={c.id} className="sound-card-modern">
-                  <div className={`sound-card-header`}>
-                    {c.image_url ? (
-                      <img src={c.image_url} alt={c.title} className="object-cover w-full h-40" />
-                    ) : (
-                      <div className="play-button" />
-                    )}
-                  </div>
                   <div className="sound-card-content">
                     <div className="sound-card-meta">
                       <span className="region-badge">{c.region || 'General'}</span>
                     </div>
                     <h3 className="sound-title">{c.title}</h3>
                     <p className="sound-description">{c.description}</p>
-                    {c.audio_url && (
-                      <div className="mt-3">
-                        <audio controls src={c.audio_url} style={{ width: '100%' }} />
-                      </div>
-                    )}
-                    {c.video_url && !c.audio_url && (
-                      <div className="mt-3">
-                        <video controls src={c.video_url} style={{ width: '100%', maxHeight: 240 }} />
-                      </div>
-                    )}
+                    <div className="mt-3">
+                      <ContentMediaPlayer content={c} />
+                    </div>
                   </div>
                 </div>
               ))
