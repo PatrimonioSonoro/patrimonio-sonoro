@@ -17,8 +17,11 @@ function getAnonKey() {
 export async function POST(req) {
   console.log('Admin upload route called');
   try {
-    if (!supabaseAdmin) {
-      return NextResponse.json({ error: 'Service not available' }, { status: 503 });
+    // Use admin client if available, otherwise fallback to anonymous client
+    let supabase = supabaseAdmin;
+    if (!supabase) {
+      console.log('Admin client not available, using anonymous client as fallback');
+      supabase = createClient(getSupabaseUrl(), getAnonKey());
     }
     
     // Basic auth: require an Authorization: Bearer <access_token> header and check is_admin RPC
@@ -206,7 +209,7 @@ export async function POST(req) {
 
         console.log(`📊 Buffer size: ${buffer.length} bytes`);
 
-        const { data: uploadData, error: uploadErr } = await supabaseAdmin.storage.from('Contenido').upload(path, buffer, { 
+        const { data: uploadData, error: uploadErr } = await supabase.storage.from('Contenido').upload(path, buffer, { 
           upsert: true,
           contentType: fileObj.contentType || 'application/octet-stream'
         });
@@ -248,7 +251,7 @@ export async function POST(req) {
 
   // insert into contenidos
     
-    const { data: row, error: insertErr } = await supabaseAdmin.from('contenidos').insert(payload).select('id').single();
+    const { data: row, error: insertErr } = await supabase.from('contenidos').insert(payload).select('id').single();
     
     if (insertErr) {
       console.error('DB insert error:', insertErr.message || insertErr);

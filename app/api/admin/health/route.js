@@ -1,25 +1,41 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 import { supabaseAdmin } from '../../../../lib/supabaseServer';
+
+function getSupabaseUrl() {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  if (!url) throw new Error('Missing NEXT_PUBLIC_SUPABASE_URL');
+  return url;
+}
+
+function getAnonKey() {
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!key) throw new Error('Missing NEXT_PUBLIC_SUPABASE_ANON_KEY');
+  return key;
+}
 
 export async function GET() {
   try {
     console.log('🔍 Running storage health check...');
     
-    if (!supabaseAdmin) {
-      return NextResponse.json({ 
-        error: 'Service role key not configured',
-        timestamp: new Date().toISOString()
-      }, { status: 503 });
+    // Use admin client if available, otherwise fallback to anonymous client
+    let supabase = supabaseAdmin;
+    let usingFallback = false;
+    if (!supabase) {
+      console.log('Admin client not available, using anonymous client as fallback');
+      supabase = createClient(getSupabaseUrl(), getAnonKey());
+      usingFallback = true;
     }
     
     const results = {
       timestamp: new Date().toISOString(),
+      usingFallback,
       checks: {}
     };
 
     // Check 1: Bucket exists and is accessible
     try {
-      const { data: buckets, error: bucketsError } = await supabaseAdmin.storage.listBuckets();
+      const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
       if (bucketsError) throw bucketsError;
       
       const contenidoBucket = buckets.find(b => b.name === 'Contenido');
@@ -36,7 +52,7 @@ export async function GET() {
 
     // Check 2: Storage policies
     try {
-      const { data: policies, error: policiesError } = await supabaseAdmin
+      const { data: policies, error: policiesError } = await supabase
         .from('pg_policies')
         .select('*')
         .eq('schemaname', 'storage')
@@ -60,7 +76,7 @@ export async function GET() {
 
     // Check 3: Database table
     try {
-      const { data: tableInfo, error: tableError } = await supabaseAdmin
+      const { data: tableInfo, error: tableError } = await supabase
         .from('contenidos')
         .select('id')
         .limit(1);
@@ -84,14 +100,14 @@ export async function GET() {
       const testPath = `health-check/test-${Date.now()}.txt`;
       
       // Use an allowed MIME type for the test upload (audio) to match bucket restrictions
-      const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
+      const { data: uploadData, error: uploadError } = await supabase.storage
         .from('Contenido')
         .upload(testPath, testData, { upsert: true, contentType: 'audio/mpeg' });
         
       if (uploadError) throw uploadError;
       
       // Clean up test file
-      await supabaseAdmin.storage.from('Contenido').remove([testPath]);
+      await supabase.storage.from('Contenido').remove([testPath]);
       
       results.checks.upload = {
         status: 'OK',
