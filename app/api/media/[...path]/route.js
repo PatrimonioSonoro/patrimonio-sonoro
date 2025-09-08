@@ -1,9 +1,13 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import supabaseAdmin from '../../../../lib/supabaseServer';
+import { supabaseAdmin } from '../../../../lib/supabaseServer';
 
 export async function GET(req, { params }) {
   try {
+    if (!supabaseAdmin) {
+      return NextResponse.json({ error: 'Service not available' }, { status: 503 });
+    }
+    
     const pathSegments = params.path;
     const filePath = pathSegments.join('/');
     

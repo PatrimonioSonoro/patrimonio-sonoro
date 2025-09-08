@@ -21,8 +21,15 @@ async function fetchPublicContents() {
   if (error || !data) return [];
 
   // For each content, if it has a storage path, generate a signed URL (short lived)
+  // Skip signed URL generation if supabaseAdmin is not available (during build)
   const results = await Promise.all(data.map(async (c) => {
     const out = { ...c };
+    
+    if (!supabaseAdmin) {
+      // During build time, skip signed URL generation
+      return out;
+    }
+    
     try {
       // Supabase storage.createSignedUrl returns { data, error } where
       // data.signedUrl contains the URL. Use a 1 hour expiry for public listing.

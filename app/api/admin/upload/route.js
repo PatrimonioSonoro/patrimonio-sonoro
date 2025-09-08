@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import supabaseAdmin from '../../../../lib/supabaseServer';
+import { supabaseAdmin } from '../../../../lib/supabaseServer';
 
 function getSupabaseUrl() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -17,6 +17,10 @@ function getAnonKey() {
 export async function POST(req) {
   console.log('Admin upload route called');
   try {
+    if (!supabaseAdmin) {
+      return NextResponse.json({ error: 'Service not available' }, { status: 503 });
+    }
+    
     // Basic auth: require an Authorization: Bearer <access_token> header and check is_admin RPC
     const auth = req.headers.get('authorization');
     if (!auth?.startsWith('Bearer ')) {

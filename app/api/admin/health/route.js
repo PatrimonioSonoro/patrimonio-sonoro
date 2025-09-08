@@ -1,9 +1,16 @@
 import { NextResponse } from 'next/server';
-import supabaseAdmin from '../../../../lib/supabaseServer';
+import { supabaseAdmin } from '../../../../lib/supabaseServer';
 
 export async function GET() {
   try {
     console.log('🔍 Running storage health check...');
+    
+    if (!supabaseAdmin) {
+      return NextResponse.json({ 
+        error: 'Service role key not configured',
+        timestamp: new Date().toISOString()
+      }, { status: 503 });
+    }
     
     const results = {
       timestamp: new Date().toISOString(),

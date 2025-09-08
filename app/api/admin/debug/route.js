@@ -1,11 +1,16 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import supabaseAdmin from '../../../../lib/supabaseServer';
+import { supabaseAdmin } from '../../../../lib/supabaseServer';
 
 // Simplified debug version of admin upload
 export async function GET(req) {
   try {
     console.log('🧪 Debug endpoint called');
+    
+    // Check if supabaseAdmin is available
+    if (!supabaseAdmin) {
+      return NextResponse.json({ error: 'Service role key not configured' }, { status: 503 });
+    }
     
     // Test basic connectivity
     const { data: buckets, error: bucketError } = await supabaseAdmin.storage.listBuckets();

@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
-import supabaseAdmin from '../../../../lib/supabaseServer';
+import { supabaseAdmin } from '../../../../lib/supabaseServer';
 
 export async function POST(req) {
   try {
+    if (!supabaseAdmin) {
+      return NextResponse.json({ error: 'Service not available' }, { status: 503 });
+    }
+    
     const body = await req.json().catch(() => ({}));
     const paths = Array.isArray(body.paths) ? body.paths : [];
     const expires = Math.max(30, Math.min(60 * 60, parseInt(body.expires || '300'))); // 5 minutes default
