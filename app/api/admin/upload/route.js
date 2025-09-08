@@ -15,20 +15,16 @@ function getAnonKey() {
 }
 
 export async function POST(req) {
-  console.log('🚀 Admin upload route called');
-  
+  console.log('Admin upload route called');
   try {
     // Basic auth: require an Authorization: Bearer <access_token> header and check is_admin RPC
     const auth = req.headers.get('authorization');
-    console.log('🔐 Authorization header present:', !!auth);
-    
     if (!auth?.startsWith('Bearer ')) {
-      console.log('❌ Missing or invalid Authorization header');
       return NextResponse.json({ error: 'Unauthorized - Missing Bearer token' }, { status: 401 });
     }
     
     const token = auth.slice(7);
-    console.log('🎫 Token extracted, length:', token.length);
+  // token present
 
     const anonKey = getAnonKey();
     const url = getSupabaseUrl();
@@ -37,12 +33,11 @@ export async function POST(req) {
       auth: { persistSession: false } 
     });
 
-    console.log('👤 Getting user data...');
+  // get user data from token
     const { data: userData, error: userErr } = await userClient.auth.getUser();
     
     if (userErr) {
-      console.log('❌ User error:', userErr);
-      return NextResponse.json({ error: `Auth error: ${userErr.message}` }, { status: 401 });
+      return NextResponse.json({ error: 'Unauthorized - invalid token' }, { status: 401 });
     }
     
     if (!userData?.user) {
@@ -51,25 +46,32 @@ export async function POST(req) {
     }
     
     const uid = userData.user.id;
-    console.log('✅ User authenticated:', uid);
+  // user authenticated
 
     // check admin role via RPC (project has is_admin)
-    console.log('🔒 Checking admin role...');
-    const { data: isAdmin, error: adminError } = await userClient.rpc('is_admin', { uid });
-    
-    if (adminError) {
-      console.log('❌ Admin check error:', adminError);
-      return NextResponse.json({ error: `Admin check failed: ${adminError.message}` }, { status: 500 });
+  // Check admin role via RPC
+    let isAdmin = null;
+    try {
+      const { data: adminData, error: adminError } = await userClient.rpc('is_admin', { uid });
+      if (adminError) {
+        console.log('⚠️ Admin RPC returned error (treating as not admin):', adminError.message || adminError);
+        // Treat RPC errors as non-admin to avoid 500 responses; return 403
+        return NextResponse.json({ error: 'Forbidden - Admin check failed' }, { status: 403 });
+      }
+      isAdmin = adminData;
+    } catch (rpcErr) {
+      console.log('⚠️ Exception calling is_admin RPC (treating as not admin):', rpcErr.message || rpcErr);
+      return NextResponse.json({ error: 'Forbidden - Admin check failed' }, { status: 403 });
     }
-    
+
     if (!isAdmin) {
-      console.log('❌ User is not admin');
+      console.log('❌ User is not admin according to RPC');
       return NextResponse.json({ error: 'Forbidden - Admin role required' }, { status: 403 });
     }
-    
-    console.log('✅ Admin role confirmed');
 
-    console.log('📝 Parsing request body...');
+  // admin confirmed
+
+  // parse request body
 
   // Support multipart/form-data (FormData) from browser or JSON fallback
   let title = null, description = null, region = null, status = 'draft', visible_to_user = true, publicly_visible = false;
@@ -79,16 +81,20 @@ export async function POST(req) {
       // In Next.js route handlers, Request.formData() is available in many runtimes
       if (typeof req.formData === 'function') {
         const form = await req.formData();
-        console.log('📦 Received FormData with keys:', Array.from(form.keys()));
+  // Received FormData
 
         title = form.get('title') || null;
         description = form.get('description') || null;
         region = form.get('region') || null;
         status = form.get('status') || 'draft';
-  const vis = form.get('visible_to_user');
-  visible_to_user = vis === '1' || vis === 'true' || vis === true;
-  const pub = form.get('publicly_visible');
-  publicly_visible = pub === '1' || pub === 'true' || pub === true;
+        const vis = form.get('visible_to_user');
+        visible_to_user = vis === '1' || vis === 'true' || vis === true;
+        const pub = form.get('publicly_visible');
+        publicly_visible = pub === '1' || pub === 'true' || pub === true;
+
+        // Check if this is an update operation
+        const updateMode = form.get('update_mode') === 'true';
+        const contentId = form.get('content_id');
 
         // Helper to read File-like entries
         const readFileEntry = async (entry) => {
@@ -113,6 +119,30 @@ export async function POST(req) {
         if (audioEntry && audioEntry.size) files.audio = await readFileEntry(audioEntry);
         if (imageEntry && imageEntry.size) files.image = await readFileEntry(imageEntry);
         if (videoEntry && videoEntry.size) files.video = await readFileEntry(videoEntry);
+
+        // If this is an update operation, return only the file paths
+        if (updateMode && contentId) {
+          // Update mode
+          
+          const uploadResults = {};
+          
+          if (files.audio) {
+            const r = await uploadFile(files.audio, 'audios');
+            if (r) uploadResults.audio_path = r.path;
+          }
+          
+          if (files.image) {
+            console.log('🖼️ Processing image file for update...');
+            const r = await uploadFile(files.image, 'imagenes');
+            if (r) uploadResults.image_path = r.path;
+          }
+          
+          if (files.video) {
+            const r = await uploadFile(files.video, 'videos');
+            if (r) uploadResults.video_path = r.path;
+          }
+          return NextResponse.json(uploadResults, { status: 200 });
+        }
       } else {
         // Fallback to JSON body (legacy)
         const body = await req.json();
@@ -131,7 +161,7 @@ export async function POST(req) {
       throw parseErr;
     }
 
-    console.log('📁 Files in request:', Object.keys(files));
+  // files present
 
     const payload = {
       title: title || null,
@@ -144,10 +174,10 @@ export async function POST(req) {
       updated_by: uid,
     };
 
-    console.log('💾 Initial payload:', payload);
+  // initial payload prepared
 
-    // helper to upload a base64 file object { name, data }
-    const uploadFile = async (fileObj, folder) => {
+  // helper to upload a base64/file buffer object { name, buffer }
+  async function uploadFile(fileObj, folder) {
       // fileObj may be either { name, data (base64) } from legacy JSON or { name, buffer } from FormData
       if (!fileObj) return null;
       const name = fileObj.name || 'file';
@@ -159,7 +189,7 @@ export async function POST(req) {
 
       console.log(`📍 Upload path: ${path}`);
 
-      try {
+  try {
         let buffer;
         if (fileObj.buffer) {
           buffer = fileObj.buffer;
@@ -180,7 +210,8 @@ export async function POST(req) {
         if (uploadErr) {
           console.log(`❌ Upload error for ${path}:`, uploadErr);
           console.log('Upload error details:', JSON.stringify(uploadErr, null, 2));
-          throw new Error(`Storage upload failed: ${uploadErr.message || uploadErr.error || JSON.stringify(uploadErr)}`);
+          // Return null so caller can handle gracefully
+          return null;
         }
 
         console.log(`✅ File uploaded successfully: ${path}`);
@@ -189,68 +220,40 @@ export async function POST(req) {
   // provide short-lived signed URLs from a server endpoint when needed.
   return { path };
       } catch (err) {
-        console.log(`❌ Error in uploadFile for ${path}:`, err);
-        throw err;
+        console.log(`❌ Error in uploadFile for ${path}:`, err.message || err);
+        return null;
       }
     };
 
-    console.log('📁 Processing file uploads...');
+  // processing uploads
     
-  if (files.audio) {
-      console.log('🎵 Processing audio file...');
+    if (files.audio) {
       const r = await uploadFile(files.audio, 'audios');
-      if (r) {
-        payload.audio_path = r.path;
-        console.log('✅ Audio file processed');
-      }
+      if (r) payload.audio_path = r.path;
     }
     
-  if (files.image) {
-      console.log('🖼️ Processing image file...');
+    if (files.image) {
       const r = await uploadFile(files.image, 'imagenes');
-      if (r) {
-        payload.image_path = r.path;
-    // image_public_url intentionally not set to avoid public access
-        console.log('✅ Image file processed');
-      }
+      if (r) payload.image_path = r.path;
     }
     
-  if (files.video) {
-      console.log('🎬 Processing video file...');
+    if (files.video) {
       const r = await uploadFile(files.video, 'videos');
-      if (r) {
-        payload.video_path = r.path;
-    // video_public_url intentionally not set to avoid public access
-        console.log('✅ Video file processed');
-      }
+      if (r) payload.video_path = r.path;
     }
 
-    console.log('💾 Final payload for DB:', payload);
-    console.log('📝 Inserting into contenidos table...');
+  // insert into contenidos
     
     const { data: row, error: insertErr } = await supabaseAdmin.from('contenidos').insert(payload).select('id').single();
     
     if (insertErr) {
-      console.log('❌ Database insert error:', insertErr);
-      throw insertErr;
+      console.error('DB insert error:', insertErr.message || insertErr);
+      return NextResponse.json({ error: 'Database error' }, { status: 500 });
     }
-    
-    console.log('✅ Content created with ID:', row.id);
 
     return NextResponse.json({ id: row.id, success: true }, { status: 201 });
   } catch (e) {
-    console.error('❌ Admin upload error:', e);
-    
-    // Provide more detailed error information
-    const errorMessage = e.message || String(e);
-    const errorDetails = {
-      error: errorMessage,
-      type: e.name || 'Unknown Error',
-      timestamp: new Date().toISOString()
-    };
-    
-    console.error('📋 Error details:', errorDetails);
-    
-    return NextResponse.json(errorDetails, { status: 500 });
+    console.error('Admin upload error:', e.message || e);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

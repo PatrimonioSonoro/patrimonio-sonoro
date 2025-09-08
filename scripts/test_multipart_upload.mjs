@@ -18,7 +18,7 @@ function createTestFiles() {
     fs.mkdirSync(testDir);
   }
 
-  // Audio de prueba (simulado como WAV header + datos) - hasta 40MB permitido
+  // Audio de prueba (simulado como WAV header + datos) - hasta 50MB permitido
   const audioData = Buffer.concat([
     Buffer.from('RIFF', 'ascii'),
     Buffer.alloc(4), // file size

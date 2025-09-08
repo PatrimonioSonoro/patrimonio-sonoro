@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { supabase } from "../../../../lib/supabaseClient";
+import { useMediaUrl } from "../../../../lib/mediaHooks";
 import Link from "next/link";
 import {
   Box,
@@ -23,6 +24,8 @@ import {
   HStack,
   VStack,
   Spinner,
+  Progress,
+  Text,
 } from "@chakra-ui/react";
 import { FiFileText, FiUpload, FiImage, FiVideo, FiTrash2 } from "react-icons/fi";
 
@@ -35,6 +38,7 @@ export default function EditContentPage() {
 
   const [form, setForm] = useState({ title: "", description: "", region: "", status: "draft" });
   const [visibleToUser, setVisibleToUser] = useState(true);
+  const [publiclyVisible, setPubliclyVisible] = useState(false);
   const [row, setRow] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -44,6 +48,11 @@ export default function EditContentPage() {
   const [imageFile, setImageFile] = useState(null);
   const [videoFile, setVideoFile] = useState(null);
   const [progress, setProgress] = useState(0);
+
+  // Get signed URLs for existing media
+  const audioUrl = useMediaUrl(row?.audio_path);
+  const imageUrl = useMediaUrl(row?.image_path);
+  const videoUrl = useMediaUrl(row?.video_path);
 
   useEffect(() => {
     if (!id) return;
@@ -63,7 +72,8 @@ export default function EditContentPage() {
           region: data?.region || "",
           status: data?.status || "draft",
         });
-  setVisibleToUser(data?.visible_to_user ?? true);
+        setVisibleToUser(data?.visible_to_user ?? true);
+        setPubliclyVisible(data?.publicly_visible ?? false);
       } catch (e) {
         setError(e.message || "No se pudo cargar el contenido");
       } finally {
@@ -76,29 +86,103 @@ export default function EditContentPage() {
 
   const handleFile = (e, setFile) => setFile(e.target.files?.[0] || null);
 
-  async function uploadToStorage(file, folder) {
-    if (!file) return null;
-    const ext = file.name.split(".").pop();
-    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
-    const path = `${folder}/${fileName}`;
+  const uploadFilesViaAPI = async (audioFile, imageFile, videoFile) => {
+    const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+    
+    if (sessionError) {
+      throw new Error(`Session error: ${sessionError.message}`);
+    }
+    
+    if (!sessionData?.session?.user) {
+      throw new Error('No user session found. Please log in again.');
+    }
+    
+    const token = sessionData.session.access_token;
+    
+    // If replacing files, delete old ones first
+    const deletePromises = [];
+    if (audioFile && row?.audio_path) {
+      deletePromises.push(deleteFile(row.audio_path, token));
+    }
+    if (imageFile && row?.image_path) {
+      deletePromises.push(deleteFile(row.image_path, token));
+    }
+    if (videoFile && row?.video_path) {
+      deletePromises.push(deleteFile(row.video_path, token));
+    }
+    
+    // Wait for deletions to complete (don't fail if deletion fails)
+    if (deletePromises.length > 0) {
+      await Promise.allSettled(deletePromises);
+    }
+    
+    // Build FormData
+    const formData = new FormData();
+    formData.set('update_mode', 'true'); // Flag to indicate this is an update
+    formData.set('content_id', id); // Content ID for updates
+    
+    if (audioFile) formData.append('audio', audioFile, audioFile.name);
+    if (imageFile) formData.append('image', imageFile, imageFile.name);
+    if (videoFile) formData.append('video', videoFile, videoFile.name);
 
-    setProgress(8);
-    const { data, error } = await supabase.storage.from("contenido").upload(path, file, { cacheControl: "3600", upsert: true });
-    if (error) throw error;
-    setProgress(60);
-    const { data: publicData } = supabase.storage.from("contenido").getPublicUrl(path);
-    const publicUrl = publicData?.publicUrl || null;
-    setProgress(100);
-    setTimeout(() => setProgress(0), 500);
-    return { path, publicUrl };
-  }
+    const response = await fetch('/api/admin/upload', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      },
+      body: formData
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `Upload failed with status ${response.status}`);
+    }
+
+    const result = await response.json();
+    return result;
+  };
+
+  const deleteFile = async (filePath, token) => {
+    try {
+      const response = await fetch('/api/admin/delete-file', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ filePath })
+      });
+      
+      if (!response.ok) {
+        console.warn(`Failed to delete old file: ${filePath}`);
+      }
+    } catch (error) {
+      console.warn(`Error deleting old file: ${filePath}`, error);
+    }
+  };
 
   const validateFile = (file, type) => {
     if (!file) return { ok: true };
+    
     const sizeMB = file.size / (1024 * 1024);
-    if (type === 'audio' && sizeMB > 10) return { ok: false, msg: 'Audio demasiado grande (máx 10MB)' };
+    const fileType = file.type || '';
+    
+    // Size validation
+    if (type === 'audio' && sizeMB > 50) return { ok: false, msg: 'Audio demasiado grande (máx 50MB)' };
     if (type === 'image' && sizeMB > 5) return { ok: false, msg: 'Imagen demasiado grande (máx 5MB)' };
     if (type === 'video' && sizeMB > 50) return { ok: false, msg: 'Video demasiado grande (máx 50MB)' };
+    
+    // MIME type validation
+    if (type === 'audio' && !fileType.startsWith('audio/')) {
+      return { ok: false, msg: 'Formato de audio no válido' };
+    }
+    if (type === 'image' && !fileType.startsWith('image/')) {
+      return { ok: false, msg: 'Formato de imagen no válido' };
+    }
+    if (type === 'video' && !fileType.startsWith('video/')) {
+      return { ok: false, msg: 'Formato de video no válido' };
+    }
+    
     return { ok: true };
   };
 
@@ -108,87 +192,76 @@ export default function EditContentPage() {
     setError("");
 
     try {
-      // ensure bucket exists (server-side)
-      await fetch("/api/admin/ensure-bucket", { method: "POST" });
+      // Validate files first
+      const vAudio = validateFile(audioFile, 'audio');
+      const vImage = validateFile(imageFile, 'image');
+      const vVideo = validateFile(videoFile, 'video');
+      if (!vAudio.ok) throw new Error(vAudio.msg);
+      if (!vImage.ok) throw new Error(vImage.msg);
+      if (!vVideo.ok) throw new Error(vVideo.msg);
 
-  // validate and upload new files first
-  const vAudio = validateFile(audioFile, 'audio');
-  const vImage = validateFile(imageFile, 'image');
-  const vVideo = validateFile(videoFile, 'video');
-  if (!vAudio.ok) throw new Error(vAudio.msg);
-  if (!vImage.ok) throw new Error(vImage.msg);
-  if (!vVideo.ok) throw new Error(vVideo.msg);
-
-  const uploads = {};
-  if (audioFile) uploads.audio = await uploadToStorage(audioFile, "audios");
-  if (imageFile) uploads.image = await uploadToStorage(imageFile, "imagenes");
-  if (videoFile) uploads.video = await uploadToStorage(videoFile, "videos");
-
-      // get user id
+      // Get user id
       const { data: sessionData } = await supabase.auth.getSession();
       const userId = sessionData?.session?.user?.id || null;
 
-      // Build update payload with only existing columns to avoid DB errors
-      const allowed = row ? Object.keys(row) : [];
-      const payload = {};
-      const meta = {
+      // If there are files to upload, use the admin API
+      let uploadResults = null;
+      if (audioFile || imageFile || videoFile) {
+        setProgress(20);
+        uploadResults = await uploadFilesViaAPI(audioFile, imageFile, videoFile);
+        setProgress(80);
+      }
+
+      // Build update payload with metadata
+      const payload = {
         title: form.title || null,
         description: form.description || null,
         region: form.region || null,
         status: form.status || "draft",
+        visible_to_user: visibleToUser,
+        publicly_visible: publiclyVisible,
         updated_by: userId,
-  visible_to_user: visibleToUser,
-      };
-      // copy metadata if column exists
-      for (const k of Object.keys(meta)) if (allowed.includes(k)) payload[k] = meta[k];
-
-      // helper to map upload results into existing columns
-      const mapMedia = (type, result) => {
-        if (!result || !row) return;
-        const candidates = {
-          audio: ["audio_path", "audio_public_url"],
-          image: ["image_path", "image_public_url"],
-          video: ["video_path", "video_public_url"],
-        }[type];
-        for (const col of candidates) {
-          if (allowed.includes(col)) {
-            if (col.includes("public")) payload[col] = result.publicUrl;
-            else payload[col] = result.path;
-            break;
-          }
-        }
       };
 
-      mapMedia("audio", uploads.audio);
-      mapMedia("image", uploads.image);
-      mapMedia("video", uploads.video);
-
-      // if payload empty for meta fields (no columns), still attempt a safe update with minimal fields
-      const hasPayload = Object.keys(payload).length > 0;
-      if (!hasPayload) {
-        // attempt to update known metadata columns fallback
-        const fallback = {
-          title: meta.title,
-          description: meta.description,
-          region: meta.region,
-          status: meta.status,
-          updated_by: meta.updated_by,
-        };
-        const { error: errFallback } = await supabase.from("contenidos").update(fallback).eq("id", id);
-        if (errFallback) throw errFallback;
-      } else {
-        const { error } = await supabase.from("contenidos").update(payload).eq("id", id);
-        if (error) throw error;
+      // Add file paths if uploads were successful
+      if (uploadResults) {
+        if (uploadResults.audio_path) payload.audio_path = uploadResults.audio_path;
+        if (uploadResults.image_path) payload.image_path = uploadResults.image_path;
+        if (uploadResults.video_path) payload.video_path = uploadResults.video_path;
       }
 
-      toast({ title: "Contenido actualizado", status: "success", duration: 3000, isClosable: true });
-      router.replace("/dashboard/contents");
+      // Update the content record
+      const { error } = await supabase.from("contenidos").update(payload).eq("id", id);
+      if (error) throw error;
+
+  setProgress(100);
+
+      toast({ 
+        title: "Contenido actualizado", 
+        description: "Los archivos se han guardado correctamente",
+        status: "success", 
+        duration: 2000, 
+        isClosable: true 
+      });
+
+      // Redirect to view page immediately
+      router.replace(`/dashboard/contents/${id}`);
     } catch (e) {
       console.error(e);
       setError(e.message || "Error al guardar");
-      toast({ title: "Error", description: e.message || "No se pudo actualizar", status: "error", duration: 6000, isClosable: true });
+      toast({ 
+        title: "Error", 
+        description: e.message || "No se pudo actualizar", 
+        status: "error", 
+        duration: 6000, 
+        isClosable: true 
+      });
     } finally {
-      setSaving(false);
+      // keep saving state until redirect completes; mark saving false after a short delay
+      setTimeout(() => {
+        setSaving(false);
+        setProgress(0);
+      }, 300);
     }
   };
 
@@ -251,48 +324,89 @@ export default function EditContentPage() {
                     <option value="archived">Archivado</option>
                   </Select>
                 </FormControl>
+              </Stack>
+
+              <Stack direction={{ base: "column", md: "row" }} spacing={4}>
                 <FormControl>
-                  <FormLabel>Visible a usuarios</FormLabel>
-                  <input type="checkbox" checked={visibleToUser} onChange={(e) => setVisibleToUser(e.target.checked)} />
+                  <FormLabel>Visible a usuarios registrados</FormLabel>
+                  <input 
+                    type="checkbox" 
+                    checked={visibleToUser} 
+                    onChange={(e) => setVisibleToUser(e.target.checked)} 
+                  />
+                </FormControl>
+                <FormControl>
+                  <FormLabel>Visible en página principal (público)</FormLabel>
+                  <input 
+                    type="checkbox" 
+                    checked={publiclyVisible} 
+                    onChange={(e) => setPubliclyVisible(e.target.checked)} 
+                  />
                 </FormControl>
               </Stack>
 
               {/* Media inputs with previews if available */}
               <Stack spacing={3}>
                 <FormControl>
-                  <FormLabel>Archivo de audio (opcional)</FormLabel>
-                  {row && (row.audio_url || row.audio_public_url || row.audio_path || row.audio) ? (
+                  <FormLabel>Archivo de audio (opcional, máx 50MB)</FormLabel>
+                  {row?.audio_path && (
                     <Box mb={2}>
-                      <audio controls src={row.audio_public_url || row.audio_url || row.audio || null} />
+                      {audioUrl.loading && <Spinner size="sm" />}
+                      {audioUrl.error && <Text color="red.500" fontSize="sm">Error cargando audio</Text>}
+                      {audioUrl.url && <audio controls src={audioUrl.url} style={{ width: '100%' }} />}
                     </Box>
-                  ) : null}
+                  )}
                   <Input type="file" accept="audio/*" onChange={(e) => handleFile(e, setAudioFile)} />
+                  {audioFile && <Text fontSize="sm" color="blue.600">Nuevo archivo seleccionado: {audioFile.name}</Text>}
                 </FormControl>
 
                 <FormControl>
                   <FormLabel>Imagen (opcional)</FormLabel>
-                  {row && (row.image_public_url || row.image_url || row.image_path || row.image) ? (
-                    <Image src={row.image_public_url || row.image_url || row.image || null} alt="preview" maxH="200px" objectFit="contain" mb={2} />
-                  ) : null}
+                  {row?.image_path && (
+                    <Box mb={2}>
+                      {imageUrl.loading && <Spinner size="sm" />}
+                      {imageUrl.error && <Text color="red.500" fontSize="sm">Error cargando imagen</Text>}
+                      {imageUrl.url && <Image src={imageUrl.url} alt="preview" maxH="200px" objectFit="contain" />}
+                    </Box>
+                  )}
                   <Input type="file" accept="image/*" onChange={(e) => handleFile(e, setImageFile)} />
+                  {imageFile && <Text fontSize="sm" color="blue.600">Nueva imagen seleccionada: {imageFile.name}</Text>}
                 </FormControl>
 
                 <FormControl>
                   <FormLabel>Video (opcional)</FormLabel>
-                  {row && (row.video_public_url || row.video_url || row.video_path || row.video) ? (
+                  {row?.video_path && (
                     <Box mb={2}>
-                      <video controls src={row.video_public_url || row.video_url || row.video || null} style={{ maxHeight: 240, width: '100%' }} />
+                      {videoUrl.loading && <Spinner size="sm" />}
+                      {videoUrl.error && <Text color="red.500" fontSize="sm">Error cargando video</Text>}
+                      {videoUrl.url && <video controls src={videoUrl.url} style={{ maxHeight: 240, width: '100%' }} />}
                     </Box>
-                  ) : null}
+                  )}
                   <Input type="file" accept="video/*" onChange={(e) => handleFile(e, setVideoFile)} />
+                  {videoFile && <Text fontSize="sm" color="blue.600">Nuevo video seleccionado: {videoFile.name}</Text>}
                 </FormControl>
               </Stack>
 
-              {error && <Box color="red.500">{error}</Box>}
+              {error && <Box color="red.500" p={3} borderRadius="md" bg="red.50">{error}</Box>}
+
+              {progress > 0 && progress < 100 && (
+                <Box>
+                  <Progress value={progress} colorScheme="blue" size="lg" />
+                  <Box textAlign="center" mt={2} fontSize="sm" color="gray.600">
+                    {progress < 30 ? 'Preparando archivos...' : 
+                     progress < 60 ? 'Subiendo archivos...' : 
+                     progress < 90 ? 'Procesando...' : 'Guardando cambios...'}
+                  </Box>
+                </Box>
+              )}
 
               <HStack spacing={3}>
-                <Button type="submit" colorScheme="blue" leftIcon={<FiUpload />} isLoading={saving}>{saving ? 'Guardando...' : 'Guardar'}</Button>
-                <Button colorScheme="red" variant="outline" leftIcon={<FiTrash2 />} onClick={onDelete} isLoading={saving}>Eliminar</Button>
+                <Button type="submit" colorScheme="blue" leftIcon={<FiUpload />} isLoading={saving} disabled={saving}>
+                  {saving ? 'Guardando...' : 'Guardar cambios'}
+                </Button>
+                <Button colorScheme="red" variant="outline" leftIcon={<FiTrash2 />} onClick={onDelete} isLoading={saving} disabled={saving}>
+                  Eliminar
+                </Button>
               </HStack>
             </Stack>
           </Box>

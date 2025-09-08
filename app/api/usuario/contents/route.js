@@ -62,36 +62,35 @@ export async function GET(req) {
     const { data: contents, error: contentsErr } = await query;
     if (contentsErr) return NextResponse.json({ error: contentsErr.message }, { status: 500 });
 
-    // Create admin client for generating public URLs
+    // Create admin client for generating signed URLs (bucket is now private)
     const serviceKey = getServiceRoleKey();
     let adminClient = null;
     if (serviceKey) {
       adminClient = createClient(getSupabaseUrl(), serviceKey, { auth: { persistSession: false } });
     } else {
-      console.warn('SUPABASE_SERVICE_ROLE_KEY not found; public URLs will not be generated.');
+      console.warn('SUPABASE_SERVICE_ROLE_KEY not found; signed URLs will not be generated.');
     }
 
-    // Since the 'Contenido' bucket is public, we can use public URLs directly
-    // No need for signed URLs with a public bucket
-    const enhanced = (contents || []).map((c) => {
+    // Since the 'Contenido' bucket is now private, we need signed URLs for authenticated access
+    const enhanced = await Promise.all((contents || []).map(async (c) => {
       const out = { ...c };
       
-      // Generate public URLs for media paths
+      // Generate signed URLs for media paths (24 hour expiry)
       if (adminClient && c.audio_path && !c.audio_public_url) {
-        const { data: publicData } = adminClient.storage.from('Contenido').getPublicUrl(c.audio_path);
-        if (publicData?.publicUrl) out.audio_public_url = publicData.publicUrl;
+        const { data: signedData, error } = await adminClient.storage.from('Contenido').createSignedUrl(c.audio_path, 86400);
+        if (signedData?.signedUrl && !error) out.audio_public_url = signedData.signedUrl;
       }
       if (adminClient && c.image_path && !c.image_public_url) {
-        const { data: publicData } = adminClient.storage.from('Contenido').getPublicUrl(c.image_path);
-        if (publicData?.publicUrl) out.image_public_url = publicData.publicUrl;
+        const { data: signedData, error } = await adminClient.storage.from('Contenido').createSignedUrl(c.image_path, 86400);
+        if (signedData?.signedUrl && !error) out.image_public_url = signedData.signedUrl;
       }
       if (adminClient && c.video_path && !c.video_public_url) {
-        const { data: publicData } = adminClient.storage.from('Contenido').getPublicUrl(c.video_path);
-        if (publicData?.publicUrl) out.video_public_url = publicData.publicUrl;
+        const { data: signedData, error } = await adminClient.storage.from('Contenido').createSignedUrl(c.video_path, 86400);
+        if (signedData?.signedUrl && !error) out.video_public_url = signedData.signedUrl;
       }
       
       return out;
-    });
+    }));
 
     return NextResponse.json({ contents: enhanced || [] }, { status: 200 });
   } catch (e) {

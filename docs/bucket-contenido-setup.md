@@ -15,12 +15,12 @@ Contenido/
 ### 🔐 Políticas de Storage Configuradas
 
 #### 1. **SELECT (Lectura)**
-- **Política**: "Allow authenticated users to read Contenido bucket"
+- **Política**: "Authenticated users can read Contenido bucket"
 - **Permiso**: Usuarios autenticados pueden leer todos los archivos
 - **Condición**: `bucket_id = 'Contenido' AND auth.role() = 'authenticated'`
 
 #### 2. **INSERT (Subida)**
-- **Política**: "Allow authenticated users to upload to Contenido bucket"
+- **Política**: "Authenticated users can upload to Contenido bucket"
 - **Permiso**: Usuarios autenticados pueden subir archivos
 - **Condición**: `bucket_id = 'Contenido' AND auth.role() = 'authenticated'`
 

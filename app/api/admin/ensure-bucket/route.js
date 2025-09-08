@@ -16,10 +16,15 @@ export async function POST(req) {
     // Check if bucket exists
     const { data: buckets } = await supabaseAdmin.storage.listBuckets();
     const exists = (buckets || []).some(b => b.name === 'Contenido');
+    const fileSizeLimit = 50 * 1024 * 1024; // 50 MB
     if (!exists) {
-      const { data, error } = await supabaseAdmin.storage.createBucket('Contenido', { public: true });
+      const { data, error } = await supabaseAdmin.storage.createBucket('Contenido', { public: false, file_size_limit: fileSizeLimit });
       if (error) throw error;
       return NextResponse.json({ created: true, bucket: data }, { status: 201 });
+    } else {
+  // If bucket exists, do not attempt to modify storage settings here.
+  // Some Supabase projects may reject updateBucket calls and cause 500 errors.
+  // Keeping ensure-bucket idempotent and non-failing avoids blocking uploads.
     }
     return NextResponse.json({ created: false, message: 'Bucket exists' });
   } catch (e) {

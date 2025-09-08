@@ -44,8 +44,9 @@ export async function GET() {
         details: contenidoPolicies.map(p => p.policyname),
       };
     } catch (err) {
+      // Some projects may not expose pg_policies via the client; treat as a warning
       results.checks.policies = {
-        status: 'ERROR', 
+        status: 'WARN',
         error: err.message,
       };
     }
@@ -75,9 +76,10 @@ export async function GET() {
       const testData = Buffer.from('test-health-check');
       const testPath = `health-check/test-${Date.now()}.txt`;
       
+      // Use an allowed MIME type for the test upload (audio) to match bucket restrictions
       const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
         .from('Contenido')
-        .upload(testPath, testData, { upsert: true });
+        .upload(testPath, testData, { upsert: true, contentType: 'audio/mpeg' });
         
       if (uploadError) throw uploadError;
       

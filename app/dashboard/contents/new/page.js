@@ -89,8 +89,8 @@ export default function NewContentPage() {
     const sizeMB = file.size / (1024 * 1024);
     const fileType = file.type || '';
     
-    // Size validation
-    if (type === 'audio' && sizeMB > 40) return { ok: false, msg: 'Audio demasiado grande (máx 40MB)' };
+  // Size validation
+  if (type === 'audio' && sizeMB > 50) return { ok: false, msg: 'Audio demasiado grande (máx 50MB)' };
     if (type === 'image' && sizeMB > 5) return { ok: false, msg: 'Imagen demasiado grande (máx 5MB)' };
     if (type === 'video' && sizeMB > 50) return { ok: false, msg: 'Video demasiado grande (máx 50MB)' };
     
@@ -120,17 +120,8 @@ export default function NewContentPage() {
     try {
       console.log('🚀 Starting content creation process...');
       
-      // ensure bucket exists (server-side uses service role key)
-      console.log('🪣 Ensuring bucket exists...');
-      const bucketRes = await fetch('/api/admin/ensure-bucket', { method: 'POST' });
-      if (!bucketRes.ok) {
-        const bucketError = await bucketRes.text();
-        console.log('❌ Bucket creation failed:', bucketError);
-      } else {
-        console.log('✅ Bucket ready');
-      }
-      
-      setProgress(10);
+  // Note: removed client-side ensure-bucket call — bucket configuration is managed server-side
+  setProgress(10);
 
       // get user session
       console.log('👤 Getting user session...');
@@ -320,7 +311,7 @@ export default function NewContentPage() {
             </SimpleGrid>
 
             <FormControl>
-              <FormLabel>Archivo de audio (máx 40MB)</FormLabel>
+              <FormLabel>Archivo de audio (máx 50MB)</FormLabel>
               <Input type="file" accept="audio/*" onChange={(e) => handleFile(e, setAudioFile)} />
             </FormControl>
 
