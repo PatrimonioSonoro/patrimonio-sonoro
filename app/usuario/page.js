@@ -3,12 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 import { clearAuthStorage } from '../../lib/authUtils';
+import { addPublicUrlsToContents } from '../../lib/supabasePublic';
 
 /**
- * Nuevo diseño de la página de usuario
+ * Página de usuario con URLs públicas directas
  * - 3 secciones: Imágenes, Videos, Audios
  * - Obtiene contenidos desde /api/usuario/contents
- * - Solicita signed URLs para paths que lo necesiten
+ * - Usa URLs públicas directas (no más signed URLs)
  * - Renderiza media con controles adecuados
  */
 
@@ -41,47 +42,22 @@ export default function UsuarioPage() {
         const json = await res.json();
         const contents = json.contents || [];
 
-        // collect paths that need signed urls
-        const paths = [];
-        contents.forEach(c => {
-          if (c.image_path) paths.push(c.image_path);
-          if (c.video_path) paths.push(c.video_path);
-          if (c.audio_path) paths.push(c.audio_path);
-        });
+        // Add public URLs directly - no more signed URLs needed!
+        const contentsWithUrls = addPublicUrlsToContents(contents);
 
-        let urls = {};
-        if (paths.length) {
-          try {
-            const su = await fetch('/api/usuario/signed-urls', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-              body: JSON.stringify({ paths, expires: 3600 }),
-            });
-            if (su.ok) {
-              const suJson = await su.json();
-              urls = suJson.urls || {};
-            }
-          } catch (e) {
-            console.warn('No se obtuvieron signed urls', e);
-          }
-        }
-
-        // Build grouped lists with resolved src
+        // Build grouped lists
         const imgs = [];
         const vids = [];
         const auds = [];
 
-        const publicBase = (process.env.NEXT_PUBLIC_SUPABASE_URL || (typeof window !== 'undefined' && window.location.origin) || '').replace(/\/$/, '');
-  const buildPublic = (path) => path ? `${publicBase}/storage/v1/object/public/Contenido/${encodeURI(path)}` : null;
-
-        contents.forEach(c => {
+        contentsWithUrls.forEach(c => {
           const item = {
             id: c.id,
             title: c.title,
             description: c.description,
-            image: c.image_public_url || urls[c.image_path] || buildPublic(c.image_path) || null,
-            video: c.video_public_url || urls[c.video_path] || buildPublic(c.video_path) || null,
-            audio: c.audio_public_url || urls[c.audio_path] || buildPublic(c.audio_path) || null,
+            image: c.image_url,
+            video: c.video_url,
+            audio: c.audio_url,
             raw: c,
           };
 

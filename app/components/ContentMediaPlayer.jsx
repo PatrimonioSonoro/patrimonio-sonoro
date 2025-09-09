@@ -1,82 +1,20 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useMemo } from 'react';
+import { getPublicUrl } from '../../lib/supabasePublic';
 
 export default function ContentMediaPlayer({ content }) {
-  const [mediaUrls, setMediaUrls] = useState({
-    image_url: content.image_url,
-    audio_url: content.audio_url,
-    video_url: content.video_url
-  });
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    // Debug logging
-    console.log('ContentMediaPlayer content:', content);
-    console.log('Current mediaUrls:', mediaUrls);
-    
-    // Always try to fetch URLs client-side if we have paths
-    // This ensures we get fresh signed URLs even if server-side failed
-    const needsUrls = content.image_path || content.audio_path || content.video_path;
-
-    console.log('needsUrls:', needsUrls);
-
-    if (needsUrls) {
-      console.log('Fetching media URLs for paths...');
-      fetchMediaUrls();
-    }
+  // Generate public URLs from paths if URLs are not provided
+  const mediaUrls = useMemo(() => {
+    return {
+      image_url: content.image_url || getPublicUrl(content.image_path),
+      audio_url: content.audio_url || getPublicUrl(content.audio_path),
+      video_url: content.video_url || getPublicUrl(content.video_path)
+    };
   }, [content]);
-
-  const fetchMediaUrls = async () => {
-    setLoading(true);
-    try {
-      const paths = [];
-      if (content.image_path) paths.push(content.image_path);
-      if (content.audio_path) paths.push(content.audio_path);
-      if (content.video_path) paths.push(content.video_path);
-
-      console.log('Fetching URLs for paths:', paths);
-
-      if (paths.length > 0) {
-        const response = await fetch('/api/public/signed-urls', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ paths, expires: 3600 })
-        });
-
-        console.log('API response status:', response.status);
-
-        if (response.ok) {
-          const data = await response.json();
-          console.log('API response data:', data);
-          
-          const { urls } = data;
-          setMediaUrls(prev => ({
-            ...prev,
-            image_url: urls[content.image_path] || prev.image_url,
-            audio_url: urls[content.audio_path] || prev.audio_url,
-            video_url: urls[content.video_path] || prev.video_url
-          }));
-        } else {
-          const errorText = await response.text();
-          console.error('API error:', response.status, errorText);
-        }
-      }
-    } catch (error) {
-      console.error('Failed to fetch media URLs:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden relative">
-      {loading && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-100">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-500"></div>
-        </div>
-      )}
-      
       {mediaUrls.image_url && (
         <img 
           src={mediaUrls.image_url} 
@@ -107,7 +45,7 @@ export default function ContentMediaPlayer({ content }) {
         </div>
       )}
       
-      {!mediaUrls.image_url && !mediaUrls.video_url && !mediaUrls.audio_url && !loading && (
+      {!mediaUrls.image_url && !mediaUrls.video_url && !mediaUrls.audio_url && (
         <div className="w-full h-full flex items-center justify-center bg-gray-100 text-gray-500">
           Sin contenido multimedia
         </div>

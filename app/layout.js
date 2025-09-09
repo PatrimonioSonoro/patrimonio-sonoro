@@ -17,9 +17,12 @@ export const metadata = {
   title: "Patrimonio Sonoro - AudioBrand",
   description: "Plataforma para explorar y preservar paisajes sonoros de Colombia",
   icons: {
-  icon: '/favicon.ico',
-  shortcut: '/images/logo_sin_letra_transparente.png',
-  apple: '/images/logo_sin_letra_transparente.png',
+    icon: [
+      { url: '/favicon.ico', sizes: 'any' },
+      { url: '/images/logo_sin_letra_transparente.png', type: 'image/png' }
+    ],
+    shortcut: '/images/logo_sin_letra_transparente.png',
+    apple: '/images/logo_sin_letra_transparente.png',
   },
 };
 

@@ -5,70 +5,27 @@ import NavClient from "./components/NavClient";
 import HeroClient from "./components/HeroClient";
 import ContentMediaPlayer from "./components/ContentMediaPlayer";
 import { createClient } from '@supabase/supabase-js';
-import { supabaseAdmin } from '../lib/supabaseServer';
+import { addPublicUrlsToContents } from '../lib/supabasePublic';
 
 async function fetchPublicContents() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!supabaseUrl || !anonKey) return [];
+  
   const sb = createClient(supabaseUrl, anonKey, { auth: { persistSession: false } });
-  // Only fetch metadata and storage paths. We'll generate short-lived signed URLs server-side
+  
+  // Fetch metadata and storage paths
   const { data, error } = await sb.from('contenidos')
     .select('id,title,description,region,created_at,image_path,video_path,audio_path')
     .eq('status','published')
     .eq('publicly_visible', true)
     .order('created_at', { ascending: false })
     .limit(9);
+    
   if (error || !data) return [];
 
-  // For each content, if it has a storage path, generate a signed URL (short lived)
-  const results = await Promise.all(data.map(async (c) => {
-    const out = { ...c };
-    
-    try {
-      // Try to generate signed URLs using admin client if available
-      if (supabaseAdmin) {
-        // Use admin client for signed URLs
-        if (c.image_path) {
-          const { data: imgData, error: imgErr } = await supabaseAdmin.storage.from('Contenido').createSignedUrl(c.image_path, 3600);
-          out.image_url = imgErr || !imgData?.signedUrl ? null : imgData.signedUrl;
-        }
-        if (c.audio_path) {
-          const { data: audioData, error: audioErr } = await supabaseAdmin.storage.from('Contenido').createSignedUrl(c.audio_path, 3600);
-          out.audio_url = audioErr || !audioData?.signedUrl ? null : audioData.signedUrl;
-        }
-        if (c.video_path) {
-          const { data: vidData, error: vidErr } = await supabaseAdmin.storage.from('Contenido').createSignedUrl(c.video_path, 3600);
-          out.video_url = vidErr || !vidData?.signedUrl ? null : vidData.signedUrl;
-        }
-      } else {
-        // Fallback: try to generate signed URLs using anonymous client
-        // This will work if the bucket policies allow public access for these specific files
-        try {
-          if (c.image_path) {
-            const { data: imgData, error: imgErr } = await sb.storage.from('Contenido').createSignedUrl(c.image_path, 3600);
-            out.image_url = imgErr || !imgData?.signedUrl ? null : imgData.signedUrl;
-          }
-          if (c.audio_path) {
-            const { data: audioData, error: audioErr } = await sb.storage.from('Contenido').createSignedUrl(c.audio_path, 3600);
-            out.audio_url = audioErr || !audioData?.signedUrl ? null : audioData.signedUrl;
-          }
-          if (c.video_path) {
-            const { data: vidData, error: vidErr } = await sb.storage.from('Contenido').createSignedUrl(c.video_path, 3600);
-            out.video_url = vidErr || !vidData?.signedUrl ? null : vidData.signedUrl;
-          }
-        } catch (fallbackError) {
-          console.warn('Failed to generate fallback signed URLs:', fallbackError);
-        }
-      }
-    } catch (e) {
-      // ignore and leave urls null
-      console.warn('Error generating signed URLs:', e);
-    }
-    return out;
-  }));
-
-  return results;
+  // Add public URLs directly - no more complex signed URL logic needed!
+  return addPublicUrlsToContents(data);
 }
 
 // Página principal migrada (server component)
