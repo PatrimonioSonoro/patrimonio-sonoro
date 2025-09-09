@@ -1,4 +1,6 @@
 // Homepage migrated from legacy static site (code_sitio_web/index.html)
+// Force dynamic rendering to fetch fresh content
+export const dynamic = 'force-dynamic';
 
 import SoundMap from "./components/SoundMap";
 import NavClient from "./components/NavClient";
@@ -9,7 +11,10 @@ import { createClient } from '@supabase/supabase-js';
 async function fetchPublicContents() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-  if (!supabaseUrl || !anonKey) return [];
+  if (!supabaseUrl || !anonKey) {
+    console.error('Missing environment variables:', { supabaseUrl: !!supabaseUrl, anonKey: !!anonKey });
+    return [];
+  }
   
   const sb = createClient(supabaseUrl, anonKey, { auth: { persistSession: false } });
   
@@ -20,20 +25,29 @@ async function fetchPublicContents() {
     .order('created_at', { ascending: false })
     .limit(9);
     
-  if (error || !data) return [];
+  console.log('Supabase query result:', { data: data?.length || 0, error: error?.message || null });
+    
+  if (error || !data) {
+    console.error('Query failed:', error);
+    return [];
+  }
 
   // No need to process URLs - they're already public URLs in the database
-  return data.map(content => ({
+  const result = data.map(content => ({
     ...content,
     image_url: content.image_public_url,
     audio_url: content.audio_public_url,
     video_url: content.video_public_url
   }));
+  
+  console.log('Final mapped content:', result.length);
+  return result;
 }
 
 // Página principal migrada (server component)
 export default async function Page() {
   const contents = await fetchPublicContents();
+  console.log('Page component received contents:', contents.length);
 
   return (
     <main>
