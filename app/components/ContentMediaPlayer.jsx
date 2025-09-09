@@ -1,31 +1,18 @@
 'use client';
 
-import { useState, useMemo } from 'react';
-import { getPublicUrl } from '../../lib/supabasePublic';
+import { useState } from 'react';
 
 export default function ContentMediaPlayer({ content }) {
   const [imageError, setImageError] = useState(false);
   const [videoError, setVideoError] = useState(false);
   const [audioError, setAudioError] = useState(false);
 
-  // Generate public URLs from paths if URLs are not provided
-  const mediaUrls = useMemo(() => {
-    const urls = {
-      image_url: content.image_url || getPublicUrl(content.image_path),
-      audio_url: content.audio_url || getPublicUrl(content.audio_path),
-      video_url: content.video_url || getPublicUrl(content.video_path)
-    };
-    
-    // Debug logging
-    console.log('ContentMediaPlayer URLs:', urls);
-    console.log('Original content paths:', {
-      image_path: content.image_path,
-      audio_path: content.audio_path,
-      video_path: content.video_path
-    });
-    
-    return urls;
-  }, [content]);
+  // Use URLs directly from content (they're already public URLs from database)
+  const mediaUrls = {
+    image_url: content.image_url,
+    audio_url: content.audio_url,
+    video_url: content.video_url
+  };
 
   const handleImageError = () => {
     console.error('Error loading image:', mediaUrls.image_url);

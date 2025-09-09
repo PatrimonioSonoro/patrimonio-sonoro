@@ -5,7 +5,6 @@ import NavClient from "./components/NavClient";
 import HeroClient from "./components/HeroClient";
 import ContentMediaPlayer from "./components/ContentMediaPlayer";
 import { createClient } from '@supabase/supabase-js';
-import { addPublicUrlsToContents } from '../lib/supabasePublic';
 
 async function fetchPublicContents() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -14,18 +13,22 @@ async function fetchPublicContents() {
   
   const sb = createClient(supabaseUrl, anonKey, { auth: { persistSession: false } });
   
-  // Fetch metadata and storage paths
+  // Fetch contenidos with public URLs directly from database
   const { data, error } = await sb.from('contenidos')
-    .select('id,title,description,region,created_at,image_path,video_path,audio_path')
+    .select('id,title,description,region,created_at,image_public_url,video_public_url,audio_public_url')
     .eq('status','published')
-    .eq('publicly_visible', true)
     .order('created_at', { ascending: false })
     .limit(9);
     
   if (error || !data) return [];
 
-  // Add public URLs directly - no more complex signed URL logic needed!
-  return addPublicUrlsToContents(data);
+  // No need to process URLs - they're already public URLs in the database
+  return data.map(content => ({
+    ...content,
+    image_url: content.image_public_url,
+    audio_url: content.audio_public_url,
+    video_url: content.video_public_url
+  }));
 }
 
 // Página principal migrada (server component)

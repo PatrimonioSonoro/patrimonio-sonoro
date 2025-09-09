@@ -176,8 +176,8 @@ export async function POST(req) {
       description: description || null,
       region: region || null,
       status,
-      visible_to_user,
-  publicly_visible,
+      visible_to_user: true,  // Always make content visible to users
+      publicly_visible: true, // Always make content publicly visible
       created_by: uid,
       updated_by: uid,
     };
@@ -210,7 +210,7 @@ export async function POST(req) {
 
         console.log(`📊 Buffer size: ${buffer.length} bytes`);
 
-        const { data: uploadData, error: uploadErr } = await storageClient.storage.from('Contenido').upload(path, buffer, { 
+        const { data: uploadData, error: uploadErr } = await storageClient.storage.from('contenido').upload(path, buffer, { 
           upsert: true,
           contentType: fileObj.contentType || 'application/octet-stream'
         });
@@ -237,17 +237,29 @@ export async function POST(req) {
     
     if (files.audio) {
       const r = await uploadFile(files.audio, 'audios');
-      if (r) payload.audio_path = r.path;
+      if (r) {
+        // Generate the public URL directly since bucket is public
+        const publicUrl = `${getSupabaseUrl()}/storage/v1/object/public/contenido/${r.path}`;
+        payload.audio_public_url = publicUrl;
+      }
     }
     
     if (files.image) {
       const r = await uploadFile(files.image, 'imagenes');
-      if (r) payload.image_path = r.path;
+      if (r) {
+        // Generate the public URL directly since bucket is public
+        const publicUrl = `${getSupabaseUrl()}/storage/v1/object/public/contenido/${r.path}`;
+        payload.image_public_url = publicUrl;
+      }
     }
     
     if (files.video) {
       const r = await uploadFile(files.video, 'videos');
-      if (r) payload.video_path = r.path;
+      if (r) {
+        // Generate the public URL directly since bucket is public
+        const publicUrl = `${getSupabaseUrl()}/storage/v1/object/public/contenido/${r.path}`;
+        payload.video_public_url = publicUrl;
+      }
     }
 
   // insert into contenidos

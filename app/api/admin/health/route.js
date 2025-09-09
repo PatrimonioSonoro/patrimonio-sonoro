@@ -38,10 +38,10 @@ export async function GET() {
       const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
       if (bucketsError) throw bucketsError;
       
-      const contenidoBucket = buckets.find(b => b.name === 'Contenido');
+      const contenidoBucket = buckets.find(b => b.name === 'contenido');
       results.checks.bucket = {
         status: contenidoBucket ? 'OK' : 'MISSING',
-        details: contenidoBucket || 'Bucket Contenido not found',
+        details: contenidoBucket || 'Bucket contenido not found',
       };
     } catch (err) {
       results.checks.bucket = {
@@ -60,7 +60,7 @@ export async function GET() {
         
       if (policiesError) throw policiesError;
       
-      const contenidoPolicies = policies.filter(p => p.qual?.includes('Contenido'));
+      const contenidoPolicies = policies.filter(p => p.qual?.includes('contenido'));
       results.checks.policies = {
         status: contenidoPolicies.length > 0 ? 'OK' : 'MISSING',
         count: contenidoPolicies.length,
@@ -101,13 +101,13 @@ export async function GET() {
       
       // Use an allowed MIME type for the test upload (audio) to match bucket restrictions
       const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('Contenido')
+        .from('contenido')
         .upload(testPath, testData, { upsert: true, contentType: 'audio/mpeg' });
         
       if (uploadError) throw uploadError;
       
       // Clean up test file
-      await supabase.storage.from('Contenido').remove([testPath]);
+      await supabase.storage.from('contenido').remove([testPath]);
       
       results.checks.upload = {
         status: 'OK',

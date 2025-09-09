@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabaseClient';
 import { useRouter } from 'next/navigation';
 import { clearAuthStorage } from '../../lib/authUtils';
-import { addPublicUrlsToContents } from '../../lib/supabasePublic';
 
 /**
  * Página de usuario con URLs públicas directas
@@ -42,8 +41,8 @@ export default function UsuarioPage() {
         const json = await res.json();
         const contents = json.contents || [];
 
-        // Add public URLs directly - no more signed URLs needed!
-        const contentsWithUrls = addPublicUrlsToContents(contents);
+        // URLs are already public URLs from database
+        const contentsWithUrls = contents;
 
         // Build grouped lists
         const imgs = [];
@@ -55,9 +54,9 @@ export default function UsuarioPage() {
             id: c.id,
             title: c.title,
             description: c.description,
-            image: c.image_url,
-            video: c.video_url,
-            audio: c.audio_url,
+            image: c.image_public_url,
+            video: c.video_public_url,
+            audio: c.audio_public_url,
             raw: c,
           };
 
