@@ -4,8 +4,9 @@ export const dynamic = 'force-dynamic';
 
 import SoundMap from "./components/SoundMap";
 import NavClient from "./components/NavClient";
-import HeroClient from "./components/HeroClient";
+import HeroCarousel from "./components/HeroCarousel";
 import ContentMediaPlayer from "./components/ContentMediaPlayer";
+import ExploreSection from "./components/ExploreSection";
 import { createClient } from '@supabase/supabase-js';
 
 async function fetchPublicContents() {
@@ -54,8 +55,8 @@ export default async function Page() {
       {/* Navegación superior (client) */}
       <NavClient />
 
-      {/* Héroe (client) */}
-      <HeroClient />
+  {/* Héroe: carrusel de contenedores (client) */}
+  <HeroCarousel />
 
       {/* ¿Qué es? */}
       <section id="que-es" className="py-20 bg-white">
@@ -109,46 +110,7 @@ export default async function Page() {
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-6">Explora los Sonidos</h2>
           <p className="text-xl text-center text-gray-600 mb-12">Descubre la riqueza sonora de Colombia</p>
 
-          {/* Filtros placeholder */}
-          <div className="search-filters mb-12">
-            <input type="text" placeholder="Buscar sonidos..." className="search-input" />
-            <select className="filter-select">
-              <option value="">Todas las regiones</option>
-              <option value="amazonia">Amazonía</option>
-              <option value="andina">Andina</option>
-              <option value="caribe">Caribe</option>
-              <option value="insular">Insular</option>
-              <option value="pacifico">Pacífico</option>
-            </select>
-            <select className="filter-select">
-              <option value="">Todas las campañas</option>
-              <option value="campesena">CampeSENA</option>
-              <option value="formacion">Formación</option>
-              <option value="sena-al-aire">SENA al Aire</option>
-            </select>
-          </div>
-
-          {/* Render public contents */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {contents.length === 0 ? (
-              <div className="text-gray-600">No hay contenidos públicos disponibles.</div>
-            ) : (
-              contents.map((c) => (
-                <div key={c.id} className="sound-card-modern">
-                  <div className="sound-card-content">
-                    <div className="sound-card-meta">
-                      <span className="region-badge">{c.region || 'General'}</span>
-                    </div>
-                    <h3 className="sound-title">{c.title}</h3>
-                    <p className="sound-description">{c.description}</p>
-                    <div className="mt-3">
-                      <ContentMediaPlayer content={c} />
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
+          <ExploreSection contents={contents} />
         </div>
       </section>
 
