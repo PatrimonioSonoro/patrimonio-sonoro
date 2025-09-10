@@ -18,24 +18,22 @@ export const metadata = {
   description: "Plataforma para explorar y preservar paisajes sonoros de Colombia",
   icons: {
     icon: [
-      { url: '/favicon.ico', sizes: 'any' },
-      { url: '/images/logo_sin_letra_transparente.png', type: 'image/png' }
+      { url: '/images/favicon-sound.svg', type: 'image/svg+xml', sizes: 'any' }
     ],
-    shortcut: '/images/logo_sin_letra_transparente.png',
-    apple: '/images/logo_sin_letra_transparente.png',
+    shortcut: '/images/favicon-sound.svg',
+    apple: '/images/favicon-sound.svg',
   },
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="es">
-      <head>
-  {/* Prefer legacy favicon.ico for broadest support, PNG links remain as fallback */}
-  <link rel="icon" href="/favicon.ico" />
-  <link rel="icon" href="/images/logo_sin_letra_transparente.png" sizes="any" />
-  <link rel="shortcut icon" href="/images/logo_sin_letra_transparente.png" />
-  <link rel="apple-touch-icon" href="/images/logo_sin_letra_transparente.png" />
-      </head>
+    <head>
+  {/* Favicon de música: muestra el icono de /images/favicon-sound.svg */}
+  <link rel="icon" href="/images/favicon-sound.svg" sizes="any" />
+  <link rel="shortcut icon" href="/images/favicon-sound.svg" />
+  <link rel="apple-touch-icon" href="/images/favicon-sound.svg" />
+    </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning={true}
