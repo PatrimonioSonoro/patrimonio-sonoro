@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "./styles.css";
 import AuthProvider from "./components/AuthProvider";
+import SocialFloat from "./components/SocialFloat";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,7 +39,16 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning={true}
       >
-        <AuthProvider>{children}</AuthProvider>
+        <AuthProvider>
+          {/* Puedes pasar los links aquí o editarlos directamente en el componente */}
+          <SocialFloat links={{
+            instagram: 'https://www.instagram.com/patrimoniosonoro?igsh=MTJyYjdpc2NtczUzYQ==',
+            facebook: 'https://www.facebook.com/share/1AYW6Q5TJu/',
+            youtube: 'https://youtube.com/@patrimoniosonoro_audiobrand?si=buRBdvYKubfOsq-p',
+            tiktok: 'https://www.tiktok.com/@patrimonio.sonoro?_t=ZS-8zaNfJhRgoK&_r=1'
+          }} />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
