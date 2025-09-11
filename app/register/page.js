@@ -73,7 +73,7 @@ export default function RegisterPage() {
           <label>Confirmar contraseña</label>
           <input value={confirm} onChange={(e) => setConfirm(e.target.value)} type="password" required style={{ width: '100%', padding: 8 }} />
         </div>
-        <button disabled={loading} type="submit" style={{ padding: '10px 14px' }}>{loading ? 'Registrando...' : 'Registrar'}</button>
+  <button disabled={loading} type="submit" className="campaign-cta" style={{ padding: '10px 14px' }}>{loading ? 'Registrando...' : 'Registrar'}</button>
       </form>
     </div>
   );

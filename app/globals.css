@@ -270,3 +270,61 @@ html, body {
   transform: translateY(-2px);
   box-shadow: 0 8px 25px rgba(0, 184, 169, 0.3);
 }
+
+/* Campaign CTA button: base + hover color + smooth transition */
+.campaign-cta {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border-radius: 9999px; /* rounded-full */
+  background-color: #00B8A9; /* turquesaAudioBrand */
+  color: #ffffff;
+  text-decoration: none;
+  transition: background-color 200ms ease, color 200ms ease, transform 200ms ease, box-shadow 200ms ease;
+  cursor: pointer;
+}
+.campaign-cta:hover {
+  background-color: #1E3A8A; /* azul más oscuro (blue-800) */
+  color: #ffffff;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+}
+
+/* Floating social icons */
+.social-float {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  align-items: center;
+}
+
+.social-cta {
+  width: 44px;
+  height: 44px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+  transition: background-color 160ms ease, transform 160ms ease, box-shadow 160ms ease;
+  text-decoration: none;
+  color: inherit;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.social-cta:hover {
+  background-color: #00B8A9; /* turquesaAudioBrand (color claro de la página) */
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.18);
+}
+
+.social-cta img {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}

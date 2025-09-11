@@ -118,7 +118,7 @@ export default function AuthModalButton() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="bg-turquesaAudioBrand hover:bg-opacity-90 text-white px-4 py-2 rounded-full text-sm font-medium transition-all"
+        className="campaign-cta"
       >
         Iniciar sesión
       </button>
@@ -170,7 +170,7 @@ export default function AuthModalButton() {
                 <span />
                 <a href="#" onClick={onForgotPassword} className="text-turquesaAudioBrand">¿Olvidaste tu contraseña?</a>
               </div>
-              <button type="submit" disabled={loading} className="w-full bg-turquesaAudioBrand text-white font-semibold py-3 rounded-lg">
+              <button type="submit" disabled={loading} className="campaign-cta" style={{ width: '100%' }}>
                 {loading ? "Ingresando..." : "Iniciar sesión"}
               </button>
             </form>
@@ -221,7 +221,7 @@ export default function AuthModalButton() {
                   required
                 />
               </div>
-              <button type="submit" disabled={loading} className="w-full bg-turquesaAudioBrand text-white font-semibold py-3 rounded-lg">
+              <button type="submit" disabled={loading} className="campaign-cta" style={{ width: '100%' }}>
                 {loading ? "Registrando..." : "Registrarse"}
               </button>
             </form>

@@ -4,7 +4,8 @@ import React, { useMemo, useState } from 'react';
 import ContentMediaPlayer from './ContentMediaPlayer';
 
 export default function ExploreSection({ contents = [] }) {
-  const [category, setCategory] = useState('all');
+  // Inicializamos en 'audio' para mostrar Audios por defecto
+  const [category, setCategory] = useState('audio');
 
   const filtered = useMemo(() => {
     if (category === 'all') return contents;
@@ -17,8 +18,7 @@ export default function ExploreSection({ contents = [] }) {
   return (
     <div>
       <div className="flex items-center justify-center gap-3 mb-6">
-        <button onClick={() => setCategory('all')} className={`px-4 py-2 rounded-full ${category==='all'? 'bg-turquesaAudioBrand text-white' : 'bg-white text-gray-700 shadow-sm'}`}>Todos</button>
-        <button onClick={() => setCategory('audio')} className={`px-4 py-2 rounded-full ${category==='audio'? 'bg-turquesaAudioBrand text-white' : 'bg-white text-gray-700 shadow-sm'}`}>Audios</button>
+  <button onClick={() => setCategory('audio')} className={`px-4 py-2 rounded-full ${category==='audio'? 'bg-turquesaAudioBrand text-white' : 'bg-white text-gray-700 shadow-sm'}`}>Audios</button>
         <button onClick={() => setCategory('video')} className={`px-4 py-2 rounded-full ${category==='video'? 'bg-turquesaAudioBrand text-white' : 'bg-white text-gray-700 shadow-sm'}`}>Videos</button>
         <button onClick={() => setCategory('image')} className={`px-4 py-2 rounded-full ${category==='image'? 'bg-turquesaAudioBrand text-white' : 'bg-white text-gray-700 shadow-sm'}`}>Imágenes</button>
       </div>

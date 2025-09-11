@@ -54,7 +54,7 @@ export default function NavClient() {
           <div className="hidden md:flex items-center space-x-6">
             <a href="#inicio" className="px-3 py-2 text-sm font-bold text-azulInstitucional nav-link-hover">Inicio</a>
             <a href="#que-es" className="px-3 py-2 text-sm font-bold text-azulInstitucional nav-link-hover">¿Qué es?</a>
-            <a href="#explora" className="px-3 py-2 text-sm font-bold text-azulInstitucional nav-link-hover">Explora</a>
+            <a href="#campanas" className="px-3 py-2 text-sm font-bold text-azulInstitucional nav-link-hover">Explora</a>
             <a href="#mapa-sonoro" className="px-3 py-2 text-sm font-bold text-azulInstitucional nav-link-hover">Mapa Sonoro</a>
             <a href="#nosotros" className="px-3 py-2 text-sm font-bold text-azulInstitucional nav-link-hover">Nosotros</a>
           </div>
@@ -118,7 +118,7 @@ export default function NavClient() {
         <div className="px-4 py-4 space-y-3">
           <a href="#inicio" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors">Inicio</a>
           <a href="#que-es" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors">¿Qué es?</a>
-          <a href="#explora" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors">Explora</a>
+          <a href="#campanas" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors">Explora</a>
           <a href="#mapa-sonoro" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors">Mapa Sonoro</a>
           <a href="#nosotros" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors">Nosotros</a>
         </div>

@@ -1,11 +1,14 @@
+
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 export default function ContentMediaPlayer({ content }) {
   const [imageError, setImageError] = useState(false);
   const [videoError, setVideoError] = useState(false);
   const [audioError, setAudioError] = useState(false);
+  const [isPortrait, setIsPortrait] = useState(false);
+  const videoRef = useRef(null);
 
   // Use URLs directly from content (they're already public URLs from database)
   const mediaUrls = {
@@ -30,8 +33,9 @@ export default function ContentMediaPlayer({ content }) {
   };
 
   return (
-    <div className="aspect-video bg-gray-200 rounded-lg overflow-hidden relative">
-      {mediaUrls.image_url && !imageError && (
+    <div className="bg-gray-200 rounded-lg overflow-hidden relative">
+      {/* Show image only when there is no video (video uses poster) */}
+      {mediaUrls.image_url && !imageError && !mediaUrls.video_url && (
         <img 
           src={mediaUrls.image_url} 
           alt={content.title} 
@@ -39,17 +43,44 @@ export default function ContentMediaPlayer({ content }) {
           onError={handleImageError}
         />
       )}
-      
+
       {mediaUrls.video_url && !videoError && (
-        <video 
-          controls 
-          className="w-full h-full"
-          poster={mediaUrls.image_url}
-          onError={handleVideoError}
-        >
-          <source src={mediaUrls.video_url} type="video/mp4" />
-          Tu navegador no soporta video HTML5.
-        </video>
+        // If the video is portrait we center it inside a fixed-height container so it displays correctly
+        isPortrait ? (
+          <div className="w-full h-96 bg-black flex items-center justify-center">
+            <video
+              ref={videoRef}
+              controls
+              className="max-h-full w-auto"
+              poster={mediaUrls.image_url}
+              onLoadedMetadata={(e) => {
+                const v = e.target;
+                setIsPortrait(v.videoHeight > v.videoWidth);
+              }}
+              onError={handleVideoError}
+            >
+              <source src={mediaUrls.video_url} type="video/mp4" />
+              Tu navegador no soporta video HTML5.
+            </video>
+          </div>
+        ) : (
+          <div className="aspect-video w-full bg-black">
+            <video 
+              ref={videoRef}
+              controls 
+              className="w-full h-full object-cover"
+              poster={mediaUrls.image_url}
+              onLoadedMetadata={(e) => {
+                const v = e.target;
+                setIsPortrait(v.videoHeight > v.videoWidth);
+              }}
+              onError={handleVideoError}
+            >
+              <source src={mediaUrls.video_url} type="video/mp4" />
+              Tu navegador no soporta video HTML5.
+            </video>
+          </div>
+        )
       )}
       
       {mediaUrls.audio_url && !mediaUrls.video_url && !audioError && (

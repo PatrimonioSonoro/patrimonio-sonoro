@@ -65,7 +65,7 @@ export default function LoginPage() {
           <label>Contraseña</label>
           <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required style={{ width: '100%', padding: 8 }} />
         </div>
-        <button disabled={loading} type="submit" style={{ padding: '10px 14px' }}>{loading ? 'Entrando...' : 'Entrar'}</button>
+  <button disabled={loading} type="submit" className="campaign-cta" style={{ padding: '10px 14px' }}>{loading ? 'Entrando...' : 'Entrar'}</button>
       </form>
       <div style={{ marginTop: 12 }}>
         <button onClick={async () => {

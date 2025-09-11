@@ -9,41 +9,13 @@ export default function SocialFloat({ links = {} }) {
     tiktok = ''
   } = links
 
-  const iconClass = {
-    container: {
-      position: 'fixed',
-      bottom: '1rem',
-      right: '1rem',
-      zIndex: 9999,
-  display: 'flex',
-  flexDirection: 'column',
-      gap: '0.6rem',
-      alignItems: 'center'
-    },
-    button: {
-      width: '44px',
-      height: '44px',
-      borderRadius: '8px',
-      background: 'rgba(255,255,255,0.95)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.12)',
-      transition: 'transform 120ms ease, box-shadow 120ms ease',
-      textDecoration: 'none',
-      color: 'inherit'
-    },
-    icon: {
-      width: '22px',
-      height: '22px'
-    }
-  }
+  // Usamos clases CSS en globals.css para manejar estilos y hover
 
   const renderLink = (href, title, svg) => {
     // Si href está vacío, devolvemos un elemento no-clickable para mantener el espacio
     if (!href) {
       return (
-        <div title={title} style={iconClass.button} aria-hidden>
+        <div title={title} className="social-cta" aria-hidden>
           {svg}
         </div>
       )
@@ -53,7 +25,7 @@ export default function SocialFloat({ links = {} }) {
       <a
         href={href}
         title={title}
-        style={iconClass.button}
+        className="social-cta"
         target="_blank"
         rel="noopener noreferrer"
       >
@@ -63,13 +35,13 @@ export default function SocialFloat({ links = {} }) {
   }
 
   const imgStyle = {
-    width: iconClass.icon.width,
-    height: iconClass.icon.height,
+    width: 22,
+    height: 22,
     objectFit: 'contain'
   }
 
   return (
-    <div style={iconClass.container} aria-label="social-floating">
+  <div className="social-float" aria-label="social-floating">
       {renderLink(
         instagram,
         'Instagram',
