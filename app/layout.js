@@ -19,10 +19,10 @@ export const metadata = {
   description: "Plataforma para explorar y preservar paisajes sonoros de Colombia",
   icons: {
     icon: [
-      { url: '/images/favicon-sound.svg', type: 'image/svg+xml', sizes: 'any' }
+      { url: '/iconos/icono.jpg', type: 'image/jpeg', sizes: 'any' }
     ],
-    shortcut: '/images/favicon-sound.svg',
-    apple: '/images/favicon-sound.svg',
+    shortcut: '/iconos/icono.jpg',
+    apple: '/iconos/icono.jpg',
   },
 };
 
@@ -31,9 +31,9 @@ export default function RootLayout({ children }) {
     <html lang="es">
     <head>
   {/* Favicon de música: muestra el icono de /images/favicon-sound.svg */}
-  <link rel="icon" href="/images/favicon-sound.svg" sizes="any" />
-  <link rel="shortcut icon" href="/images/favicon-sound.svg" />
-  <link rel="apple-touch-icon" href="/images/favicon-sound.svg" />
+    <link rel="icon" href="/iconos/icono.jpg" sizes="any" />
+    <link rel="shortcut icon" href="/iconos/icono.jpg" />
+    <link rel="apple-touch-icon" href="/iconos/icono.jpg" />
     </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
