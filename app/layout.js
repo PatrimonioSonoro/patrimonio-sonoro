@@ -3,6 +3,8 @@ import "./globals.css";
 import "./styles.css";
 import AuthProvider from "./components/AuthProvider";
 import SocialFloat from "./components/SocialFloat";
+import Footer from "./components/Footer";
+import MotionLayout from "./components/MotionLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -47,7 +49,10 @@ export default function RootLayout({ children }) {
             youtube: 'https://youtube.com/@patrimoniosonoro_audiobrand?si=buRBdvYKubfOsq-p',
             tiktok: 'https://www.tiktok.com/@patrimonio.sonoro?_t=ZS-8zaNfJhRgoK&_r=1'
           }} />
-          {children}
+          <MotionLayout>
+            {children}
+          </MotionLayout>
+          <Footer />
         </AuthProvider>
       </body>
     </html>

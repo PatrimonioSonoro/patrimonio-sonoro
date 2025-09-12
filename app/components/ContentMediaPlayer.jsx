@@ -67,7 +67,7 @@ export default function ContentMediaPlayer({ content }) {
           <div className="aspect-video w-full bg-black">
             <video 
               ref={videoRef}
-              controls 
+              controls
               className="w-full h-full object-cover"
               poster={mediaUrls.image_url}
               onLoadedMetadata={(e) => {

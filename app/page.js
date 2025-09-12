@@ -7,6 +7,7 @@ import NavClient from "./components/NavClient";
 import HeroCarousel from "./components/HeroCarousel";
 import ContentMediaPlayer from "./components/ContentMediaPlayer";
 import ExploreSection from "./components/ExploreSection";
+import RevealOnScroll from "./components/RevealOnScroll";
 import { createClient } from '@supabase/supabase-js';
 
 async function fetchPublicContents() {
@@ -55,11 +56,14 @@ export default async function Page() {
       {/* Navegación superior (client) */}
       <NavClient />
 
-  {/* Héroe: carrusel de contenedores (client) */}
-  <HeroCarousel />
+      {/* Héroe: carrusel de contenedores (client) */}
+  <RevealOnScroll>
+    <HeroCarousel />
+  </RevealOnScroll>
 
-      {/* ¿Qué es? */}
-      <section id="que-es" className="py-20 bg-white">
+  {/* ¿Qué es? */}
+  <RevealOnScroll>
+  <section id="que-es" className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="flex justify-center mb-6">
@@ -99,10 +103,12 @@ export default async function Page() {
             </div>
           </div>
         </div>
-      </section>
+  </section>
+  </RevealOnScroll>
 
-      {/* Campañas */}
-      <section id="campanas" className="py-20 bg-white">
+  {/* Campañas */}
+  <RevealOnScroll>
+    <section id="campanas" className="py-20 bg-white">
         <div className="container mx-auto px-4">
           <div className="flex justify-center mb-6">
             <div className="w-20 h-1 bg-turquesaAudioBrand" />
@@ -147,24 +153,28 @@ export default async function Page() {
                 <a href="https://www.youtube.com/watch?v=8uv9GJmRwdI" target="_blank" rel="noopener noreferrer" className="campaign-cta">Seguir viendo</a>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* Explora */}
-      <section id="explora" className="py-20 bg-grisClaro">
-        <div className="container mx-auto px-4">
-          <div className="flex justify-center mb-6">
-            <div className="w-20 h-1 bg-turquesaAudioBrand" />
           </div>
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-6">Explora los Sonidos</h2>
-          <p className="text-xl text-center text-gray-600 mb-12">Descubre la riqueza sonora de Colombia</p>
-
-          <ExploreSection contents={contents} />
-        </div>
       </section>
+  </RevealOnScroll>
+
+  {/* Explora */}
+  <RevealOnScroll>
+    <section id="explora" className="py-20 bg-grisClaro">
+      <div className="container mx-auto px-4">
+        <div className="flex justify-center mb-6">
+          <div className="w-20 h-1 bg-turquesaAudioBrand" />
+        </div>
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-6">Explora los Sonidos</h2>
+        <p className="text-xl text-center text-gray-600 mb-12">Descubre la riqueza sonora de Colombia</p>
+
+        <ExploreSection contents={contents} />
+      </div>
+    </section>
+  </RevealOnScroll>
 
   {/* Mapa Sonoro */}
-      <section id="mapa-sonoro" className="py-20 bg-white scroll-mt-24 relative z-0">
+  <RevealOnScroll>
+  <section id="mapa-sonoro" className="py-20 bg-white scroll-mt-24 relative z-0">
         <div className="container mx-auto px-15">
           <div className="flex justify-center mb-6">
             <div className="w-20 h-1 bg-turquesaAudioBrand" />
@@ -174,41 +184,42 @@ export default async function Page() {
           <SoundMap />
         </div>
       </section>
+      </RevealOnScroll>
 
-      {/* Sección Nosotros (migrada) */}
-      <section id="nosotros" className="py-20 bg-grisClaro">
+  {/* Sección Nosotros (migrada) */}
+  <RevealOnScroll>
+  <section id="nosotros" className="py-20 bg-grisClaro">
         <div className="container mx-auto px-4">
           <div className="flex justify-center mb-6">
             <div className="w-20 h-1 bg-turquesaAudioBrand" />
           </div>
           <h2 className="text-3xl md:text-4xl font-bold text-center mb-10">Nosotros</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Texto descriptivo */}
+            {/* Texto descriptivo: versión resumida y clara */}
             <div className="md:col-span-2 space-y-4 text-gray-700 text-center md:text-justify">
               <p>
-                Patrimonio Sonoro es una iniciativa cultural, educativa y tecnológica del Servicio Nacional de Aprendizaje – SENA,
-                liderada junto a la oficina de AudioBrand, que busca preservar, visibilizar y compartir los sonidos representativos de las
-                regiones de Colombia mediante una plataforma digital pública, abierta y colaborativa.
+                Patrimonio Sonoro es una plataforma colaborativa del SENA y AudioBrand dedicada a documentar, preservar y difundir los
+                paisajes sonoros de Colombia. Reunimos grabaciones de campo, descripciones curatoriales y metadatos técnicos que facilitan
+                la catalogación y el acceso responsable a materiales sonoros de valor patrimonial.
               </p>
+
               <p>
-                Nace con el propósito de consolidar un banco nacional de sonidos que capture la riqueza auditiva de nuestro país — desde
-                paisajes sonoros rurales y urbanos, hasta expresiones culturales, voces del territorio, música tradicional, fauna, eventos,
-                historias habladas y mucho más.
+                Nuestra misión es promover la memoria acústica del país y fortalecer la identidad local a través del sonido. Trabajamos
+                con comunidades, aprendices e investigadores para garantizar que las grabaciones estén contextualizadas y sean reutilizables
+                en contextos educativos, culturales y científicos.
               </p>
+
               <p>
-                Creemos que lo que suena también nos representa, y por eso trabajamos para que aprendices, instructores, comunidades,
-                instituciones y empresas puedan contribuir, escuchar, descargar y reutilizar sonidos con atribución institucional bajo licencias abiertas.
+                El repositorio incluye distintos tipos de contenido: Paisajes sonoros, música tradicional, voces orales, eventos comunitarios y
+                ejemplos de fauna y ambientes naturales. Cada registro incorpora metadatos que permiten búsquedas por región, tema, campaña o autor.
               </p>
+
               <p>
-                Actualmente estamos desarrollando la fase inicial del proyecto, construyendo una plataforma web interactiva que funcionará como repositorio,
-                mapa sonoro y red colaborativa, permitiendo explorar sonidos por región, temática o campaña. Esta plataforma servirá como herramienta pedagógica,
-                archivo patrimonial y espacio de innovación sonora para el país.
-              </p>
-              <p>
-                Nuestro compromiso es convertir el sonido en una herramienta de aprendizaje, memoria, identidad y transformación cultural, al servicio de todos los colombianos.
+                Te invitamos a participar: Si tienes grabaciones, historias o proyectos relacionados con el patrimonio sonoro, contáctanos o
+                únete a nuestras campañas para contribuir con el acervo público. Juntos podemos construir un archivo sonoro accesible y sostenible.
               </p>
             </div>
-            {/* Tarjeta de equipo */}
+            {/* Tarjeta de equipo: mantener roles, quitar 'Aliados' */}
             <div className="bg-white p-8 rounded-xl shadow-md mx-auto lg:mx-0">
               <h3 className="text-lg font-bold text-azulInstitucional mb-4">Nuestro Equipo</h3>
               <div className="space-y-4 text-sm">
@@ -220,12 +231,7 @@ export default async function Page() {
                 <div>
                   <span className="font-semibold">SENA</span>
                   <br />
-                  Servicio Nacional de Aprendizaje
-                </div>
-                <div>
-                  <span className="font-semibold">Aliados</span>
-                  <br />
-                  Instituciones educativas y culturales de Colombia
+                  Coordinación institucional y educativa
                 </div>
                 <hr className="my-4" />
                 <div>
@@ -242,83 +248,9 @@ export default async function Page() {
           </div>
         </div>
       </section>
+      </RevealOnScroll>
 
-      {/* Footer migrado */}
-      <footer className="mt-20">
-        {/* Barra superior de contacto */}
-        <div className="bg-azulInstitucional text-white py-8">
-          <div className="container mx-auto px-4 text-center">
-            <h3 className="text-lg md:text-2xl font-bold mb-4">Contacto institucional</h3>
-            <div className="flex flex-col md:flex-row items-center justify-center space-y-3 md:space-y-0 md:space-x-8 text-sm">
-              <div className="flex items-center space-x-2">
-                {/* ícono correo */}
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8m-18 8h18a2 2 0 002-2V8a2 2 0 00-2-2H3a2 2 0 00-2 2v6a2 2 0 002 2z"/></svg>
-                <span>patrimoniosonoro@sena.edu.co</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                {/* ícono teléfono */}
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M3 5h2l3 7-1.34 2.68a2 2 0 001.8 2.96h3.13a2 2 0 001.8-1.14l1.42-2.82a48.6 48.6 0 006.95 6.95l-2.82 1.42a2 2 0 00-1.14 1.8v3.13a2 2 0 002.96 1.8L19 19l7 3v2a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2z"/></svg>
-                <span>(601) 546-2354</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                {/* ícono ubicación */}
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M12 11c1.657 0 3-1.343 3-3S13.657 5 12 5 9 6.343 9 8s1.343 3 3 3z"/><path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8C19.5 13.5 12 21 12 21S4.5 13.5 4.5 8a7.5 7.5 0 1115 0z"/></svg>
-                <span>Valledupar-Cesar, Colombia</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Cuerpo del footer */}
-        <div className="bg-negroSuave text-gray-400 py-10 text-sm">
-          <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Col 1 */}
-            <div>
-              <div className="flex items-center mb-4">
-                <svg xmlns="http://www.w3.org/2000/svg" className="w-6 h-6 text-turquesaAudioBrand mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M19 3v18c0 1.103-.897 2-2 2s-2-.897-2-2V3h-2v18c0 1.103-.897 2-2 2s-2-.897-2-2V3H9v18c0 1.103-.897 2-2 2s-2-.897-2-2V3H3v18c0 2.206 1.794 4 4 4s4-1.794 4-4V7h2v14c0 2.206 1.794 4 4 4s4-1.794 4-4V3h-2z"/></svg>
-                <div>
-                  <p className="font-bold text-white leading-none">Patrimonio Sonoro</p>
-                  <span className="text-turquesaAudioBrand text-xs">AudioBrand</span>
-                </div>
-              </div>
-              <p>Preservando, visibilizando y difundiendo los sonidos representativos de Colombia como parte de nuestro patrimonio cultural inmaterial.</p>
-            </div>
-
-            {/* Col 2 */}
-            <div>
-              <h4 className="font-semibold text-white mb-3">Explorar</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="hover:text-white">Inicio</a></li>
-                <li><a href="#" className="hover:text-white">¿Por qué?</a></li>
-                <li><a href="#explora" className="hover:text-white">Explora</a></li>
-                <li><a href="#regiones" className="hover:text-white">Regiones</a></li>
-              </ul>
-            </div>
-
-            {/* Col 3 */}
-            <div>
-              <h4 className="font-semibold text-white mb-3">Participa</h4>
-              <ul className="space-y-2">
-                <li><a href="#campanas" className="hover:text-white">Campañas</a></li>
-                <li><a href="#" className="hover:text-white">Formulario</a></li>
-                <li><a href="#" className="hover:text-white">Recursos</a></li>
-                <li><a href="#" className="hover:text-white">Preguntas frecuentes</a></li>
-              </ul>
-            </div>
-
-            {/* Col 4 */}
-            <div>
-              <h4 className="font-semibold text-white mb-3">Institucional</h4>
-              <ul className="space-y-2">
-                <li><a href="#" className="hover:text-white">Sobre el proyecto</a></li>
-                <li><a href="#" className="hover:text-white">SENA</a></li>
-                <li><a href="#" className="hover:text-white">AudioBrand</a></li>
-                <li><a href="#" className="hover:text-white">Contacto</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </footer>
+      
     </main>
   );
 }

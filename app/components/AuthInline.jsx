@@ -132,11 +132,10 @@ export default function AuthInline() {
           <div id="login-content" className={`auth-content ${mode === "login" ? "active" : ""}`}>
             <form onSubmit={onLogin}>
               <div className="input-group">
-                <span className="input-icon">📧</span>
                 <input
                   id="login-email"
                   type="email"
-                  className="input-with-icon w-full border rounded-lg p-3"
+                  className="w-full border rounded-lg p-3"
                   placeholder="Correo electrónico"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -144,11 +143,10 @@ export default function AuthInline() {
                 />
               </div>
               <div className="input-group">
-                <span className="input-icon">🔒</span>
                 <input
                   id="login-password"
                   type="password"
-                  className="input-with-icon w-full border rounded-lg p-3"
+                  className="w-full border rounded-lg p-3"
                   placeholder="Contraseña"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -172,10 +170,9 @@ export default function AuthInline() {
           <div id="register-content" className={`auth-content ${mode === "register" ? "active" : ""}`}>
             <form onSubmit={onRegister}>
               <div className="input-group">
-                <span className="input-icon">👤</span>
                 <input
                   id="register-name"
-                  className="input-with-icon w-full border rounded-lg p-3"
+                  className="w-full border rounded-lg p-3"
                   placeholder="Nombre completo"
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
@@ -183,11 +180,10 @@ export default function AuthInline() {
                 />
               </div>
               <div className="input-group">
-                <span className="input-icon">📧</span>
                 <input
                   id="register-email"
                   type="email"
-                  className="input-with-icon w-full border rounded-lg p-3"
+                  className="w-full border rounded-lg p-3"
                   placeholder="Correo electrónico"
                   value={regEmail}
                   onChange={(e) => setRegEmail(e.target.value)}
@@ -195,11 +191,10 @@ export default function AuthInline() {
                 />
               </div>
               <div className="input-group">
-                <span className="input-icon">🔒</span>
                 <input
                   id="register-password"
                   type="password"
-                  className="input-with-icon w-full border rounded-lg p-3"
+                  className="w-full border rounded-lg p-3"
                   placeholder="Contraseña"
                   value={regPassword}
                   onChange={(e) => setRegPassword(e.target.value)}
@@ -207,11 +202,10 @@ export default function AuthInline() {
                 />
               </div>
               <div className="input-group">
-                <span className="input-icon">🔒</span>
                 <input
                   id="register-confirm-password"
                   type="password"
-                  className="input-with-icon w-full border rounded-lg p-3"
+                  className="w-full border rounded-lg p-3"
                   placeholder="Confirmar contraseña"
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}

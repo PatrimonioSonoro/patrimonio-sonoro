@@ -1,7 +1,6 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import AuthModalButton from "./AuthModalButton";
-import { motion } from "framer-motion";
 import { supabase } from "../../lib/supabaseClient";
 import { forceSignOut } from "../../lib/authUtils";
 
@@ -105,24 +104,17 @@ export default function NavClient() {
         </div>
       </div>
 
-      <motion.div 
-        initial={false}
-        animate={mobileMenuOpen ? "open" : "closed"}
-        variants={{
-          open: { opacity: 1, height: "auto" },
-          closed: { opacity: 0, height: 0 }
-        }}
-        transition={{ duration: 0.3, ease: "easeInOut" }}
-        className="md:hidden bg-white border-t border-gray-200 overflow-hidden"
-      >
-        <div className="px-4 py-4 space-y-3">
-          <a href="#inicio" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors">Inicio</a>
-          <a href="#que-es" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors">¿Qué es?</a>
-          <a href="#campanas" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors">Explora</a>
-          <a href="#mapa-sonoro" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors">Mapa Sonoro</a>
-          <a href="#nosotros" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors">Nosotros</a>
+      {mobileMenuOpen && (
+        <div className="md:hidden bg-white border-t border-gray-200">
+          <div className="px-4 py-4 space-y-3">
+            <a href="#inicio" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors">Inicio</a>
+            <a href="#que-es" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors">¿Qué es?</a>
+            <a href="#campanas" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors">Explora</a>
+            <a href="#mapa-sonoro" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors">Mapa Sonoro</a>
+            <a href="#nosotros" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2 text-base font-bold text-azulInstitucional hover:text-turquesaAudioBrand hover:bg-gray-50 rounded-md transition-colors">Nosotros</a>
+          </div>
         </div>
-      </motion.div>
+      )}
     </nav>
   );
 }

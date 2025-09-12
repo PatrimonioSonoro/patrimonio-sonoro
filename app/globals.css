@@ -53,6 +53,52 @@ html, body {
 /* Fondo oscuro utilizado en el footer migrado */
 .bg-negroSuave { background-color: #111827; }
 
+/* Footer specific styles */
+.footer-top {
+  /* Pleasant light-to-dark blue gradient for a calm, professional footer */
+  background: linear-gradient(180deg, #60A5FA 0%, #0B3B6F 100%);
+  /* Add a very subtle radial sheen to give depth without distracting */
+  background-image: linear-gradient(180deg, #60A5FA 0%, #0B3B6F 100%), radial-gradient(60% 50% at 12% 12%, rgba(255,255,255,0.06), transparent 30%);
+  background-blend-mode: overlay;
+  border-top-left-radius: 18px;
+  border-top-right-radius: 18px;
+}
+
+.footer-top .footer-link,
+.footer-bottom .footer-link {
+  color: rgba(255,255,255,0.92);
+  text-decoration: none;
+  transition: color 180ms ease, transform 160ms ease;
+}
+
+.footer-top .footer-link:hover,
+.footer-bottom .footer-link:hover {
+  color: #071f45; /* contrast darker on hover */
+  transform: translateY(-2px);
+}
+
+.footer-bottom {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+/* Navigation links in footer with hover */
+.footer-nav-link {
+  color: rgba(255,255,255,0.95);
+  text-decoration: none;
+  transition: color 160ms ease, transform 120ms ease;
+}
+.footer-nav-link:hover {
+  color: #071f45;
+  transform: translateY(-2px);
+}
+
+/* Policy links should not have hover effects */
+.policy-link {
+  color: rgba(255,255,255,0.78);
+  text-decoration: none;
+}
+
 /* Modern sound card styles based on design reference */
 .sound-card-modern {
   background: white;
@@ -125,6 +171,18 @@ html, body {
   z-index: 2;
   cursor: pointer;
   transition: all 0.2s ease;
+}
+
+/* Ensure videos indicate interactivity but don't show hover pause affordances */
+video {
+  cursor: default;
+}
+
+/* Some browsers show controls overlay — when controls are removed we keep the player clean */
+.aspect-video video,
+.w-full video,
+.max-h-full video {
+  outline: none;
 }
 
 
@@ -289,12 +347,28 @@ html, body {
   box-shadow: 0 10px 30px rgba(0,0,0,0.15);
 }
 
+/* Responsive adjustments for mobile: make primary CTA full-width and more tappable */
+@media (max-width: 640px) {
+  .campaign-cta {
+    display: block;
+    width: 100%;
+    /* Keep the button tappable but not so tall that it visually matches the header height */
+    padding: 0.7rem 1rem;
+    font-size: 1.05rem;
+    line-height: 1.1;
+    text-align: center;
+    border-radius: 9999px; /* rounded-full restored */
+    max-height: 56px;
+  }
+}
+
 /* Floating social icons */
 .social-float {
   position: fixed;
   bottom: 1rem;
   right: 1rem;
-  z-index: 9999;
+  /* lower z-index so it doesn't overlay interactive media controls */
+  z-index: 1200;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
@@ -314,7 +388,9 @@ html, body {
   text-decoration: none;
   color: inherit;
   overflow: hidden;
+  /* By default anchors should be clickable */
   cursor: pointer;
+  pointer-events: auto;
 }
 
 .social-cta:hover {
@@ -328,3 +404,59 @@ html, body {
   height: 22px;
   object-fit: contain;
 }
+
+/* When the component renders a non-clickable placeholder (no href) we add aria-hidden
+   in the JSX; those should not intercept pointer events so underlying media remains interactive */
+.social-cta[aria-hidden] {
+  pointer-events: none;
+  cursor: default;
+  opacity: 0.9;
+}
+
+/* Make image thumbnails and category buttons show pointer cursor */
+.sound-card-modern img,
+.sound-card-modern .cursor-pointer,
+.flex .rounded-full[style] {
+  cursor: pointer;
+}
+
+/* Lightbox image transition */
+.lightbox-img {
+  transition: transform 200ms ease, opacity 200ms ease;
+}
+
+/* Lightbox close button tweaks */
+.lightbox-close {
+  font-size: 20px;
+  line-height: 1;
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Disable hover effects for links inside the site footer so they remain static */
+.site-footer .footer-link,
+.site-footer .nav-link-hover,
+.site-footer .footer-nav-link {
+  /* Keep color consistent and remove transitions inside footer */
+  color: inherit !important;
+  transition: none !important;
+}
+
+.site-footer .nav-link-hover::after {
+  /* remove underline/indicator for footer nav links */
+  display: none !important;
+  width: 0 !important;
+}
+
+.site-footer .nav-link-hover:hover,
+.site-footer .footer-link:hover,
+.site-footer .footer-nav-link:hover {
+  /* prevent color change and transforms on hover */
+  color: inherit !important;
+  transform: none !important;
+  text-decoration: none !important;
+}
+

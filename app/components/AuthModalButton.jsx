@@ -145,10 +145,9 @@ export default function AuthModalButton() {
           <div className={`auth-content ${mode === "login" ? "active" : ""}`}>
             <form onSubmit={onLogin}>
               <div className="input-group">
-                <span className="input-icon">📧</span>
                 <input
                   type="email"
-                  className="input-with-icon w-full border rounded-lg p-3"
+                  className="w-full border rounded-lg p-3"
                   placeholder="Correo electrónico"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -156,10 +155,9 @@ export default function AuthModalButton() {
                 />
               </div>
               <div className="input-group">
-                <span className="input-icon">🔒</span>
                 <input
                   type="password"
-                  className="input-with-icon w-full border rounded-lg p-3"
+                  className="w-full border rounded-lg p-3"
                   placeholder="Contraseña"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -179,9 +177,8 @@ export default function AuthModalButton() {
           <div className={`auth-content ${mode === "register" ? "active" : ""}`}>
             <form onSubmit={onRegister}>
               <div className="input-group">
-                <span className="input-icon">👤</span>
                 <input
-                  className="input-with-icon w-full border rounded-lg p-3"
+                  className="w-full border rounded-lg p-3"
                   placeholder="Nombre completo"
                   value={nombre}
                   onChange={(e) => setNombre(e.target.value)}
@@ -189,10 +186,9 @@ export default function AuthModalButton() {
                 />
               </div>
               <div className="input-group">
-                <span className="input-icon">📧</span>
                 <input
                   type="email"
-                  className="input-with-icon w-full border rounded-lg p-3"
+                  className="w-full border rounded-lg p-3"
                   placeholder="Correo electrónico"
                   value={regEmail}
                   onChange={(e) => setRegEmail(e.target.value)}
@@ -200,10 +196,9 @@ export default function AuthModalButton() {
                 />
               </div>
               <div className="input-group">
-                <span className="input-icon">🔒</span>
                 <input
                   type="password"
-                  className="input-with-icon w-full border rounded-lg p-3"
+                  className="w-full border rounded-lg p-3"
                   placeholder="Contraseña"
                   value={regPassword}
                   onChange={(e) => setRegPassword(e.target.value)}
@@ -211,10 +206,9 @@ export default function AuthModalButton() {
                 />
               </div>
               <div className="input-group">
-                <span className="input-icon">🔒</span>
                 <input
                   type="password"
-                  className="input-with-icon w-full border rounded-lg p-3"
+                  className="w-full border rounded-lg p-3"
                   placeholder="Confirmar contraseña"
                   value={confirm}
                   onChange={(e) => setConfirm(e.target.value)}
