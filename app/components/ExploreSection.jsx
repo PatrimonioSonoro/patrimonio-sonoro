@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState, useEffect } from 'react';
 import ContentMediaPlayer from './ContentMediaPlayer';
+import ViewCount from './ViewCount';
 
 export default function ExploreSection({ contents = [] }) {
   // Inicializamos en 'audio' para mostrar Audios por defecto
@@ -46,8 +47,10 @@ export default function ExploreSection({ contents = [] }) {
                   <div className="sound-card-meta">
                     <span className="region-badge">{c.region || 'General'}</span>
                   </div>
-                  <h3 className="sound-title">{c.title}</h3>
-                  <p className="sound-description">{c.description}</p>
+                  <div>
+                    <h3 className="sound-title">{c.title}</h3>
+                    <p className="sound-description">{c.description}</p>
+                  </div>
                   <div className="mt-3">
                     {/* If it's an image-only content, show img; otherwise use player */}
                     {category === 'image' && c.image_url ? (

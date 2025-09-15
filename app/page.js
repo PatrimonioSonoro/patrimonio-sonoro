@@ -6,6 +6,7 @@ import SoundMap from "./components/SoundMap";
 import NavClient from "./components/NavClient";
 import HeroCarousel from "./components/HeroCarousel";
 import ContentMediaPlayer from "./components/ContentMediaPlayer";
+import CampaignCard from "./components/CampaignCard";
 import ExploreSection from "./components/ExploreSection";
 import RevealOnScroll from "./components/RevealOnScroll";
 import { createClient } from '@supabase/supabase-js';
@@ -117,41 +118,29 @@ export default async function Page() {
           <p className="text-xl text-center text-gray-600 mb-12">Conoce nuestras campañas y participa en la preservación sonora.</p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-grisClaro p-8 rounded-2xl shadow-xl transform hover:-translate-y-2 transition-all">
-              <div className="mb-6">
-                <video controls className="w-full h-48 object-cover rounded-lg" aria-label="Video Full Popular">
-                  <source src="/videos/full_popular.mp4" type="video/mp4" />
-                  Tu navegador no soporta video.
-                </video>
-              </div>
-              <h3 className="text-2xl md:text-3xl font-extrabold text-azulInstitucional mb-4">Full popular</h3>
-              <p className="text-gray-700 mb-6">Campaña dedicada a recopilar canciones y expresiones populares de distintas regiones.</p>
-              <a href="https://www.youtube.com/watch?v=KNhJvmszCzo" target="_blank" rel="noopener noreferrer" className="campaign-cta">Seguir viendo</a>
-            </div>
+            <CampaignCard
+              title="CampeSENA"
+              description="Iniciativa formativa del SENA que promueve la participación de comunidades rurales."
+              videoSrc="/videos/campe_sena.mp4"
+              posterSrc="/images/logo.jpg"
+              ctaHref="https://www.youtube.com/watch?v=GrMtr30uQPc"
+            />
 
-            <div className="bg-grisClaro p-8 rounded-2xl shadow-xl transform hover:-translate-y-2 transition-all">
-              <div className="mb-6">
-                <video controls className="w-full h-48 object-cover rounded-lg" aria-label="Video CampeSENA">
-                  <source src="/videos/campe_sena.mp4" type="video/mp4" />
-                  Tu navegador no soporta video.
-                </video>
-              </div>
-              <h3 className="text-2xl md:text-3xl font-extrabold text-azulInstitucional mb-4">CampeSENA</h3>
-              <p className="text-gray-700 mb-6">Iniciativa formativa del SENA que promueve la participación de comunidades rurales.</p>
-                <a href="https://www.youtube.com/watch?v=GrMtr30uQPc" target="_blank" rel="noopener noreferrer" className="campaign-cta">Seguir viendo</a>
-            </div>
+            <CampaignCard
+              title="Campesino Canta"
+              description="Recopilación de voces y cantos campesinos, una memoria viva del territorio."
+              videoSrc="/videos/campesino_canta.mp4"
+              posterSrc="/images/logo.jpg"
+              ctaHref="https://www.youtube.com/watch?v=8uv9GJmRwdI"
+            />
 
-            <div className="bg-grisClaro p-8 rounded-2xl shadow-xl transform hover:-translate-y-2 transition-all">
-              <div className="mb-6">
-                <video controls className="w-full h-48 object-cover rounded-lg" aria-label="Video Campesino Canta">
-                  <source src="/videos/campesino_canta.mp4" type="video/mp4" />
-                  Tu navegador no soporta video.
-                </video>
-              </div>
-              <h3 className="text-2xl md:text-3xl font-extrabold text-azulInstitucional mb-4">Campesino Canta</h3>
-              <p className="text-gray-700 mb-6">Recopilación de voces y cantos campesinos, una memoria viva del territorio.</p>
-                <a href="https://www.youtube.com/watch?v=8uv9GJmRwdI" target="_blank" rel="noopener noreferrer" className="campaign-cta">Seguir viendo</a>
-            </div>
+            <CampaignCard
+              title="Full popular"
+              description="Campaña dedicada a recopilar canciones y expresiones populares de distintas regiones."
+              videoSrc="/videos/full_popular.mp4"
+              posterSrc="/images/logo.jpg"
+              ctaHref="https://www.youtube.com/watch?v=KNhJvmszCzo"
+            />
           </div>
           </div>
       </section>
@@ -249,8 +238,6 @@ export default async function Page() {
         </div>
       </section>
       </RevealOnScroll>
-
-      
     </main>
   );
 }

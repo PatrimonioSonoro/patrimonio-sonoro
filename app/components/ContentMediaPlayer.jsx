@@ -1,7 +1,8 @@
 
-'use client';
+ 'use client';
 
 import { useState, useRef } from 'react';
+import ViewCount from './ViewCount';
 
 export default function ContentMediaPlayer({ content }) {
   const [imageError, setImageError] = useState(false);
@@ -84,13 +85,17 @@ export default function ContentMediaPlayer({ content }) {
       )}
       
       {mediaUrls.audio_url && !mediaUrls.video_url && !audioError && (
-        <div className="w-full h-full flex items-center justify-center bg-gray-100">
-          <audio controls className="w-full max-w-md" onError={handleAudioError}>
-            <source src={mediaUrls.audio_url} type="audio/mpeg" />
-            <source src={mediaUrls.audio_url} type="audio/mp4" />
-            <source src={mediaUrls.audio_url} type="audio/wav" />
-            Tu navegador no soporta audio HTML5.
-          </audio>
+        <div className="w-full bg-gray-100">
+          <div className="p-4 flex items-center justify-center">
+            <audio controls className="w-full max-w-md" onError={handleAudioError}>
+              <source src={mediaUrls.audio_url} type="audio/mpeg" />
+              <source src={mediaUrls.audio_url} type="audio/mp4" />
+              <source src={mediaUrls.audio_url} type="audio/wav" />
+              Tu navegador no soporta audio HTML5.
+            </audio>
+          </div>
+
+          {/* View count removed from here; counts are shown in CampaignCard */}
         </div>
       )}
       
