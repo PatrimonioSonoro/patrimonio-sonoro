@@ -64,7 +64,7 @@ export default async function Page() {
 
   {/* ¿Qué es? */}
   <RevealOnScroll>
-  <section id="que-es" className="py-20 bg-white">
+  <section id="que-es" className="py-20 bg-que-es">
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="flex justify-center mb-6">

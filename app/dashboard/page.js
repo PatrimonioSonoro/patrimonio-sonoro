@@ -27,7 +27,7 @@ import {
   Icon,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { FiTrendingUp, FiUsers, FiFileText, FiActivity } from 'react-icons/fi';
+import { FiTrendingUp, FiUsers, FiFileText, FiActivity, FiBarChart } from 'react-icons/fi';
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -114,7 +114,7 @@ export default function DashboardPage() {
   if (!user) return null;
 
   return (
-    <Box maxW="1200px" mx="auto" py={6}>
+    <Box maxW="1200px" mx="auto" py={6} px={4} minHeight="100vh" bg="gray.50" _dark={{ bg: "gray.900" }}>
       {/* Bienvenida */}
       <VStack align="start" mb={8}>
         <Heading size="lg" color="blue.600">Bienvenido, {nombre}</Heading>
@@ -221,6 +221,11 @@ export default function DashboardPage() {
             <Link href="/dashboard/users">
               <Button variant="outline" leftIcon={<FiUsers />}>
                 Gestionar Usuarios
+              </Button>
+            </Link>
+            <Link href="/dashboard/estadisticas">
+              <Button colorScheme="purple" leftIcon={<FiBarChart />}>
+                Ver Estadísticas
               </Button>
             </Link>
             <Button colorScheme="red" variant="outline" onClick={handleLogout}>

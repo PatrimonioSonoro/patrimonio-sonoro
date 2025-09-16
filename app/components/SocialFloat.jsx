@@ -1,6 +1,9 @@
 import React from 'react'
+import { useAnalyticsContext } from './AnalyticsProvider'
 
 export default function SocialFloat({ links = {} }) {
+  const analytics = useAnalyticsContext();
+  
   // Deja aquí tus links (puedes pasarlos como prop o editar directamente)
   const {
     instagram = '',
@@ -11,7 +14,7 @@ export default function SocialFloat({ links = {} }) {
 
   // Usamos clases CSS en globals.css para manejar estilos y hover
 
-  const renderLink = (href, title, svg) => {
+  const renderLink = (href, title, svg, platform) => {
     // Si href está vacío, devolvemos un elemento no-clickable para mantener el espacio
     if (!href) {
       return (
@@ -24,10 +27,13 @@ export default function SocialFloat({ links = {} }) {
     return (
       <a
         href={href}
-        title={title}
-        className="social-cta"
         target="_blank"
         rel="noopener noreferrer"
+        title={title}
+        className="social-cta"
+        onClick={() => {
+          analytics.trackSocialClick(platform, href);
+        }}
       >
         {svg}
       </a>
@@ -45,25 +51,29 @@ export default function SocialFloat({ links = {} }) {
       {renderLink(
         instagram,
         'Instagram',
-        <img src="/iconos/instagram.png" alt="Instagram" style={imgStyle} />
+        <img src="/iconos/instagram.png" alt="Instagram" style={imgStyle} />,
+        'instagram'
       )}
 
       {renderLink(
         facebook,
         'Facebook',
-        <img src="/iconos/facebook.png" alt="Facebook" style={imgStyle} />
+        <img src="/iconos/facebook.png" alt="Facebook" style={imgStyle} />,
+        'facebook'
       )}
 
       {renderLink(
         youtube,
         'YouTube',
-        <img src="/iconos/youtube.png" alt="YouTube" style={imgStyle} />
+        <img src="/iconos/youtube.png" alt="YouTube" style={imgStyle} />,
+        'youtube'
       )}
 
       {renderLink(
         tiktok,
         'TikTok',
-        <img src="/iconos/tik-tok.png" alt="TikTok" style={imgStyle} />
+        <img src="/iconos/tik-tok.png" alt="TikTok" style={imgStyle} />,
+        'tiktok'
       )}
     </div>
   )

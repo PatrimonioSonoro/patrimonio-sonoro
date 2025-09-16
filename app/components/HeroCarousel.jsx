@@ -65,7 +65,18 @@ export default function HeroCarousel() {
       video.loop = true;
       video.muted = true; // required for autoplay without user interaction
       const p = video.play();
-      if (p && p.catch) p.catch(() => {});
+      const dispatchHeroPlay = () => {
+        try {
+          const ev = new CustomEvent('hero-video-play', { detail: { currentTime: video.currentTime || 0 } });
+          window.dispatchEvent(ev);
+        } catch (e) {}
+      };
+      if (p && p.then) {
+        p.then(() => dispatchHeroPlay()).catch(() => dispatchHeroPlay());
+      } else {
+        // fallback: dispatch shortly after
+        setTimeout(dispatchHeroPlay, 80);
+      }
     } catch (e) {}
     return () => {};
   }, []);
@@ -165,7 +176,17 @@ export default function HeroCarousel() {
       try {
         video.muted = true;
         const p = video.play();
-        if (p && p.catch) p.catch(() => {});
+        const dispatchHeroPlay = () => {
+          try {
+            const ev = new CustomEvent('hero-video-play', { detail: { currentTime: video.currentTime || 0 } });
+            window.dispatchEvent(ev);
+          } catch (e) {}
+        };
+        if (p && p.then) {
+          p.then(() => dispatchHeroPlay()).catch(() => dispatchHeroPlay());
+        } else {
+          setTimeout(dispatchHeroPlay, 80);
+        }
       } catch (e) {}
     }
   }, [active]);
@@ -204,11 +225,10 @@ export default function HeroCarousel() {
               {i === 0 ? (
                 <video
                   ref={videoRef}
-                  style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover' }}
-                  controls
+                  style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', pointerEvents: 'none' }}
                   preload="metadata"
                   playsInline
-                  muted={false}
+                  tabIndex={-1}
                   src="/videos/PATRIMONIO_SONORO.mp4"
                 />
               ) : (

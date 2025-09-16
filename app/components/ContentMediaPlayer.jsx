@@ -3,6 +3,7 @@
 
 import { useState, useRef } from 'react';
 import ViewCount from './ViewCount';
+import { useAnalyticsContext } from './AnalyticsProvider';
 
 export default function ContentMediaPlayer({ content }) {
   const [imageError, setImageError] = useState(false);
@@ -10,6 +11,7 @@ export default function ContentMediaPlayer({ content }) {
   const [audioError, setAudioError] = useState(false);
   const [isPortrait, setIsPortrait] = useState(false);
   const videoRef = useRef(null);
+  const analytics = useAnalyticsContext();
 
   // Use URLs directly from content (they're already public URLs from database)
   const mediaUrls = {
@@ -58,6 +60,13 @@ export default function ContentMediaPlayer({ content }) {
                 const v = e.target;
                 setIsPortrait(v.videoHeight > v.videoWidth);
               }}
+              onPlay={() => {
+                analytics.trackContentInteraction(
+                  content.id,
+                  content.title,
+                  'play'
+                );
+              }}
               onError={handleVideoError}
             >
               <source src={mediaUrls.video_url} type="video/mp4" />
@@ -75,6 +84,13 @@ export default function ContentMediaPlayer({ content }) {
                 const v = e.target;
                 setIsPortrait(v.videoHeight > v.videoWidth);
               }}
+              onPlay={() => {
+                analytics.trackContentInteraction(
+                  content.id,
+                  content.title,
+                  'play'
+                );
+              }}
               onError={handleVideoError}
             >
               <source src={mediaUrls.video_url} type="video/mp4" />
@@ -87,7 +103,18 @@ export default function ContentMediaPlayer({ content }) {
       {mediaUrls.audio_url && !mediaUrls.video_url && !audioError && (
         <div className="w-full bg-gray-100">
           <div className="p-4 flex items-center justify-center">
-            <audio controls className="w-full max-w-md" onError={handleAudioError}>
+            <audio 
+              controls 
+              className="w-full max-w-md" 
+              onPlay={() => {
+                analytics.trackContentInteraction(
+                  content.id,
+                  content.title,
+                  'play'
+                );
+              }}
+              onError={handleAudioError}
+            >
               <source src={mediaUrls.audio_url} type="audio/mpeg" />
               <source src={mediaUrls.audio_url} type="audio/mp4" />
               <source src={mediaUrls.audio_url} type="audio/wav" />
