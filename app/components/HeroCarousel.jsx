@@ -206,10 +206,10 @@ export default function HeroCarousel() {
 
   return (
   <section id="inicio" className="hero-carousel-section relative pt-20 md:pt-24 lg:pt-28 min-h-screen overflow-hidden">
-      {/* Full-bleed background video (covers the whole hero section) */}
+      {/* Full-bleed background video (desktop: horizontal, mobile: vertical) */}
       <video
         ref={bgVideoRef}
-        src="/videos/PATRIMONIO_SONORO.mp4"
+        src="/videos/LOGO_AUDIOBRAND_HORIZONTAL.mp4"
         preload="auto"
         playsInline
         muted
@@ -217,7 +217,18 @@ export default function HeroCarousel() {
         autoPlay
         aria-hidden={true}
         tabIndex={-1}
-        className="hero-bg-video"
+        className="hero-bg-video hero-bg-video-desktop"
+      />
+      <video
+        src="/videos/LOGO_AUDIOBRAND_VERTICAL.mp4"
+        preload="auto"
+        playsInline
+        muted
+        loop
+        autoPlay
+        aria-hidden={true}
+        tabIndex={-1}
+        className="hero-bg-video hero-bg-video-mobile"
       />
       <div className="container relative z-10 mx-auto px-4">
           <div
@@ -290,7 +301,13 @@ export default function HeroCarousel() {
         }
 
         .carousel-arrow { z-index: 30; }
-  .hero-bg-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
+  .hero-bg-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 35%; z-index: 0; display: block; }
+  .hero-bg-video-desktop { display: block; }
+  .hero-bg-video-mobile { display: none; }
+  @media (max-width: 767px) {
+    .hero-bg-video-desktop { display: none; }
+    .hero-bg-video-mobile { display: block; }
+  }
       `}</style>
     </section>
   );
