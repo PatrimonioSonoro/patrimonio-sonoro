@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState } from 'react';
 export default function HeroCarousel() {
   const count = 1;
   const wrapperRef = useRef(null);
-  const videoRef = useRef(null);
+  const bgVideoRef = useRef(null);
   const [videoHeight, setVideoHeight] = useState(160); // fallback immediate, slightly reduced
   const [videoAspect, setVideoAspect] = useState(16 / 9);
   const ACTIVE_SCALE = 1.0; // no scale so both containers keep same physical size
@@ -58,7 +58,7 @@ export default function HeroCarousel() {
 
   // ensure video is playing in loop (muted) on mount and keep playing even when slide is not active
   useEffect(() => {
-    const video = videoRef.current;
+    const video = bgVideoRef.current;
     if (!video) return;
     try {
       // ensure the video loops continuously
@@ -83,7 +83,7 @@ export default function HeroCarousel() {
 
   // measure video aspect and compute container height from card width
   useEffect(() => {
-    const video = videoRef.current;
+    const video = bgVideoRef.current;
     if (!video) return;
 
     const updateAspect = () => {
@@ -170,7 +170,7 @@ export default function HeroCarousel() {
 
   // when the slide becomes active ensure it's playing (remains playing at all times otherwise)
   useEffect(() => {
-    const video = videoRef.current;
+    const video = bgVideoRef.current;
     if (!video) return;
     if (active === 0) {
       try {
@@ -205,9 +205,22 @@ export default function HeroCarousel() {
   };
 
   return (
-  <section id="inicio" className="hero-carousel-section relative pt-20 md:pt-24 lg:pt-28">
-      <div className="container mx-auto px-4">
-        <div
+  <section id="inicio" className="hero-carousel-section relative pt-20 md:pt-24 lg:pt-28 min-h-screen overflow-hidden">
+      {/* Full-bleed background video (covers the whole hero section) */}
+      <video
+        ref={bgVideoRef}
+        src="/videos/PATRIMONIO_SONORO.mp4"
+        preload="auto"
+        playsInline
+        muted
+        loop
+        autoPlay
+        aria-hidden={true}
+        tabIndex={-1}
+        className="hero-bg-video"
+      />
+      <div className="container relative z-10 mx-auto px-4">
+          <div
           className="carousel-wrapper flex space-x-6 overflow-x-auto py-6 scrollbar-hidden"
           ref={wrapperRef}
           onMouseEnter={handleMouseEnter}
@@ -217,29 +230,14 @@ export default function HeroCarousel() {
           {Array.from({ length: count }).map((_, i) => (
             <div
               key={i}
-              className={`carousel-item flex-shrink-0 rounded-lg shadow-md overflow-hidden ${i === active ? 'is-active ring-2 ring-turquesaAudioBrand' : ''}`}
-                style={{ minHeight: '203px', ...(videoHeight ? { height: `${videoHeight}px` } : {}), ...(i === 1 ? { backgroundColor: '#000' } : { backgroundColor: 'var(--bg-gray, #f3f4f6)' }) }}
+              className={`carousel-item flex-shrink-0 ${i === active ? 'is-active ring-2 ring-turquesaAudioBrand' : ''}`}
+                style={{ minHeight: '203px', ...(videoHeight ? { height: `${videoHeight}px` } : {}) }}
               aria-hidden={i !== active}
               role="group"
             >
-              {i === 0 ? (
-                <video
-                  ref={videoRef}
-                  style={{ width: '100%', height: '100%', display: 'block', objectFit: 'cover', pointerEvents: 'none' }}
-                  preload="metadata"
-                  playsInline
-                  tabIndex={-1}
-                  src="/videos/PATRIMONIO_SONORO.mp4"
-                />
-              ) : (
-                <div className="logo-inner" style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <img
-                    src="/images/logo.jpg"
-                    alt="Logo Patrimonio Sonoro"
-                    style={{ maxWidth: '100%', maxHeight: '100%', display: 'block', objectFit: 'contain' }}
-                  />
-                </div>
-              )}
+              <div className="logo-inner" style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                {/* Logo removed as requested - this space intentionally left blank */}
+              </div>
             </div>
           ))}
         </div>
@@ -257,13 +255,13 @@ export default function HeroCarousel() {
   .carousel-wrapper { padding: 16px 0; margin: 0 auto; gap: 24px; }
 
   .carousel-item { transition: transform 260ms ease, box-shadow 260ms ease; scroll-snap-align: center; }
-  .carousel-item.is-active { transform: translateY(-6px); z-index: 20; box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
-  .carousel-item:not(.is-active) { transform: translateY(0) scale(1); z-index: 10; }
+  .carousel-item.is-active { transform: translateY(-6px); z-index: 20; box-shadow: none; }
+  .carousel-item:not(.is-active) { transform: translateY(0) scale(1); z-index: 10; box-shadow: none; }
 
   /* Default mobile: single card, full width with side padding */
   /* Make the card fill the wrapper inner width (respecting 16px gutters) on mobile */
   .carousel-wrapper { padding: 12px 0; padding-left: 16px; padding-right: 16px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
-  .carousel-item { width: 100% !important; max-width: none !important; box-sizing: border-box; min-height: 203px; }
+  .carousel-item { width: 100% !important; max-width: none !important; box-sizing: border-box; min-height: 203px; background: transparent; border-radius: 0; }
 
         /* Desktop and up: enforce card size range
            - Width between 350px and 400px
@@ -292,6 +290,7 @@ export default function HeroCarousel() {
         }
 
         .carousel-arrow { z-index: 30; }
+  .hero-bg-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0; }
       `}</style>
     </section>
   );

@@ -5,6 +5,7 @@ export const dynamic = 'force-dynamic';
 import SoundMap from "./components/SoundMap";
 import NavClient from "./components/NavClient";
 import HeroCarousel from "./components/HeroCarousel";
+import FloatingGameButton from "./components/FloatingGameButton";
 import ContentMediaPlayer from "./components/ContentMediaPlayer";
 import CampaignCard from "./components/CampaignCard";
 import ExploreSection from "./components/ExploreSection";
@@ -122,7 +123,7 @@ export default async function Page() {
               title="CampeSENA"
               description="Iniciativa formativa del SENA que promueve la participación de comunidades rurales."
               videoSrc="/videos/campe_sena.mp4"
-              posterSrc="/images/logo.jpg"
+              posterSrc="/images/campe_sena_banner.png"
               ctaHref="https://www.youtube.com/watch?v=GrMtr30uQPc"
             />
 
@@ -130,7 +131,7 @@ export default async function Page() {
               title="Campesino Canta"
               description="Recopilación de voces y cantos campesinos, una memoria viva del territorio."
               videoSrc="/videos/campesino_canta.mp4"
-              posterSrc="/images/logo.jpg"
+              posterSrc="/images/campesino_canta_banner.png"
               ctaHref="https://www.youtube.com/watch?v=8uv9GJmRwdI"
             />
 
@@ -138,7 +139,7 @@ export default async function Page() {
               title="Full popular"
               description="Campaña dedicada a recopilar canciones y expresiones populares de distintas regiones."
               videoSrc="/videos/full_popular.mp4"
-              posterSrc="/images/logo.jpg"
+              posterSrc="/images/full_popular_banner.png"
               ctaHref="https://www.youtube.com/watch?v=KNhJvmszCzo"
             />
           </div>
@@ -238,6 +239,7 @@ export default async function Page() {
         </div>
       </section>
       </RevealOnScroll>
-    </main>
+      <FloatingGameButton gameLink="https://patrimoniosonoro.github.io/game_patrimonio_sonoro/" />
+      </main>
   );
 }
