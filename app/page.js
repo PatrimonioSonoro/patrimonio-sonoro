@@ -239,7 +239,7 @@ export default async function Page() {
         </div>
       </section>
       </RevealOnScroll>
-    <FloatingGameButton gameLink="https://patrimoniosonoro.github.io/game/" />
+    <FloatingGameButton gameLink="https://game.patrimoniosonoro.com.co/" />
       </main>
   );
 }
