@@ -154,8 +154,8 @@ export default async function Page() {
         <div className="flex justify-center mb-6">
           <div className="w-20 h-1 bg-turquesaAudioBrand" />
         </div>
-        <h2 className="text-3xl md:text-4xl font-bold text-center mb-6">Explora los Sonidos</h2>
-        <p className="text-xl text-center text-gray-600 mb-12">Descubre la riqueza sonora de Colombia</p>
+        <h2 className="text-3xl md:text-4xl font-bold text-center mb-6">El SENA suena y se ve</h2>
+        <p className="text-xl text-center text-gray-600 mb-12">Producciones que dan vida a la riqueza cultural de Colombia.</p>
 
         <ExploreSection contents={contents} />
       </div>
@@ -188,25 +188,19 @@ export default async function Page() {
             {/* Texto descriptivo: versión resumida y clara */}
             <div className="md:col-span-2 space-y-4 text-gray-700 text-center md:text-justify">
               <p>
-                Patrimonio Sonoro es una plataforma colaborativa del SENA y AudioBrand dedicada a documentar, preservar y difundir los
-                paisajes sonoros de Colombia. Reunimos grabaciones de campo, descripciones curatoriales y metadatos técnicos que facilitan
-                la catalogación y el acceso responsable a materiales sonoros de valor patrimonial.
+                En un escenario de constante transformación social, tecnológica y cultural, la oficina de AudioBrand SENA 
+                asume el compromiso de liderar iniciativas que fortalezcan los procesos de formación, innovación y preservación 
+                del patrimonio colombiano. La integración de la dimensión sonora dentro de este propósito resulta fundamental, 
+                pues los sonidos constituyen una expresión viva de la identidad cultural y un recurso pedagógico con alto potencial 
+                en los procesos educativos.
               </p>
 
               <p>
-                Nuestra misión es promover la memoria acústica del país y fortalecer la identidad local a través del sonido. Trabajamos
-                con comunidades, aprendices e investigadores para garantizar que las grabaciones estén contextualizadas y sean reutilizables
-                en contextos educativos, culturales y científicos.
-              </p>
-
-              <p>
-                El repositorio incluye distintos tipos de contenido: Paisajes sonoros, música tradicional, voces orales, eventos comunitarios y
-                ejemplos de fauna y ambientes naturales. Cada registro incorpora metadatos que permiten búsquedas por región, tema, campaña o autor.
-              </p>
-
-              <p>
-                Te invitamos a participar: Si tienes grabaciones, historias o proyectos relacionados con el patrimonio sonoro, contáctanos o
-                únete a nuestras campañas para contribuir con el acervo público. Juntos podemos construir un archivo sonoro accesible y sostenible.
+                En este contexto, surge Patrimonio Sonoro, un proyecto desarrollado por la Oficina de Audio Brand – SENA, orientado a consolidar 
+                un banco sonoro abierto, público y accesible. Su propósito es salvaguardar la riqueza auditiva del país, ofreciendo a aprendices, 
+                instructores, instituciones educativas y culturales un repositorio digital de grabaciones originales bajo licencias abiertas. Aunque los 
+                contenidos estarán disponibles para consulta, descarga y uso responsable, su autoría y pertenencia serán institucionales, reafirmando el carácter 
+                técnico y educativo que distingue al SENA.
               </p>
             </div>
             {/* Tarjeta de equipo: mantener roles, quitar 'Aliados' */}
@@ -225,6 +219,7 @@ export default async function Page() {
                 </div>
                 <hr className="my-4" />
                 <div>
+                  {/*
                   <span className="font-semibold">Contacto</span>
                   <br />
                   <a href="mailto:info@patrimoniosonoro.co" className="text-turquesaAudioBrand">
@@ -232,6 +227,7 @@ export default async function Page() {
                   </a>
                   <br />
                   <span>+57 (1) 123 4567</span>
+                  */}
                 </div>
               </div>
             </div>

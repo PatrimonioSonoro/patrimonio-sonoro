@@ -24,9 +24,12 @@ export default function Footer() {
           </nav>
 
           <div className="footer-contact">
+            <h4 className="font-semibold">Ubicación</h4>
+            {/*  --- IGNORE --- 
             <h4 className="font-semibold">Contacto</h4>
             <p className="mt-2 text-sm">Correo: <a className="footer-link" href="mailto:info@patrimoniosonoro.org">info@patrimoniosonoro.org</a></p>
             <p className="mt-1 text-sm">Tel: <a className="footer-link" href="tel:+571234567890">+57 1 234 567 890</a></p>
+            */}
             <p className="mt-2 text-sm flex items-center gap-2">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
                 <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5A2.5 2.5 0 1112 6a2.5 2.5 0 010 5.5z" />

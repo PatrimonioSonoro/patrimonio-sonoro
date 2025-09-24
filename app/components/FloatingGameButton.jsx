@@ -1,7 +1,11 @@
 "use client";
 import React, { useRef, useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 export default function FloatingGameButton({ gameLink = null }) {
+  const pathname = usePathname?.() ?? null;
+  // Do not render the floating button inside the admin/dashboard area
+  if (pathname && pathname.startsWith('/dashboard')) return null;
   const btnRef = useRef(null);
   const draggingRef = useRef(false);
   const lastPosRef = useRef({ x: 20, y: 24 }); // default offsets
