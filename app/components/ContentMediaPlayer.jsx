@@ -3,7 +3,6 @@
 
 import { useState, useRef } from 'react';
 import ViewCount from './ViewCount';
-import { useAnalyticsContext } from './AnalyticsProvider';
 
 export default function ContentMediaPlayer({ content }) {
   const [imageError, setImageError] = useState(false);
@@ -11,7 +10,6 @@ export default function ContentMediaPlayer({ content }) {
   const [audioError, setAudioError] = useState(false);
   const [isPortrait, setIsPortrait] = useState(false);
   const videoRef = useRef(null);
-  const analytics = useAnalyticsContext();
 
   // Use URLs directly from content (they're already public URLs from database)
   const mediaUrls = {
@@ -61,11 +59,7 @@ export default function ContentMediaPlayer({ content }) {
                 setIsPortrait(v.videoHeight > v.videoWidth);
               }}
               onPlay={() => {
-                analytics.trackContentInteraction(
-                  content.id,
-                  content.title,
-                  'play'
-                );
+                // Video play tracking removed
               }}
               onError={handleVideoError}
             >
@@ -85,11 +79,7 @@ export default function ContentMediaPlayer({ content }) {
                 setIsPortrait(v.videoHeight > v.videoWidth);
               }}
               onPlay={() => {
-                analytics.trackContentInteraction(
-                  content.id,
-                  content.title,
-                  'play'
-                );
+                // Video play tracking removed
               }}
               onError={handleVideoError}
             >
@@ -107,11 +97,7 @@ export default function ContentMediaPlayer({ content }) {
               controls 
               className="w-full max-w-md" 
               onPlay={() => {
-                analytics.trackContentInteraction(
-                  content.id,
-                  content.title,
-                  'play'
-                );
+                // Audio play tracking removed
               }}
               onError={handleAudioError}
             >

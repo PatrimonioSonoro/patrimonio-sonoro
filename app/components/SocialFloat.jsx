@@ -1,8 +1,7 @@
 import React from 'react'
-import { useAnalyticsContext } from './AnalyticsProvider'
+import { trackSocialClick } from '../../lib/googleAnalytics'
 
 export default function SocialFloat({ links = {} }) {
-  const analytics = useAnalyticsContext();
   
   // Deja aquí tus links (puedes pasarlos como prop o editar directamente)
   const {
@@ -32,7 +31,7 @@ export default function SocialFloat({ links = {} }) {
         title={title}
         className="social-cta"
         onClick={() => {
-          analytics.trackSocialClick(platform, href);
+          trackSocialClick(platform, href);
         }}
       >
         {svg}

@@ -2,10 +2,10 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import "./styles.css";
 import AuthProvider from "./components/AuthProvider";
-import { AnalyticsProvider } from "./components/AnalyticsProvider";
 import ConditionalLayoutComponents from "./components/ConditionalLayoutComponents";
 import MotionLayout from "./components/MotionLayout";
 import BackgroundAudio from "./components/BackgroundAudio";
+import GoogleAnalytics from "./components/GoogleAnalytics";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,21 +42,20 @@ export default function RootLayout({ children }) {
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         suppressHydrationWarning={true}
       >
+        <GoogleAnalytics />
         <AuthProvider>
-          <AnalyticsProvider>
-            <MotionLayout>
-              {children}
-            </MotionLayout>
-            <BackgroundAudio src="/audios/audio_home.mp3" volume={0.12} />
-            <ConditionalLayoutComponents 
-              socialLinks={{
-                instagram: 'https://www.instagram.com/patrimoniosonoro?igsh=MTJyYjdpc2NtczUzYQ==',
-                facebook: 'https://www.facebook.com/share/1AYW6Q5TJu/',
-                youtube: 'https://youtube.com/@patrimoniosonoro_audiobrand?si=buRBdvYKubfOsq-p',
-                tiktok: 'https://www.tiktok.com/@patrimonio.sonoro?_t=ZS-8zaNfJhRgoK&_r=1'
-              }} 
-            />
-          </AnalyticsProvider>
+          <MotionLayout>
+            {children}
+          </MotionLayout>
+          <BackgroundAudio src="/audios/audio_home.mp3" volume={0.12} />
+          <ConditionalLayoutComponents 
+            socialLinks={{
+              instagram: 'https://www.instagram.com/patrimoniosonoro?igsh=MTJyYjdpc2NtczUzYQ==',
+              facebook: 'https://www.facebook.com/share/1AYW6Q5TJu/',
+              youtube: 'https://youtube.com/@patrimoniosonoro_audiobrand?si=buRBdvYKubfOsq-p',
+              tiktok: 'https://www.tiktok.com/@patrimonio.sonoro?_t=ZS-8zaNfJhRgoK&_r=1'
+            }} 
+          />
         </AuthProvider>
       </body>
     </html>
