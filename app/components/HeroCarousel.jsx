@@ -209,7 +209,7 @@ export default function HeroCarousel() {
       {/* Full-bleed background video (desktop: horizontal, mobile: vertical) */}
       <video
         ref={bgVideoRef}
-        src="/videos/LOGO_HORIZONTAL_BLANCO.mp4"
+        src="/videos/LOGO_AUDIOBRAND_HORIZONTAL.mp4"
         preload="auto"
         playsInline
         muted
@@ -220,7 +220,7 @@ export default function HeroCarousel() {
         className="hero-bg-video hero-bg-video-desktop"
       />
       <video
-        src="/videos/LOGO_VERTICAL_BLANCO.mp4"
+        src="/videos/LOGO_AUDIOBRAND_VERTICAL.mp4"
         preload="auto"
         playsInline
         muted
