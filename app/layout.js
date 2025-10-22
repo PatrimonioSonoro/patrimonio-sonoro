@@ -6,7 +6,6 @@ import ConditionalLayoutComponents from "./components/ConditionalLayoutComponent
 import MotionLayout from "./components/MotionLayout";
 import BackgroundAudio from "./components/BackgroundAudio";
 import GoogleAnalytics from "./components/GoogleAnalytics";
-import AnalyticsDebugger from "./components/AnalyticsDebugger";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -57,7 +56,6 @@ export default function RootLayout({ children }) {
               tiktok: 'https://www.tiktok.com/@patrimonio.sonoro?_t=ZS-8zaNfJhRgoK&_r=1'
             }} 
           />
-          <AnalyticsDebugger />
         </AuthProvider>
       </body>
     </html>

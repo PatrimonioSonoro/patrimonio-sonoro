@@ -6,6 +6,7 @@ import SoundMap from "./components/SoundMap";
 import NavClient from "./components/NavClient";
 import HeroCarousel from "./components/HeroCarousel";
 import FloatingGameButton from "./components/FloatingGameButton";
+
 import ContentMediaPlayer from "./components/ContentMediaPlayer";
 import CampaignCard from "./components/CampaignCard";
 import ExploreSection from "./components/ExploreSection";
@@ -236,6 +237,7 @@ export default async function Page() {
       </section>
       </RevealOnScroll>
     <FloatingGameButton gameLink="https://game.patrimoniosonoro.com.co/" />
+
       </main>
   );
 }

@@ -138,25 +138,6 @@ export default function BackgroundAudio({ src = "/audios/audio_home.mp3", volume
   };
 
   return (
-    <div aria-hidden={false} style={{ position: "fixed", right: '1rem', bottom: 'calc(1rem + 176px + 1.8rem + 0.5rem)', zIndex: 1210 }}>
-      <audio ref={audioRef} src={src} playsInline preload="auto" crossOrigin="anonymous" />
-      <div style={{ display: 'flex', gap: 8 }}>
-        <button
-          onClick={handleTogglePlay}
-          aria-pressed={playing}
-          aria-label={playing ? "オーディオロゴを一時停止" : "オーディオロゴを再生"}
-          title={playing ? "オーディオロゴを一時停止" : "オーディオロゴを再生"}
-          className={`audio-cta ${playing ? 'is-playing' : ''}`}
-        >
-          {/* subtle wave svg (stacked) using currentColor for dynamic color */}
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden>
-            <path d="M3 8c2-3 4-3 6 0s4 3 6 0 4-3 6 0" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" opacity="0.95" />
-            <path d="M3 12c2-2 4-2 6 0s4 2 6 0 4-2 6 0" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" opacity="0.6" />
-          </svg>
-
-          <span style={{ fontSize: 11, fontWeight: 700, lineHeight: 1 }}>{'オーディオロゴ'}</span>
-        </button>
-      </div>
-    </div>
+    <audio ref={audioRef} src={src} playsInline preload="auto" crossOrigin="anonymous" />
   );
 }
