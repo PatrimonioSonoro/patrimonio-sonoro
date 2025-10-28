@@ -4,7 +4,6 @@ import "./styles.css";
 import AuthProvider from "./components/AuthProvider";
 import ConditionalLayoutComponents from "./components/ConditionalLayoutComponents";
 import MotionLayout from "./components/MotionLayout";
-import BackgroundAudio from "./components/BackgroundAudio";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 
 const geistSans = Geist({
@@ -47,7 +46,6 @@ export default function RootLayout({ children }) {
           <MotionLayout>
             {children}
           </MotionLayout>
-          <BackgroundAudio src="/audios/audio_home.mp3" volume={0.12} />
           <ConditionalLayoutComponents 
             socialLinks={{
               instagram: 'https://www.instagram.com/patrimoniosonoro?igsh=MTJyYjdpc2NtczUzYQ==',
