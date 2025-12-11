@@ -72,9 +72,9 @@ export default function CampaignCard({ title, description, videoSrc, posterSrc, 
           <a href={ctaHref} target="_blank" rel="noopener noreferrer" className="campaign-cta">Seguir viendo</a>
           {(() => {
             const mapping = {
-              'campesena': 9882,
-              'campesino canta': 3069,
-              'full popular': 4128,
+              'campesena': 10166,
+              'campesino canta': 3129,
+              'full popular': 4223,
             };
             const titleKey = (title || '').toLowerCase().trim();
             const value = mapping[titleKey] ?? null;
