@@ -66,6 +66,13 @@ export default function LoginPage() {
           <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required style={{ width: '100%', padding: 8 }} />
         </div>
   <button disabled={loading} type="submit" className="campaign-cta">{loading ? 'Entrando...' : 'Entrar'}</button>
+        <div style={{ marginTop: 16, display: 'flex', justifyContent: 'center' }}>
+          <img
+            src="/images/logo_footer.png"
+            alt="Patrimonio Sonoro"
+            style={{ width: '100%', height: 'auto', maxWidth: 420, display: 'block' }}
+          />
+        </div>
       </form>
       <div style={{ marginTop: 12 }}>
         <button onClick={async () => {

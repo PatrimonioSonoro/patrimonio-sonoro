@@ -54,7 +54,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <div style={{ maxWidth: 680, margin: '28px auto', padding: 18 }}>
+    <div style={{ maxWidth: 680, margin: '28px auto', padding: '18px 18px 8px' }}>
       <h1>Registro - Patrimonio Sonoro</h1>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: 12 }}>
@@ -73,7 +73,14 @@ export default function RegisterPage() {
           <label>Confirmar contraseña</label>
           <input value={confirm} onChange={(e) => setConfirm(e.target.value)} type="password" required style={{ width: '100%', padding: 8 }} />
         </div>
-  <button disabled={loading} type="submit" className="campaign-cta" style={{ padding: '10px 14px' }}>{loading ? 'Registrando...' : 'Registrar'}</button>
+        <button disabled={loading} type="submit" className="campaign-cta" style={{ padding: '10px 14px' }}>{loading ? 'Registrando...' : 'Registrar'}</button>
+        <div style={{ marginTop: 8, display: 'flex', justifyContent: 'center' }}>
+          <img
+            src="/images/logo_footer.png"
+            alt="Patrimonio Sonoro"
+            style={{ width: '100%', height: 'auto', maxWidth: 420, display: 'block' }}
+          />
+        </div>
       </form>
     </div>
   );

@@ -171,6 +171,13 @@ export default function AuthModalButton() {
               <button type="submit" disabled={loading} className="campaign-cta" style={{ width: '100%' }}>
                 {loading ? "Ingresando..." : "Iniciar sesión"}
               </button>
+              <div className="mt-4 flex justify-center">
+                <img
+                  src="/images/logo_footer.png"
+                  alt="Patrimonio Sonoro"
+                  className="w-full h-auto max-w-[420px]"
+                />
+              </div>
             </form>
           </div>
 
@@ -218,6 +225,13 @@ export default function AuthModalButton() {
               <button type="submit" disabled={loading} className="campaign-cta" style={{ width: '100%' }}>
                 {loading ? "Registrando..." : "Registrarse"}
               </button>
+              <div className="mt-4 flex justify-center">
+                <img
+                  src="/images/logo_footer.png"
+                  alt="Patrimonio Sonoro"
+                  className="w-full h-auto max-w-[420px]"
+                />
+              </div>
             </form>
           </div>
         </div>

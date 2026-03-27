@@ -163,6 +163,13 @@ export default function AuthInline() {
               <button type="submit" disabled={loading} className="w-full bg-turquesaAudioBrand text-white font-semibold py-3 rounded-lg">
                 {loading ? "Ingresando..." : "Iniciar sesión"}
               </button>
+              <div className="mt-4 flex justify-center">
+                <img
+                  src="/images/logo_footer.png"
+                  alt="Patrimonio Sonoro"
+                  className="w-full h-auto max-w-[420px]"
+                />
+              </div>
             </form>
           </div>
 
@@ -215,6 +222,13 @@ export default function AuthInline() {
               <button type="submit" disabled={loading} className="w-full bg-turquesaAudioBrand text-white font-semibold py-3 rounded-lg">
                 {loading ? "Registrando..." : "Registrarse"}
               </button>
+              <div className="mt-4 flex justify-center">
+                <img
+                  src="/images/logo_footer.png"
+                  alt="Patrimonio Sonoro"
+                  className="w-full h-auto max-w-[420px]"
+                />
+              </div>
             </form>
           </div>
         </div>
