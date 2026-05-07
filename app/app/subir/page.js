@@ -1,5 +1,6 @@
 import PrivatePageHeader from "../../components/PrivatePageHeader";
 import SectionHeading from "../../components/SectionHeading";
+import Link from "next/link";
 
 export const dynamic = 'force-dynamic';
 
@@ -27,18 +28,18 @@ export default function SubirPage() {
               </p>
 
               <div className="mt-5 flex flex-col sm:flex-row gap-3">
-                <a
+                <Link
                   href="/app/dashboard"
                   className="inline-flex items-center justify-center rounded-full bg-turquesaAudioBrand px-6 py-3 text-sm font-extrabold text-white hover:brightness-110 transition"
                 >
                   Volver al Dashboard
-                </a>
-                <a
+                </Link>
+                <Link
                   href="/dashboard/contents/new"
                   className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-extrabold text-azulInstitucional ring-1 ring-black/5 hover:bg-gray-50 transition"
                 >
                   Panel admin (si aplica)
-                </a>
+                </Link>
               </div>
             </div>
           </div>

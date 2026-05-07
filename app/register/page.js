@@ -1,6 +1,7 @@
 "use client";
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import Swal from 'sweetalert2';
 import { supabase } from '../../lib/supabaseClient';
 
@@ -64,13 +65,13 @@ export default function RegisterPage() {
           </div>
 
           <div className="relative">
-            <a
+            <Link
               href="/"
               className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white/80 px-4 py-2 text-sm font-extrabold text-azulInstitucional backdrop-blur hover:bg-white"
             >
               <span className="text-turquesaAudioBrand">←</span>
               Volver al inicio
-            </a>
+            </Link>
 
             <div className="mt-10">
               <div className="inline-flex items-center rounded-full bg-azulInstitucional/5 px-4 py-2 text-xs font-extrabold tracking-wide text-azulInstitucional ring-1 ring-azulInstitucional/10">
@@ -189,12 +190,12 @@ export default function RegisterPage() {
               </div>
 
               <div className="mt-6 flex items-center justify-between gap-3">
-                <a href="/login" className="text-sm font-extrabold text-azulInstitucional hover:text-turquesaAudioBrand">
+                <Link href="/login" className="text-sm font-extrabold text-azulInstitucional hover:text-turquesaAudioBrand">
                   Ya tengo cuenta
-                </a>
-                <a href="/login" className="text-sm font-extrabold text-gray-600 hover:text-azulInstitucional">
+                </Link>
+                <Link href="/login" className="text-sm font-extrabold text-gray-600 hover:text-azulInstitucional">
                   Ir al login
-                </a>
+                </Link>
               </div>
             </div>
 

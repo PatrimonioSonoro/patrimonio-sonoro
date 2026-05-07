@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { useAlbumByTitle, useAlbumFull } from "../../../../lib/albumsHooks";
 import { useMediaUrl, useMediaUrls } from "../../../../lib/mediaHooks";
 import { supabase } from "../../../../lib/supabaseClient";
@@ -183,13 +183,16 @@ export default function CampeSenaAlbumPage() {
 
   const activeIndex = useMemo(() => playlist.findIndex((s) => s.id === activeSongId), [playlist, activeSongId]);
 
-  const playSongAt = (idx) => {
-    if (idx < 0 || idx >= playlist.length) return;
-    const s = playlist[idx];
-    if (!s) return;
-    setActiveSongId(s.id);
-    setIsPlaying(true);
-  };
+  const playSongAt = useCallback(
+    (idx) => {
+      if (idx < 0 || idx >= playlist.length) return;
+      const s = playlist[idx];
+      if (!s) return;
+      setActiveSongId(s.id);
+      setIsPlaying(true);
+    },
+    [playlist]
+  );
 
   useEffect(() => {
     if (!activeSongId) return;
@@ -258,7 +261,7 @@ export default function CampeSenaAlbumPage() {
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [activeIndex, playlist, showCreditsFor]);
+  }, [activeIndex, playlist, playSongAt, showCreditsFor]);
 
   const bg = {
     base: "#121212",

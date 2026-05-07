@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic';
 
 import NavClient from "../components/NavClient";
+import Link from "next/link";
 
 export default function MusicosPage() {
   return (
@@ -22,12 +23,12 @@ export default function MusicosPage() {
               </p>
 
               <div className="mt-5">
-                <a
+                <Link
                   href="/"
                   className="inline-flex items-center justify-center rounded-full bg-turquesaAudioBrand px-6 py-3 text-sm font-extrabold text-white hover:brightness-110 transition"
                 >
                   Volver al Home
-                </a>
+                </Link>
               </div>
             </div>
           </div>
