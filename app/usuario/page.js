@@ -12,7 +12,7 @@ import { clearAuthStorage } from '../../lib/authUtils';
  * - Renderiza media con controles adecuados
  */
 
-export default function UsuarioPage() {
+export default function UsuarioPage({ showHeader = true }) {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -90,16 +90,18 @@ export default function UsuarioPage() {
   if (error) return <div className="p-8 text-red-600">{error}</div>;
 
   return (
-    <div className="max-w-6xl mx-auto p-8">
-      <div className="flex items-center justify-between mb-6">
-        <div>
-          <h1 className="text-3xl font-extrabold">Explora los Sonidos</h1>
-          <p className="text-gray-600">Tus imágenes, videos y audios</p>
+    <div className={showHeader ? "max-w-6xl mx-auto p-8" : "max-w-6xl mx-auto"}>
+      {showHeader ? (
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-3xl font-extrabold">Explora los Sonidos</h1>
+            <p className="text-gray-600">Tus imágenes, videos y audios</p>
+          </div>
+          <div>
+            <button onClick={handleLogout} className="px-4 py-2 bg-red-600 text-white rounded">Cerrar sesión</button>
+          </div>
         </div>
-        <div>
-          <button onClick={handleLogout} className="px-4 py-2 bg-red-600 text-white rounded">Cerrar sesión</button>
-        </div>
-      </div>
+      ) : null}
 
       <Section title="Imágenes" items={images} renderItem={(it) => (
         <div key={it.id} className="p-3 bg-white rounded shadow">

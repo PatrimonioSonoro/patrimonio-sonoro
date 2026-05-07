@@ -5,13 +5,9 @@ import ContentMediaPlayer from './ContentMediaPlayer';
 import ViewCount from './ViewCount';
 
 export default function ExploreSection({ contents = [] }) {
-  // Inicializamos en 'audio' para mostrar Audios por defecto
-  const [category, setCategory] = useState('audio');
+  const [category] = useState('image');
 
   const filtered = useMemo(() => {
-    if (category === 'all') return contents;
-    if (category === 'audio') return contents.filter(c => !!c.audio_url);
-    if (category === 'video') return contents.filter(c => !!c.video_url);
     if (category === 'image') return contents.filter(c => !!c.image_url);
     return contents;
   }, [contents, category]);
@@ -28,42 +24,47 @@ export default function ExploreSection({ contents = [] }) {
 
   return (
     <div>
-      <div className="flex items-center justify-center gap-3 mb-6">
-        <button onClick={() => setCategory('audio')} className={`px-4 py-2 rounded-full ${category==='audio'? 'bg-turquesaAudioBrand text-white' : 'bg-white text-gray-700 shadow-sm'}`} style={{ cursor: 'pointer' }}>Audios</button>
-        <button onClick={() => setCategory('video')} className={`px-4 py-2 rounded-full ${category==='video'? 'bg-turquesaAudioBrand text-white' : 'bg-white text-gray-700 shadow-sm'}`} style={{ cursor: 'pointer' }}>Videos</button>
-        <button onClick={() => setCategory('image')} className={`px-4 py-2 rounded-full ${category==='image'? 'bg-turquesaAudioBrand text-white' : 'bg-white text-gray-700 shadow-sm'}`} style={{ cursor: 'pointer' }}>Imágenes</button>
-      </div>
-
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filtered.length === 0 ? (
-          <div className="text-gray-600">No hay contenidos en esta categoría.</div>
+          <div className="text-gray-600 md:col-span-2 lg:col-span-3">No hay contenidos en esta categoría.</div>
         ) : (
             filtered.map((c, idx) => (
               <div
                 key={c.id}
-                className="sound-card-modern"
+                className="group rounded-3xl border border-gray-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md hover:border-turquesaAudioBrand/35 overflow-hidden"
               >
-                <div className="sound-card-content">
-                  <div className="sound-card-meta">
-                    <span className="region-badge">{c.region || 'General'}</span>
+                <div className="p-6">
+                  <div className="flex items-center justify-between gap-3">
+                    <div className="inline-flex items-center gap-2 rounded-full bg-azulInstitucional/5 px-3 py-1 text-xs font-extrabold text-azulInstitucional ring-1 ring-azulInstitucional/10">
+                      {c.region || 'Estrategia'}
+                    </div>
+                    <div className="text-[11px] font-extrabold text-gray-400">ESTRATEGIA</div>
                   </div>
-                  <div>
-                    <h3 className="sound-title">{c.title}</h3>
-                    <p className="sound-description">{c.description}</p>
+
+                  <div className="mt-4">
+                    <h3 className="text-base font-extrabold text-azulInstitucional leading-snug line-clamp-2">{c.title}</h3>
+                    <p className="mt-2 text-sm text-gray-600 leading-snug line-clamp-3">{c.description}</p>
                   </div>
-                  <div className="mt-3">
-                    {/* If it's an image-only content, show img; otherwise use player */}
-                    {category === 'image' && c.image_url ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={c.image_url}
-                        alt={c.title}
-                        className="w-full h-48 object-cover rounded-md cursor-pointer"
+
+                  <div className="mt-4">
+                    {c.image_url ? (
+                      <button
+                        type="button"
+                        className="block w-full text-left"
                         onClick={() => setLightboxSrc(c.image_url)}
-                      />
-                    ) : (
-                      <ContentMediaPlayer content={c} />
-                    )}
+                        title="Ver imagen"
+                      >
+                        <div className="relative overflow-hidden rounded-2xl ring-1 ring-black/5 bg-gray-50">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img
+                            src={c.image_url}
+                            alt={c.title}
+                            className="w-full h-52 object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                          />
+                          <div className="pointer-events-none absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300" style={{ background: "linear-gradient(180deg, rgba(0,0,0,0.00) 40%, rgba(0,0,0,0.18) 100%)" }} />
+                        </div>
+                      </button>
+                    ) : null}
                   </div>
                 </div>
               </div>

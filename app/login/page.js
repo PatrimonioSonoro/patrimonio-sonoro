@@ -13,7 +13,16 @@ export default function LoginPage() {
   useEffect(() => {
     // Redirigir si ya está autenticado
     const session = supabase.auth.getSession().then(({ data }) => {
-      if (data?.session) router.push('/dashboard');
+      if (data?.session?.user?.id) {
+        const uid = data.session.user.id;
+        supabase
+          .rpc('is_admin', { uid })
+          .then(({ data: isAdmin, error }) => {
+            if (error) return router.push('/app/dashboard');
+            router.push(isAdmin ? '/dashboard' : '/app/dashboard');
+          })
+          .catch(() => router.push('/app/dashboard'));
+      }
     });
   }, [router]);
 
@@ -38,7 +47,7 @@ export default function LoginPage() {
   if (typeof window !== 'undefined' && key) window.localStorage.setItem(key, '1');
 
       // decidir destino según rol (is_admin RPC)
-      let dest = '/';
+      let dest = '/app/dashboard';
       if (user?.id) {
         try {
           const { data: isAdmin, error: adminErr } = await supabase.rpc('is_admin', { uid: user.id });
@@ -49,40 +58,146 @@ export default function LoginPage() {
       }
       router.replace(dest);
     } catch (e) {
-      router.replace('/');
+      router.replace('/app/dashboard');
     }
   }
 
   return (
-    <div style={{ maxWidth: 680, margin: '28px auto', padding: 18 }}>
-      <h1>Iniciar sesión - Patrimonio Sonoro</h1>
-      <form onSubmit={handleLogin}>
-        <div style={{ marginBottom: 12 }}>
-          <label>Correo electrónico</label>
-          <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" required style={{ width: '100%', padding: 8 }} />
+    <div className="min-h-screen bg-gradient-to-b from-white via-white to-gray-50">
+      <div className="mx-auto grid min-h-screen max-w-6xl grid-cols-1 lg:grid-cols-2">
+        <div className="relative overflow-hidden px-6 pb-10 pt-14 sm:px-10 lg:px-12 lg:pb-14 lg:pt-20">
+          <div className="pointer-events-none absolute inset-0">
+            <div className="absolute -left-24 -top-24 h-80 w-80 rounded-full bg-turquesaAudioBrand/20 blur-3xl" />
+            <div className="absolute -bottom-24 -right-24 h-80 w-80 rounded-full bg-azulInstitucional/15 blur-3xl" />
+            <div className="absolute left-1/2 top-20 h-[460px] w-[460px] -translate-x-1/2 rounded-full bg-amber-300/10 blur-3xl" />
+          </div>
+
+          <div className="relative">
+            <a
+              href="/"
+              className="inline-flex items-center gap-2 rounded-full border border-gray-200 bg-white/80 px-4 py-2 text-sm font-extrabold text-azulInstitucional backdrop-blur hover:bg-white"
+            >
+              <span className="text-turquesaAudioBrand">←</span>
+              Volver al inicio
+            </a>
+
+            <div className="mt-10">
+              <div className="inline-flex items-center rounded-full bg-azulInstitucional/5 px-4 py-2 text-xs font-extrabold tracking-wide text-azulInstitucional ring-1 ring-azulInstitucional/10">
+                Patrimonio Sonoro
+              </div>
+              <h1 className="mt-5 text-3xl font-extrabold tracking-tight text-azulInstitucional sm:text-4xl">
+                Inicia sesión y vive el patrimonio cultural sonoro
+              </h1>
+              <p className="mt-4 max-w-xl text-base text-gray-700">
+                Accede a tu espacio privado para explorar estrategias, guardar tus favoritos y descubrir el Álbum
+                CampeSENA.
+              </p>
+
+              <div className="mt-8 grid max-w-xl grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="rounded-2xl border border-gray-200 bg-white/70 p-5 backdrop-blur">
+                  <div className="text-sm font-extrabold text-azulInstitucional">Estrategias</div>
+                  <div className="mt-1 text-sm text-gray-600">Explora imágenes y materiales por estrategia.</div>
+                </div>
+                <div className="rounded-2xl border border-gray-200 bg-white/70 p-5 backdrop-blur">
+                  <div className="text-sm font-extrabold text-azulInstitucional">Álbum CampeSENA</div>
+                  <div className="mt-1 text-sm text-gray-600">Escucha, guarda y comparte piezas destacadas.</div>
+                </div>
+                <div className="rounded-2xl border border-gray-200 bg-white/70 p-5 backdrop-blur">
+                  <div className="text-sm font-extrabold text-azulInstitucional">Favoritos</div>
+                  <div className="mt-1 text-sm text-gray-600">Tu biblioteca personal de canciones guardadas.</div>
+                </div>
+                <div className="rounded-2xl border border-gray-200 bg-white/70 p-5 backdrop-blur">
+                  <div className="text-sm font-extrabold text-azulInstitucional">Tu perfil</div>
+                  <div className="mt-1 text-sm text-gray-600">Actualiza tu identidad cultural y tus estadísticas.</div>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-10 flex items-center justify-start">
+              <img
+                src="/images/logo_footer.png"
+                alt="Patrimonio Sonoro"
+                className="h-auto w-full max-w-[420px] opacity-95"
+              />
+            </div>
+          </div>
         </div>
-        <div style={{ marginBottom: 12 }}>
-          <label>Contraseña</label>
-          <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" required style={{ width: '100%', padding: 8 }} />
+
+        <div className="flex items-center justify-center px-6 pb-14 pt-6 sm:px-10 lg:px-12 lg:py-16">
+          <div className="w-full max-w-md">
+            <div className="rounded-3xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+              <div className="mb-6">
+                <h2 className="text-xl font-extrabold text-azulInstitucional">Bienvenido de nuevo</h2>
+                <p className="mt-1 text-sm text-gray-600">Ingresa con tu correo y contraseña.</p>
+              </div>
+
+              <form onSubmit={handleLogin} className="space-y-4">
+                <div>
+                  <label className="block text-sm font-extrabold text-azulInstitucional">Correo electrónico</label>
+                  <input
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    type="email"
+                    required
+                    className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-turquesaAudioBrand/60 focus:ring-4 focus:ring-turquesaAudioBrand/15"
+                    placeholder="tu@correo.com"
+                    autoComplete="email"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-extrabold text-azulInstitucional">Contraseña</label>
+                  <input
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    type="password"
+                    required
+                    className="mt-2 w-full rounded-xl border border-gray-200 bg-white px-4 py-3 text-sm text-gray-900 shadow-sm outline-none transition focus:border-turquesaAudioBrand/60 focus:ring-4 focus:ring-turquesaAudioBrand/15"
+                    placeholder="••••••••"
+                    autoComplete="current-password"
+                  />
+                </div>
+
+                <button
+                  disabled={loading}
+                  type="submit"
+                  className="w-full rounded-xl bg-turquesaAudioBrand px-5 py-3 text-sm font-extrabold text-white shadow-sm transition hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {loading ? 'Entrando...' : 'Entrar'}
+                </button>
+              </form>
+
+              <div className="mt-6 flex items-center justify-between gap-3">
+                <a href="/register" className="text-sm font-extrabold text-azulInstitucional hover:text-turquesaAudioBrand">
+                  Crear cuenta
+                </a>
+                <button
+                  type="button"
+                  onClick={async () => {
+                    const res = await Swal.fire({
+                      title: 'Cerrar sesión',
+                      text: '¿Deseas cerrar la sesión?',
+                      showCancelButton: true,
+                    });
+                    if (res.isConfirmed) {
+                      await supabase.auth.signOut();
+                      Swal.fire('Listo', 'Has cerrado sesión', 'success');
+                      router.push('/');
+                    }
+                  }}
+                  className="text-sm font-extrabold text-gray-600 hover:text-azulInstitucional"
+                >
+                  Cerrar sesión
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-6 rounded-2xl border border-gray-200 bg-white/60 p-4 text-sm text-gray-700 backdrop-blur">
+              <span className="font-extrabold text-azulInstitucional">Consejo:</span> Si tu correo no está verificado,
+              revisa tu bandeja principal y la carpeta de spam.
+            </div>
+          </div>
         </div>
-  <button disabled={loading} type="submit" className="campaign-cta">{loading ? 'Entrando...' : 'Entrar'}</button>
-        <div style={{ marginTop: 16, display: 'flex', justifyContent: 'center' }}>
-          <img
-            src="/images/logo_footer.png"
-            alt="Patrimonio Sonoro"
-            style={{ width: '100%', height: 'auto', maxWidth: 420, display: 'block' }}
-          />
-        </div>
-      </form>
-      <div style={{ marginTop: 12 }}>
-        <button onClick={async () => {
-          const res = await Swal.fire({ title: 'Cerrar sesión', text: '¿Deseas cerrar la sesión?', showCancelButton: true });
-          if (res.isConfirmed) {
-            await supabase.auth.signOut();
-            Swal.fire('Listo', 'Has cerrado sesión', 'success');
-            router.push('/');
-          }
-        }} style={{ marginTop: 12 }}>Cerrar sesión</button>
       </div>
     </div>
   );

@@ -1,5 +1,121 @@
 "use client";
 import React, { useEffect, useRef, useState } from 'react';
+import { useRouter } from 'next/navigation';
+
+export default function HeroCarousel() {
+  const router = useRouter();
+  const [query, setQuery] = useState('');
+  const inputRef = useRef(null);
+
+  useEffect(() => {
+    const hash = typeof window !== 'undefined' ? window.location.hash : '';
+    if (hash === '#buscar') {
+      // Let the browser scroll first, then focus.
+      setTimeout(() => inputRef.current?.focus?.(), 60);
+    }
+  }, []);
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const q = (query || '').trim();
+    router.push(q ? `/banco-sonoro?q=${encodeURIComponent(q)}` : '/banco-sonoro');
+  };
+
+  return (
+    <section
+      id="inicio"
+      className="relative pt-20 md:pt-24 lg:pt-28 overflow-hidden"
+    >
+      <div className="absolute inset-0 bg-gradient-to-b from-azulInstitucional via-[#0b2f4a] to-[#061e2f]" />
+      <img
+        src="/images/campesino_canta_banner.png"
+        alt=""
+        aria-hidden="true"
+        className="absolute inset-0 h-full w-full object-cover opacity-15"
+        loading="lazy"
+      />
+      <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_20%_20%,rgba(45,212,191,0.55),transparent_45%),radial-gradient(circle_at_80%_30%,rgba(255,255,255,0.30),transparent_40%)]" />
+      <div className="absolute inset-0 bg-black/25" />
+
+      <div className="container relative z-10 mx-auto px-4 py-16 md:py-24 min-h-[70vh] flex items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+          <div className="max-w-2xl">
+            <p className="text-xs md:text-sm tracking-[0.24em] uppercase text-white/80">
+              Patrimonio cultural sonoro de Colombia
+            </p>
+            <h1 className="mt-3 text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight">
+              Esto suena a nosotros.
+            </h1>
+            <p className="mt-5 text-base md:text-lg text-white/80 leading-relaxed">
+              Explora, escucha y preserva nuestra riqueza cultural a través de una experiencia digital única.
+            </p>
+
+            <form id="buscar" onSubmit={onSubmit} className="mt-7 scroll-mt-28">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 rounded-2xl bg-white/10 ring-1 ring-white/20 px-4 py-3">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" className="text-white/70" aria-hidden="true">
+                      <path d="M21 21l-4.35-4.35" />
+                      <circle cx="11" cy="11" r="7" />
+                    </svg>
+                    <input
+                      ref={inputRef}
+                      value={query}
+                      onChange={(e) => setQuery(e.target.value)}
+                      placeholder="Buscar sonido, región o palabra clave..."
+                      className="w-full bg-transparent text-white placeholder:text-white/60 outline-none text-sm md:text-base"
+                      aria-label="Buscar sonido"
+                    />
+                  </div>
+                </div>
+                <button
+                  type="submit"
+                  className="inline-flex items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-extrabold text-azulInstitucional ring-1 ring-black/5 hover:bg-gray-50 transition"
+                >
+                  Buscar
+                </button>
+              </div>
+            </form>
+
+            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+              <a
+                href="/login"
+                className="inline-flex items-center justify-center rounded-full bg-turquesaAudioBrand px-6 py-3 text-sm font-bold text-white shadow-lg shadow-black/20 hover:brightness-110 transition"
+              >
+                Explorar sonidos
+              </a>
+              <a
+                href="/login"
+                className="inline-flex items-center justify-center rounded-full bg-white/10 px-6 py-3 text-sm font-bold text-white ring-1 ring-white/20 hover:bg-white/15 transition"
+              >
+                Iniciar sesión
+              </a>
+            </div>
+          </div>
+
+          <div className="relative">
+            <div className="relative mx-auto flex w-full max-w-2xl items-center justify-center lg:justify-self-center">
+              <img
+                src="/images/logo_audio.png"
+                alt="Patrimonio Sonoro"
+                className="h-auto w-full max-w-[640px] object-contain drop-shadow-[0_34px_70px_rgba(0,0,0,0.45)]"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/*
+Legacy Hero (Video)
+-------------------
+Se conserva comentado para poder restaurarlo en el futuro sin perder la implementación original.
+
+"use client";
+import React, { useEffect, useRef, useState } from 'react';
 
 export default function HeroCarousel() {
   const count = 1;
@@ -20,35 +136,25 @@ export default function HeroCarousel() {
     const items = wrapper.querySelectorAll('.carousel-item');
     const item = items[index];
     if (!item) return;
-  // center the item in the wrapper when possible
-  const wrapperWidth = wrapper.clientWidth;
-  const itemWidth = item.clientWidth;
-  const targetLeft = Math.max(0, item.offsetLeft - (wrapperWidth - itemWidth) / 2);
-  wrapper.scrollTo({ left: targetLeft, behavior: 'smooth' });
-  setActive(index);
-  };
-
-  const next = () => {
-    const nextIndex = (active + 1) % count;
-    scrollToIndex(nextIndex);
-  };
-
-  const prev = () => {
-    const prevIndex = (active - 1 + count) % count;
-    scrollToIndex(prevIndex);
+    // center the item in the wrapper when possible
+    const wrapperWidth = wrapper.clientWidth;
+    const itemWidth = item.clientWidth;
+    const targetLeft = Math.max(0, item.offsetLeft - (wrapperWidth - itemWidth) / 2);
+    wrapper.scrollTo({ left: targetLeft, behavior: 'smooth' });
+    setActive(index);
   };
 
   useEffect(() => {
     // autoplay every 10s
     const start = () => {
       clearInterval(intervalRef.current);
-        intervalRef.current = setInterval(() => {
-          setActive((a) => {
-            const n = (a + 1) % count;
-            scrollToIndex(n);
-            return n;
-          });
-        }, 13000);
+      intervalRef.current = setInterval(() => {
+        setActive((a) => {
+          const n = (a + 1) % count;
+          scrollToIndex(n);
+          return n;
+        });
+      }, 13000);
     };
 
     start();
@@ -81,132 +187,8 @@ export default function HeroCarousel() {
     return () => {};
   }, []);
 
-  // measure video aspect and compute container height from card width
-  useEffect(() => {
-    const video = bgVideoRef.current;
-    if (!video) return;
-
-    const updateAspect = () => {
-      const w = video.videoWidth || parseInt(video.getAttribute('width')) || 0;
-      const h = video.videoHeight || parseInt(video.getAttribute('height')) || 0;
-      if (w && h) setVideoAspect(w / h);
-    };
-
-    const updateHeight = () => {
-      const wrapper = wrapperRef.current;
-      if (!wrapper) return;
-      const items = wrapper.querySelectorAll('.carousel-item');
-      // prefer measuring the first item (card width) or the active one
-      const item = items[0] || items[active] || null;
-      const cardW = item ? item.clientWidth : Math.round(wrapper.clientWidth * 0.9);
-  const baseH = Math.max(160, Math.round(cardW / (videoAspect || (16 / 9))));
-  // if active slide is scaled, apply small scale so layout doesn't jump
-  const scaled = Math.ceil(baseH * ACTIVE_SCALE);
-      const reduced = Math.ceil(scaled * HEIGHT_REDUCTION);
-      // if availableHeight is known, clamp to it
-  const final = availableHeight ? Math.min(reduced, availableHeight) : reduced;
-  setVideoHeight(Math.max(final, 150));
-    };
-
-    // listen for when metadata is available to get intrinsic size
-    video.addEventListener('loadedmetadata', () => {
-      updateAspect();
-      updateHeight();
-    });
-    video.addEventListener('canplay', () => {
-      updateAspect();
-      updateHeight();
-    });
-    // window resize should recalc
-    window.addEventListener('resize', updateHeight);
-
-    // initial measure after render
-    setTimeout(() => {
-      updateAspect();
-      updateHeight();
-    }, 120);
-
-    return () => {
-      video.removeEventListener('loadedmetadata', updateAspect);
-      video.removeEventListener('canplay', updateAspect);
-      window.removeEventListener('resize', updateHeight);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [videoAspect]);
-
-  // recalc height when active changes (so centered active scale is accounted)
-  useEffect(() => {
-    const wrapper = wrapperRef.current;
-    if (!wrapper) return;
-    const items = wrapper.querySelectorAll('.carousel-item');
-    const item = items[0] || items[active] || null;
-  const cardW = item ? item.clientWidth : Math.round(wrapper.clientWidth * 0.9);
-  const baseH = Math.max(160, Math.round(cardW / (videoAspect || (16 / 9))));
-  const scaled = Math.ceil(baseH * ACTIVE_SCALE);
-  const reduced = Math.ceil(scaled * HEIGHT_REDUCTION);
-  const final = availableHeight ? Math.min(reduced, availableHeight) : reduced;
-  setVideoHeight(Math.max(final, 150));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [active]);
-
-  // compute available height in viewport for the carousel container (space left on first page)
-  useEffect(() => {
-    const computeAvailable = () => {
-      const wrapper = wrapperRef.current;
-      if (!wrapper) return setAvailableHeight(null);
-      const rect = wrapper.getBoundingClientRect();
-      // space from top of wrapper to bottom of viewport minus small margin
-      let avail = Math.max(120, Math.floor(window.innerHeight - rect.top - 40));
-      // cap to a fraction of the viewport to avoid occupying the full screen
-      const cap = Math.floor(window.innerHeight * MAX_VIEWPORT_RATIO);
-      avail = Math.min(avail, cap);
-      setAvailableHeight(avail);
-    };
-    window.addEventListener('resize', computeAvailable);
-    // also compute on mount
-    setTimeout(computeAvailable, 80);
-    return () => window.removeEventListener('resize', computeAvailable);
-  }, []);
-
-  // when the slide becomes active ensure it's playing (remains playing at all times otherwise)
-  useEffect(() => {
-    const video = bgVideoRef.current;
-    if (!video) return;
-    if (active === 0) {
-      try {
-        video.muted = true;
-        const p = video.play();
-        const dispatchHeroPlay = () => {
-          try {
-            const ev = new CustomEvent('hero-video-play', { detail: { currentTime: video.currentTime || 0 } });
-            window.dispatchEvent(ev);
-          } catch (e) {}
-        };
-        if (p && p.then) {
-          p.then(() => dispatchHeroPlay()).catch(() => dispatchHeroPlay());
-        } else {
-          setTimeout(dispatchHeroPlay, 80);
-        }
-      } catch (e) {}
-    }
-  }, [active]);
-
-  // pause on hover
-  const handleMouseEnter = () => clearInterval(intervalRef.current);
-  const handleMouseLeave = () => {
-    clearInterval(intervalRef.current);
-      intervalRef.current = setInterval(() => {
-        setActive((a) => {
-          const n = (a + 1) % count;
-          scrollToIndex(n);
-          return n;
-        });
-      }, 13000);
-  };
-
   return (
-  <section id="inicio" className="hero-carousel-section relative pt-20 md:pt-24 lg:pt-28 min-h-screen overflow-hidden">
-      {/* Full-bleed background video (desktop: horizontal, mobile: vertical) */}
+    <section id="inicio" className="hero-carousel-section relative pt-20 md:pt-24 lg:pt-28 min-h-screen overflow-hidden">
       <video
         ref={bgVideoRef}
         src="/videos/LOGO_HORIZONTAL.mp4"
@@ -231,84 +213,38 @@ export default function HeroCarousel() {
         className="hero-bg-video hero-bg-video-mobile"
       />
       <div className="container relative z-10 mx-auto px-4">
-          <div
+        <div
           className="carousel-wrapper flex space-x-6 overflow-x-auto py-6 scrollbar-hidden"
           ref={wrapperRef}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}
         >
-          {/* 5 contenedores responsivos (placeholders) */}
           {Array.from({ length: count }).map((_, i) => (
             <div
               key={i}
               className={`carousel-item flex-shrink-0 ${i === active ? 'is-active ring-2 ring-turquesaAudioBrand' : ''}`}
-                style={{ minHeight: '203px', ...(videoHeight ? { height: `${videoHeight}px` } : {}) }}
+              style={{ minHeight: '203px', ...(videoHeight ? { height: `${videoHeight}px` } : {}) }}
               aria-hidden={i !== active}
               role="group"
             >
               <div className="logo-inner" style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                {/* Logo removed as requested - this space intentionally left blank */}
+                // Logo removed as requested - this space intentionally left blank
               </div>
             </div>
           ))}
         </div>
-
-  {/* Navigation arrows removed as requested */}
-
-  {/* Indicators removed for single-slide layout */}
       </div>
 
-        <style jsx>{`
-  .scrollbar-hidden::-webkit-scrollbar { display: none; }
-  .scrollbar-hidden { -ms-overflow-style: none; scrollbar-width: none; }
-
-  /* center the wrapper content and control gap */
-  .carousel-wrapper { padding: 16px 0; margin: 0 auto; gap: 24px; }
-
-  .carousel-item { transition: transform 260ms ease, box-shadow 260ms ease; scroll-snap-align: center; }
-  .carousel-item.is-active { transform: translateY(-6px); z-index: 20; box-shadow: none; }
-  .carousel-item:not(.is-active) { transform: translateY(0) scale(1); z-index: 10; box-shadow: none; }
-
-  /* Default mobile: single card, full width with side padding */
-  /* Make the card fill the wrapper inner width (respecting 16px gutters) on mobile */
-  .carousel-wrapper { padding: 12px 0; padding-left: 16px; padding-right: 16px; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; }
-  .carousel-item { width: 100% !important; max-width: none !important; box-sizing: border-box; min-height: 203px; background: transparent; border-radius: 0; }
-
-        /* Desktop and up: enforce card size range
-           - Width between 350px and 400px
-           - Height between 450px and 550px
-           Cards will keep these constraints and the wrapper will allow horizontal scrolling when needed. */
-        @media (min-width: 768px) {
-          /* show one centered card on tablets and desktop; card width adapts to viewport */
-          .carousel-wrapper { padding: 18px 0; overflow-x: auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; --card-w: clamp(350px, 95vw, 1200px); padding-left: calc((100% - var(--card-w)) / 2); padding-right: calc((100% - var(--card-w)) / 2); }
-          .carousel-item {
-            width: var(--card-w) !important; /* adaptive card width (up to 95vw) */
-            min-width: auto !important;
-            max-width: none !important;
-            min-height: 480px;
-          }
-        }
-
-        /* Extra large: allow slightly larger card width but still centered */
-        @media (min-width: 1280px) {
-          .carousel-wrapper { --card-w: clamp(350px, 95vw, 1400px); padding-left: calc((100% - var(--card-w)) / 2); padding-right: calc((100% - var(--card-w)) / 2); }
-          .carousel-item { min-height: 520px; }
-        }
-
-        /* Hide arrows on smaller screens */
+      <style jsx>{`
+        .scrollbar-hidden::-webkit-scrollbar { display: none; }
+        .scrollbar-hidden { -ms-overflow-style: none; scrollbar-width: none; }
+        .hero-bg-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 35%; z-index: 0; display: block; }
+        .hero-bg-video-desktop { display: block; }
+        .hero-bg-video-mobile { display: none; }
         @media (max-width: 767px) {
-          .carousel-arrow { display: none; }
+          .hero-bg-video-desktop { display: none; }
+          .hero-bg-video-mobile { display: block; }
         }
-
-        .carousel-arrow { z-index: 30; }
-  .hero-bg-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 35%; z-index: 0; display: block; }
-  .hero-bg-video-desktop { display: block; }
-  .hero-bg-video-mobile { display: none; }
-  @media (max-width: 767px) {
-    .hero-bg-video-desktop { display: none; }
-    .hero-bg-video-mobile { display: block; }
-  }
       `}</style>
     </section>
   );
 }
+*/

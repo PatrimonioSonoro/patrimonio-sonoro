@@ -1,7 +1,15 @@
+"use client";
+
 import React from 'react'
+import { usePathname } from 'next/navigation'
 import { trackSocialClick } from '../../lib/googleAnalytics'
 
 export default function SocialFloat({ links = {} }) {
+  const pathname = usePathname();
+
+  const isDashboard = pathname?.startsWith('/dashboard');
+  const isPrivateApp = pathname?.startsWith('/app');
+  if (isDashboard || isPrivateApp) return null;
   
   // Deja aquí tus links (puedes pasarlos como prop o editar directamente)
   const {

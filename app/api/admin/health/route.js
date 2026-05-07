@@ -35,14 +35,25 @@ export async function GET() {
 
     // Check 1: Bucket exists and is accessible
     try {
+      // Note: listing buckets requires elevated privileges. When using the anon
+      // fallback client, Supabase may return an empty list (or error) even if
+      // the bucket exists.
       const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
-      if (bucketsError) throw bucketsError;
-      
-      const contenidoBucket = buckets.find(b => b.name === 'contenido');
-      results.checks.bucket = {
-        status: contenidoBucket ? 'OK' : 'MISSING',
-        details: contenidoBucket || 'Bucket contenido not found',
-      };
+
+      if (usingFallback) {
+        results.checks.bucket = {
+          status: 'WARN',
+          details: 'Bucket listing not reliable without service role; configure SUPABASE_SERVICE_ROLE_KEY to validate buckets.',
+          bucketsCount: Array.isArray(buckets) ? buckets.length : 0,
+        };
+      } else {
+        if (bucketsError) throw bucketsError;
+        const contenidoBucket = (buckets || []).find(b => b.name === 'contenido');
+        results.checks.bucket = {
+          status: contenidoBucket ? 'OK' : 'MISSING',
+          details: contenidoBucket || 'Bucket contenido not found',
+        };
+      }
     } catch (err) {
       results.checks.bucket = {
         status: 'ERROR',
@@ -126,8 +137,12 @@ export async function GET() {
 
     console.log('✅ Health check completed:', results.overall);
     
+    // Don't hard-fail the endpoint just because we're running without a service role key
+    // (fallback mode). The upload test is the more relevant signal in that case.
+    const shouldFail = !allOk && !usingFallback;
+
     return NextResponse.json(results, { 
-      status: allOk ? 200 : 500,
+      status: shouldFail ? 500 : 200,
       headers: {
         'Cache-Control': 'no-cache',
       }

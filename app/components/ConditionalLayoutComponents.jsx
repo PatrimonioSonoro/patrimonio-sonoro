@@ -8,9 +8,10 @@ export default function ConditionalLayoutComponents({ socialLinks }) {
   
   // Detectar si estamos en rutas del dashboard/administración
   const isDashboard = pathname?.startsWith('/dashboard');
+  const isPrivateApp = pathname?.startsWith('/app');
   
-  // No mostrar footer ni redes sociales en el panel administrativo
-  if (isDashboard) {
+  // No mostrar footer ni redes sociales en el panel administrativo ni en el área privada
+  if (isDashboard || isPrivateApp) {
     return null;
   }
   

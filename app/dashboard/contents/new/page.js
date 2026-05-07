@@ -4,15 +4,20 @@ import { useRouter } from "next/navigation";
 import { supabase } from "../../../../lib/supabaseClient";
 import {
   Box,
+  HStack,
+  VStack,
   Stack,
   FormControl,
   FormLabel,
+  FormHelperText,
   Input,
   Textarea,
   Select,
   Button,
   Card,
   CardBody,
+  CardHeader,
+  Divider,
   Heading,
   useToast,
   Icon,
@@ -20,8 +25,10 @@ import {
   InputGroup,
   InputLeftElement,
   Progress,
+  Switch,
+  Text,
 } from "@chakra-ui/react";
-import { FiUpload, FiImage, FiVideo, FiFileText } from "react-icons/fi";
+import { FiUpload, FiImage, FiVideo, FiFileText, FiArrowLeft } from "react-icons/fi";
 
 export default function NewContentPage() {
   const router = useRouter();
@@ -267,108 +274,186 @@ export default function NewContentPage() {
   };
 
   return (
-    <Card maxW="3xl" mx="auto" boxShadow="lg">
-      <CardBody>
-        <Heading size="md" mb={4}>Nuevo contenido</Heading>
-        <Box as="form" onSubmit={onSubmit}>
-          <Stack spacing={4}>
-            <FormControl>
-              <FormLabel>Título</FormLabel>
-              <InputGroup>
-                <InputLeftElement pointerEvents="none">
-                  <Icon as={FiFileText} color="gray.400" />
-                </InputLeftElement>
-                <Input name="title" value={form.title} onChange={onChange} placeholder="Título" />
-              </InputGroup>
-            </FormControl>
+    <Box maxW="6xl" mx="auto">
+      <Card boxShadow="lg" borderRadius="2xl" overflow="hidden">
+        <CardHeader pb={0}>
+          <HStack justify="space-between" align="start" spacing={6} flexWrap="wrap">
+            <HStack spacing={3} minW="260px">
+              <Box
+                h="44px"
+                w="44px"
+                borderRadius="2xl"
+                bg="blue.50"
+                color="blue.700"
+                display="grid"
+                placeItems="center"
+              >
+                <Icon as={FiFileText} boxSize={5} />
+              </Box>
+              <Box>
+                <Heading size="md">Nuevo contenido</Heading>
+                <Text fontSize="sm" color="gray.600">
+                  Crea una publicación con audio, imagen y/o video.
+                </Text>
+              </Box>
+            </HStack>
 
-            <FormControl>
-              <FormLabel>Descripción</FormLabel>
-              <Textarea name="description" value={form.description} onChange={onChange} placeholder="Descripción" />
-            </FormControl>
+            <Button
+              variant="outline"
+              leftIcon={<FiArrowLeft />}
+              borderRadius="full"
+              onClick={() => router.push("/dashboard/contents")}
+            >
+              Volver
+            </Button>
+          </HStack>
+        </CardHeader>
 
-            <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
-              <FormControl>
-                <FormLabel>Región</FormLabel>
-                <Input name="region" value={form.region} onChange={onChange} placeholder="Región" />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Estado</FormLabel>
-                <Select name="status" value={form.status} onChange={onChange}>
-                  <option value="draft">Borrador</option>
-                  <option value="published">Publicado</option>
-                  <option value="archived">Archivado</option>
-                </Select>
-              </FormControl>
-              <FormControl>
-                <FormLabel>Visible a usuarios</FormLabel>
-                <input type="checkbox" checked={visibleToUser} onChange={(e) => setVisibleToUser(e.target.checked)} />
-              </FormControl>
-              <FormControl>
-                <FormLabel>Visible en página principal (público)</FormLabel>
-                <input type="checkbox" checked={publiclyVisible} onChange={(e) => setPubliclyVisible(e.target.checked)} />
-              </FormControl>
+        <CardBody>
+          <Box as="form" onSubmit={onSubmit}>
+            <SimpleGrid columns={{ base: 1, lg: 2 }} gap={6} alignItems="start">
+              <Card variant="outline" borderRadius="2xl" overflow="hidden">
+                <CardHeader>
+                  <Heading size="sm">Detalles</Heading>
+                  <Text fontSize="sm" color="gray.600" mt={1}>
+                    Información editorial, estado y visibilidad.
+                  </Text>
+                </CardHeader>
+                <Divider />
+                <CardBody>
+                  <Stack spacing={4}>
+                    <FormControl>
+                      <FormLabel>Título</FormLabel>
+                      <InputGroup>
+                        <InputLeftElement pointerEvents="none">
+                          <Icon as={FiFileText} color="gray.400" />
+                        </InputLeftElement>
+                        <Input name="title" value={form.title} onChange={onChange} placeholder="Título" />
+                      </InputGroup>
+                    </FormControl>
+
+                    <FormControl>
+                      <FormLabel>Descripción</FormLabel>
+                      <Textarea name="description" value={form.description} onChange={onChange} placeholder="Descripción" rows={5} />
+                    </FormControl>
+
+                    <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
+                      <FormControl>
+                        <FormLabel>Región</FormLabel>
+                        <Input name="region" value={form.region} onChange={onChange} placeholder="Región" />
+                        <FormHelperText>Ejemplo: Caribe, Andina, Pacífica, Orinoquía, Amazonía.</FormHelperText>
+                      </FormControl>
+                      <FormControl>
+                        <FormLabel>Estado</FormLabel>
+                        <Select name="status" value={form.status} onChange={onChange}>
+                          <option value="draft">Borrador</option>
+                          <option value="published">Publicado</option>
+                          <option value="archived">Archivado</option>
+                        </Select>
+                      </FormControl>
+                    </SimpleGrid>
+
+                    <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
+                      <FormControl display="flex" alignItems="center" justifyContent="space-between" p={3} borderRadius="xl" bg="gray.50" borderWidth="1px" borderColor="blackAlpha.100">
+                        <Box>
+                          <FormLabel mb={0}>Visible a usuarios</FormLabel>
+                          <Text fontSize="xs" color="gray.600">
+                            Disponible en el espacio privado.
+                          </Text>
+                        </Box>
+                        <Switch isChecked={visibleToUser} onChange={(e) => setVisibleToUser(e.target.checked)} />
+                      </FormControl>
+                      <FormControl display="flex" alignItems="center" justifyContent="space-between" p={3} borderRadius="xl" bg="gray.50" borderWidth="1px" borderColor="blackAlpha.100">
+                        <Box>
+                          <FormLabel mb={0}>Visible en página principal</FormLabel>
+                          <Text fontSize="xs" color="gray.600">
+                            Se muestra en la web pública.
+                          </Text>
+                        </Box>
+                        <Switch isChecked={publiclyVisible} onChange={(e) => setPubliclyVisible(e.target.checked)} />
+                      </FormControl>
+                    </SimpleGrid>
+                  </Stack>
+                </CardBody>
+              </Card>
+
+              <Card variant="outline" borderRadius="2xl" overflow="hidden">
+                <CardHeader>
+                  <Heading size="sm">Multimedia</Heading>
+                  <Text fontSize="sm" color="gray.600" mt={1}>
+                    Adjunta archivos para enriquecer el contenido.
+                  </Text>
+                </CardHeader>
+                <Divider />
+                <CardBody>
+                  <Stack spacing={4}>
+                    <FormControl>
+                      <FormLabel>Archivo de audio (máx 50MB)</FormLabel>
+                      <Input type="file" accept="audio/*" onChange={(e) => handleFile(e, setAudioFile)} />
+                    </FormControl>
+
+                    <FormControl>
+                      <FormLabel>Imagen</FormLabel>
+                      <Input type="file" accept="image/*" onChange={(e) => handleFile(e, setImageFile)} />
+                    </FormControl>
+
+                    <FormControl>
+                      <FormLabel>Video</FormLabel>
+                      <Input type="file" accept="video/*" onChange={(e) => handleFile(e, setVideoFile)} />
+                    </FormControl>
+                  </Stack>
+                </CardBody>
+              </Card>
             </SimpleGrid>
 
-            <FormControl>
-              <FormLabel>Archivo de audio (máx 50MB)</FormLabel>
-              <Input type="file" accept="audio/*" onChange={(e) => handleFile(e, setAudioFile)} />
-            </FormControl>
-
-            <FormControl>
-              <FormLabel>Imagen</FormLabel>
-              <Input type="file" accept="image/*" onChange={(e) => handleFile(e, setImageFile)} />
-            </FormControl>
-
-            <FormControl>
-              <FormLabel>Video</FormLabel>
-              <Input type="file" accept="video/*" onChange={(e) => handleFile(e, setVideoFile)} />
-            </FormControl>
-
             {debugInfo && (
-              <Box p={3} bg="gray.50" borderRadius="md" fontSize="sm">
+              <Box mt={6} p={3} bg="gray.50" borderRadius="xl" fontSize="sm" borderWidth="1px" borderColor="blackAlpha.100">
                 <pre>{JSON.stringify(debugInfo, null, 2)}</pre>
               </Box>
             )}
-            
-            {error && <Box color="red.500" p={3} borderRadius="md" bg="red.50">{error}</Box>}
-            
+
+            {error && (
+              <Box mt={6} color="red.700" p={4} borderRadius="xl" bg="red.50" borderWidth="1px" borderColor="red.100">
+                {error}
+              </Box>
+            )}
+
             {progress > 0 && progress < 100 && (
-              <Box>
-                <Progress value={progress} colorScheme="blue" size="lg" />
+              <Box mt={6}>
+                <Progress value={progress} colorScheme="blue" size="lg" borderRadius="full" />
                 <Box textAlign="center" mt={2} fontSize="sm" color="gray.600">
-                  {progress < 30 ? 'Preparando archivos...' : 
-                   progress < 60 ? 'Convirtiendo archivos...' : 
-                   progress < 90 ? 'Subiendo a storage...' : 'Guardando en base de datos...'}
+                  {progress < 30
+                    ? "Preparando archivos..."
+                    : progress < 60
+                      ? "Convirtiendo archivos..."
+                      : progress < 90
+                        ? "Subiendo a storage..."
+                        : "Guardando en base de datos..."}
                 </Box>
               </Box>
             )}
 
-            <SimpleGrid columns={{ base: 1, md: 2 }} gap={4}>
-              <Button 
-                variant="outline" 
-                onClick={testConnection}
-                size="sm"
-                colorScheme="gray"
-              >
+            <HStack mt={6} spacing={3} flexWrap="wrap" justify="space-between">
+              <Button variant="outline" onClick={testConnection} size="sm" colorScheme="gray" borderRadius="full">
                 🧪 Probar Conexión
               </Button>
-              
-              <Button 
-                type="submit" 
-                colorScheme="blue" 
-                leftIcon={<FiUpload />} 
+
+              <Button
+                type="submit"
+                colorScheme="blue"
+                leftIcon={<FiUpload />}
                 isLoading={saving}
                 loadingText="Subiendo..."
                 disabled={saving}
                 size="lg"
+                borderRadius="full"
               >
-                {saving ? 'Subiendo...' : 'Crear contenido'}
+                {saving ? "Subiendo..." : "Crear contenido"}
               </Button>
-            </SimpleGrid>
-          </Stack>
-        </Box>
-      </CardBody>
-    </Card>
+            </HStack>
+          </Box>
+        </CardBody>
+      </Card>
+    </Box>
   );
 }

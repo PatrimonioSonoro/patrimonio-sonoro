@@ -65,7 +65,7 @@ export default function AuthProvider({ children }) {
               // Check is_user first
               const { data: isUser, error: userErr } = await supabase.rpc('is_user', { uid });
               if (!userErr && isUser) {
-                router.replace('/usuario');
+                router.replace('/app/dashboard');
                 return;
               }
               // Then check admin
@@ -80,7 +80,7 @@ export default function AuthProvider({ children }) {
           }
 
           // Fallback: go to usuario for safety if roles couldn't be determined
-          router.replace('/usuario');
+          router.replace('/app/dashboard');
         }
         if (event === "SIGNED_OUT") {
           // Clear all auth-related localStorage items

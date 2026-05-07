@@ -30,7 +30,7 @@ export async function GET(req) {
     
     // Test basic connectivity
     const { data: buckets, error: bucketError } = await supabase.storage.listBuckets();
-    if (bucketError) {
+    if (bucketError && !usingFallback) {
       return NextResponse.json({ error: 'Storage connection failed', details: bucketError }, { status: 500 });
     }
     
@@ -42,7 +42,8 @@ export async function GET(req) {
     return NextResponse.json({ 
       status: 'OK',
       usingFallback,
-      buckets: buckets.map(b => ({ name: b.name, public: b.public })),
+      buckets: Array.isArray(buckets) ? buckets.map(b => ({ name: b.name, public: b.public })) : [],
+      bucketWarning: usingFallback && bucketError ? (bucketError.message || String(bucketError)) : null,
       contenidos_count: tables?.count || 0,
       timestamp: new Date().toISOString()
     });
